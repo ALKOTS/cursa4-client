@@ -2,21 +2,39 @@ package sample;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 public class Main extends Application {
 
-    Stage stage_menu;
-    Scene scene1, scene2;
+
+    public static Map<String,Scene> sceneMap = new HashMap<String,Scene>();
+    public Scene mainMenu;
+    public Scene questionScene;
+    public static Stage prStage=new Stage();
+
+    {
+        try {
+            mainMenu = new Scene(FXMLLoader.load(getClass().getResource("main_menu.fxml")), 800, 600);
+            questionScene =new Scene(FXMLLoader.load(getClass().getResource("questions.fxml")), 800, 600);
+            sceneMap.put("mainMenu",mainMenu);
+            sceneMap.put("questionScene",questionScene);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Что? Где? Когда?");
-        primaryStage.setScene(new Scene(root, 800, 600));
-        primaryStage.show();
+        prStage=primaryStage;
+        SceneChanger.changeScene("mainMenu");
     }
 
 
