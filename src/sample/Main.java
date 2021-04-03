@@ -23,7 +23,7 @@ public class Main extends Application {
             mainMenu = new Scene(FXMLLoader.load(getClass().getResource("main_menu.fxml")), 800, 600);
             questionScene =new Scene(FXMLLoader.load(getClass().getResource("questions.fxml")), 800, 600);
             sceneMap.put("mainMenu",mainMenu);
-            sceneMap.put("questionScene",questionScene);
+            sceneMap.put("questionScene", questionScene);
         } catch (IOException e) {
             e.printStackTrace();
         }

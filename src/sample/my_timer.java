@@ -1,8 +1,10 @@
 package sample;
 
+import javafx.scene.control.Label;
+
 public class my_timer{
-    public void timeCheck(Int secs, Label needed_label){
-        secs*=secs;
+    public static void timeCheck(int secs, Label needed_label){
+        secs*=1000;
         long elapsedTime=0;
         long startTime = System.currentTimeMillis();
         System.out.println(elapsedTime);
