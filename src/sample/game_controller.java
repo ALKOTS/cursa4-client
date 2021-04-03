@@ -37,16 +37,6 @@ public class game_controller {
 
     }
 
-    public void timeCheck(){
-        long elapsedTime=0;
-        long startTime = System.currentTimeMillis();
-        System.out.println(elapsedTime);
-        while (elapsedTime<5000){
-            elapsedTime = System.currentTimeMillis() - startTime;
-            timeLbl.setText(String.valueOf(elapsedTime/1000));
-        }
-    }
-
 
 
 }

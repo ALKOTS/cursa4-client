@@ -6,5 +6,6 @@
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.main_menu_controller">
    <children>
       <Button fx:id="startBtn" layoutX="374.0" layoutY="288.0" mnemonicParsing="false" onAction="#onStart" text="Start" />
+      <Button fx:id="teamSelectBtn" layoutX="374.0" layoutY="300.0" mnemonicParsing="false" onAction="#onSelectTeam" text="Select team" />
    </children>
 </Pane>
