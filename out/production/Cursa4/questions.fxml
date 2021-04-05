@@ -3,11 +3,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.game_controller">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="game_controller">
    <children>
       <Button fx:id="subBtn" layoutX="352.0" layoutY="300.0" mnemonicParsing="false" onAction="#btnPress" text="Submit answer" />
       <Label fx:id="qsLbl" layoutX="368.0" layoutY="15.0" text="&lt;question&gt;" />
       <TextField fx:id="ansTxt" layoutX="326.0" layoutY="275.0" promptText="Enter answer" />
       <Label fx:id="timeLbl" layoutX="725.0" layoutY="15.0" text="&lt;time left&gt;" />
+      <ProgressBar fx:id="timeBar" layoutX="14.0" layoutY="23.0" prefWidth="200.0" progress="0.0" />
    </children>
 </Pane>
