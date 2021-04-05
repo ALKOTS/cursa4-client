@@ -30,51 +30,41 @@ public class game_controller {
         timeBar.setProgress(0);
 
 
-//        new Thread(new Runnable() {
+//        new Thread(new Task<Void>(){
+//
 //            long startTime=System.currentTimeMillis();
 //            long endTime=startTime+5000;
+//
 //            @Override
-//            public void run() {
-//                while (startTime<endTime){
+//            protected Void call(){
 //
-////                    Platform.runLater(new Runnable() {
-////                        @Override
-////                        public void run() {
-////                            timeLbl.setText(String.valueOf((6000-endTime+startTime)/1000));
-////                        }
-////                    });
-//                    System.out.println(6000-endTime+startTime);
+//                while(startTime<endTime){
+//                    timeLbl.setText(String.valueOf((6000-endTime+startTime)/1000));
+//                    System.out.println((6000-endTime+startTime)/1000);
 //                    startTime=System.currentTimeMillis();
-//
 //                }
+//
+//                Platform.runLater(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if(qsLbl.getText()!="Mocha"){
+//                            qsLbl.setText("sasat");
+//                        }
+//                    }
+//                });
+//                return null;
 //            }
 //        }).start();
 
-        new Thread(new Task<Void>(){
-
-            long startTime=System.currentTimeMillis();
-            long endTime=startTime+5000;
-
+        my_timer mt=new my_timer(){
+            int count=0;
             @Override
-            protected Void call(){
-
-                while(startTime<endTime){
-                    timeLbl.setText(String.valueOf((6000-endTime+startTime)/1000));
-                    System.out.println((6000-endTime+startTime)/1000);
-                    startTime=System.currentTimeMillis();
-                }
-
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(qsLbl.getText()!="Mocha"){
-                            qsLbl.setText("sasat");
-                        }
-                    }
-                });
-                return null;
+            void run() {
+                  timeLbl.setText(String.valueOf(count++));
             }
-        }).start();
+
+        };
+        mt.start();
 
 
 

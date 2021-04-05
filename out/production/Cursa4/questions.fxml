@@ -8,7 +8,7 @@
       <Button fx:id="subBtn" layoutX="352.0" layoutY="300.0" mnemonicParsing="false" onAction="#btnPress" text="Submit answer" />
       <Label fx:id="qsLbl" layoutX="368.0" layoutY="15.0" text="&lt;question&gt;" />
       <TextField fx:id="ansTxt" layoutX="326.0" layoutY="275.0" promptText="Enter answer" />
-      <Label fx:id="timeLbl" layoutX="725.0" layoutY="15.0" text="&lt;time left&gt;" />
+      <Label fx:id="timeLbl" layoutX="725.0" layoutY="15.0" text="0" />
       <ProgressBar fx:id="timeBar" layoutX="14.0" layoutY="23.0" prefWidth="200.0" progress="0.0" />
    </children>
 </Pane>
