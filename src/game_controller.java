@@ -1,8 +1,13 @@
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -12,13 +17,12 @@ public class game_controller {
     public Label qsLbl, timeLbl, viewerScore, playerScore;
 
     @FXML
-    public Button subBtn;
+    public Button subBtn, returnBtn;
 
     @FXML
     public TextField ansTxt;
 
-    @FXML
-    public ProgressBar timeBar;
+
 
     ArrayList<ArrayList<String>> questions=Main.questions_list;
 
@@ -32,7 +36,11 @@ public class game_controller {
 
     public int count;
 
+    public String team;
+
     public void initialize()  {
+
+        returnBtn.setVisible(false);
 
         mt=new my_timer(){
 
@@ -57,8 +65,9 @@ public class game_controller {
         }
     }
 
+    
+
     public void outOfTime(){
-        System.out.println("ss");
         mt.stop();
     }
 
@@ -96,9 +105,35 @@ public class game_controller {
         }else{
             qsLbl.setText("Players won");
         }
+        //Main.teams_list.replace(main_menu_controller.team,0,pScore); //.get(main_menu_controller.team)
+
+        subBtn.setVisible(false);
+        returnBtn.setVisible(true);
     }
 
 
+    public void onReturn(ActionEvent actionEvent) throws Exception {
+        //
 
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("main_menu.fxml"));
+        Parent root = loader.load();
 
+        main_menu_controller mmc = loader.getController();
+        mmc.updateScore(team, pScore);
+
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.setTitle("Что? Где? Когда?");
+        stage.show();
+
+        Stage cur_stage = (Stage) returnBtn.getScene().getWindow();
+        cur_stage.close();
+
+        //
+
+    }
+
+    public void recieveTeam(String Team){
+        team=Team;
+    }
 }

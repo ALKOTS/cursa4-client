@@ -16,7 +16,6 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         get_questions();
         get_teams();
-        System.out.println(questions_list.get(0).get(0));
         primaryStage.setTitle("Что? Где? Когда?");
         primaryStage.setScene(SceneChanger.changeScene("main_menu"));
         primaryStage.show();
@@ -30,8 +29,8 @@ public class Main extends Application {
     }
 
     public void get_teams(){
-        teams_list.put("ss",0);
-        teams_list.put("aa",0);
+        teams_list.put("ss",null);
+        teams_list.put("aa",1);
 
     }
 

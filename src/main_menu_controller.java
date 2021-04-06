@@ -1,7 +1,7 @@
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -29,18 +29,32 @@ public class main_menu_controller {
 
 	public void initialize() {
 		currTeamLbl.setText("Команда не выбрана");
-		String teams = "";
-		for (Map.Entry me:teams_list.entrySet()){
-			teams+=me.getKey()+": "+me.getValue()+"\n";
+		drawScoreBoard();
 
-		}
-		teamLbl.setText(teams);
+
 	}
 
 	public void onStart(ActionEvent actionEvent) throws Exception {
 
 		if(currTeamLbl.getText()!="Команда не выбрана"){
-			StageChanger.changeStage("Что? Где? Когда?", "game", startBtn);
+			//
+
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("game.fxml"));
+			Parent root = loader.load();
+
+			game_controller gc = loader.getController();
+			gc.recieveTeam(currTeamLbl.getText());
+
+			Stage stage = new Stage();
+			stage.setScene(new Scene(root));
+			stage.setTitle("Что? Где? Когда?");
+			stage.show();
+
+			Stage cur_stage = (Stage) startBtn.getScene().getWindow();
+			cur_stage.close();
+
+			//
+
 		}
 		else {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -56,12 +70,30 @@ public class main_menu_controller {
 
 
 	public void onTeamSelect(ActionEvent actionEvent) throws Exception {
-		StageChanger.changeStage("Выберите команду", "team_selector", startBtn);
-
+		StageChanger.simpleChangeStage("Выберите команду", "team_selector", startBtn);
+		team=currTeamLbl.getText();
 	}
 
 	public void receiveTeam(String team){
 		currTeamLbl.setText(team);
+	}
+
+	public void updateScore(String key, Integer score){
+		teams_list.replace(key,null,score);
+		System.out.println(key+" "+ score);
+		drawScoreBoard();
+	}
+
+
+	public void drawScoreBoard(){
+		String teams = "";
+		for (Map.Entry me:teams_list.entrySet()){
+			if(me.getValue()!=null){
+				teams+=me.getKey()+": "+me.getValue()+"\n";
+			}
+
+		}
+		teamLbl.setText(teams);
 	}
 
 }
