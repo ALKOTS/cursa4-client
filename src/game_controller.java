@@ -1,16 +1,15 @@
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
-import javafx.concurrent.Task;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class game_controller {
     @FXML
-    public Label qsLbl, timeLbl;
+    public Label qsLbl, timeLbl, viewerScore, playerScore;
 
     @FXML
     public Button subBtn;
@@ -21,19 +20,22 @@ public class game_controller {
     @FXML
     public ProgressBar timeBar;
 
-    ArrayList<ArrayList<String>> questions=Main.questions;
+    ArrayList<ArrayList<String>> questions=Main.questions_list;
 
-    public String right_answer="ss";
+    private Random random=new Random();
+    public String right_answer;
+
+    public int vScore=0;
+    public int pScore=0;
 
     public my_timer mt;
 
+    public int count;
+
     public void initialize()  {
 
-        qsLbl.setText("What is ss?");
-        timeBar.setProgress(0);
-
         mt=new my_timer(){
-            int count=5;
+
             @Override
             void run() {
                 if(count>=0) {
@@ -43,20 +45,16 @@ public class game_controller {
                 }
             }
         };
-        mt.start();
+
+        startRound();
 
     }
 
     public void btnPress(javafx.event.ActionEvent actionEvent) {
-        System.out.println(ansTxt.getText());
-        mt.stop();
-        if(ansTxt.getText().equals(right_answer)){
-            qsLbl.setText("Mocha");
+        if (vScore<6 && pScore<6){
+            mt.stop();
+            endRound();
         }
-        else{
-            qsLbl.setText("Govno");
-        }
-
     }
 
     public void outOfTime(){
@@ -64,6 +62,41 @@ public class game_controller {
         mt.stop();
     }
 
+    public void startRound(){
+        count=5;
+        ansTxt.setText("");
+        right_answer=questions.get(random.nextInt(questions.size())).get(1);
+        qsLbl.setText(questions.get(random.nextInt(questions.size())).get(0));
+        mt.start();
+    }
+
+    public void endRound(){
+        if(ansTxt.getText().equals(right_answer)){
+            pScore++;
+        }
+        else{
+            vScore++;
+        }
+        viewerScore.setText(String.valueOf(vScore));
+        playerScore.setText(String.valueOf(pScore));
+
+        if(vScore>=6){
+            endGame("v");
+        }else if(pScore>=6){
+            endGame("p");
+        }else{
+            startRound();
+        }
+
+    }
+
+    public void endGame(String winner){
+        if(winner=="v"){
+            qsLbl.setText("Viewers won");
+        }else{
+            qsLbl.setText("Players won");
+        }
+    }
 
 
 

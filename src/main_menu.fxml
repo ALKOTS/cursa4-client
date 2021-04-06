@@ -3,11 +3,20 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main_menu_controller">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main_menu_controller">
    <children>
-      <Button fx:id="startBtn" layoutX="379.0" layoutY="275.0" mnemonicParsing="false" onAction="#onStart" text="Start" />
-      <Button fx:id="teamSelectBtn" layoutX="379.0" layoutY="300.0" mnemonicParsing="false" onAction="#onTeamSelect" text="Select Team" />
+      <Button fx:id="startBtn" layoutX="358.0" layoutY="275.0" mnemonicParsing="false" onAction="#onStart" text="Start" />
+      <Button fx:id="teamSelectBtn" layoutX="339.0" layoutY="300.0" mnemonicParsing="false" onAction="#onTeamSelect" text="Select Team" />
 
-      <Label fx:id="teamLbl" layoutX="386.0" layoutY="14.0" text="Label" />
+      <Label fx:id="currTeamLbl" layoutX="365.0" layoutY="14.0" text="Label" />
+      <ScrollPane layoutX="586.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <Label fx:id="teamLbl" layoutX="14.0" layoutY="14.0" text="Label" />
+               </children>
+            </AnchorPane>
+        </content>
+      </ScrollPane>
    </children>
 </Pane>
