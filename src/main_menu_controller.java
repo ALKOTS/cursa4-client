@@ -1,6 +1,9 @@
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
@@ -25,13 +28,18 @@ public class main_menu_controller {
 
 	public void onStart(ActionEvent actionEvent) throws Exception {
 		try {
-			Stage questions_stage = new Stage();
-			questions_stage.setTitle("Что? Где? Когда?");
-			questions_stage.setScene(SceneChanger.changeScene("questions"));
-			questions_stage.show();
+			if(teamLbl.getText()!="Команда не выбрана"){
+				StageChanger.changeStage("Что? Где? Когда?", "game", startBtn);
+			}
+			else {
+				Alert alert = new Alert(Alert.AlertType.ERROR);
+				alert.setTitle("Error Dialog");
+				alert.setHeaderText("Error with your team!");
+				alert.setContentText("Looks like you haven't selected your team yet! You can't start a game without a team!");
 
-			Stage cur_stage = (Stage) startBtn.getScene().getWindow();
-			cur_stage.close();
+				alert.showAndWait();
+			}
+
 
 			
 		} catch (Exception e) {
@@ -40,7 +48,14 @@ public class main_menu_controller {
 	}
 
 
+	public void onTeamSelect(ActionEvent actionEvent) throws Exception {
+		StageChanger.changeStage("Выберите команду", "team_selector", startBtn);
 
+	}
+
+	public void receiveTeam(String team){
+		teamLbl.setText(team);
+	}
 
 }
 

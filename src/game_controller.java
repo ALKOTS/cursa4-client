@@ -30,32 +30,6 @@ public class game_controller {
         timeBar.setProgress(0);
 
 
-//        new Thread(new Task<Void>(){
-//
-//            long startTime=System.currentTimeMillis();
-//            long endTime=startTime+5000;
-//
-//            @Override
-//            protected Void call(){
-//
-//                while(startTime<endTime){
-//                    timeLbl.setText(String.valueOf((6000-endTime+startTime)/1000));
-//                    System.out.println((6000-endTime+startTime)/1000);
-//                    startTime=System.currentTimeMillis();
-//                }
-//
-//                Platform.runLater(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if(qsLbl.getText()!="Mocha"){
-//                            qsLbl.setText("sasat");
-//                        }
-//                    }
-//                });
-//                return null;
-//            }
-//        }).start();
-
         my_timer mt=new my_timer(){
             int count=0;
             @Override

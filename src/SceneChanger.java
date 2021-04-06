@@ -2,7 +2,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 
 
-public class SceneChanger extends Main {
+public class SceneChanger{
 
     private static Scene current_scene;
 
