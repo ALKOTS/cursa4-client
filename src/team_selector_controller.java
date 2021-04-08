@@ -24,7 +24,7 @@ public class team_selector_controller {
 
     public HashMap<String, Integer> teams_list=Main.teams_list;
 
-    public void selectTeam(ActionEvent actionEvent) throws IOException {
+    public void selectTeam(ActionEvent actionEvent) throws Exception {
 
 
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -51,6 +51,12 @@ public class team_selector_controller {
             cur_stage.close();
 
             //
+
+        }else if(ansTxt.getText().equals("adminka")){
+            StageChanger.simpleChangeStage("Админка","admin", subBtn);
+
+            Stage cur_stage = (Stage) subBtn.getScene().getWindow();
+            cur_stage.close();
 
         }else if(!(teams_list.containsKey(ansTxt.getText()))){
             alert.setContentText("Looks like the team you are trying to access doesn't exist!");

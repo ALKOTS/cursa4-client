@@ -61,7 +61,7 @@ public class game_controller {
     public void btnPress(javafx.event.ActionEvent actionEvent) {
         if (vScore<6 && pScore<6){
             mt.stop();
-            endRound();
+            endRound(ansTxt.getText());
         }
     }
 
@@ -69,6 +69,7 @@ public class game_controller {
 
     public void outOfTime(){
         mt.stop();
+        endRound(null);
     }
 
     public void startRound(){
@@ -79,8 +80,8 @@ public class game_controller {
         mt.start();
     }
 
-    public void endRound(){
-        if(ansTxt.getText().equals(right_answer)){
+    public void endRound(String ans){
+        if(ans!=null&&ans.equals(right_answer)){
             pScore++;
         }
         else{
