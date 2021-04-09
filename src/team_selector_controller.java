@@ -1,4 +1,5 @@
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -6,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -54,6 +57,24 @@ public class team_selector_controller {
 
         }else if(ansTxt.getText().equals("adminka")){
             StageChanger.simpleChangeStage("Админка","admin", subBtn);
+
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("admin.fxml"));
+//
+//            Button testBtn=new Button("Test");
+//            testBtn.setOnAction(new EventHandler<ActionEvent>() {
+//                @Override
+//                public void handle(ActionEvent actionEvent) {
+//                    System.out.println("ss");
+//                }
+//            });
+//
+//            admin_controller.appsContainer.getChildren().add(testBtn);
+//            Parent root=loader.load();
+//
+//            Stage stage = new Stage();
+//            stage.setScene(new Scene(root));
+//            stage.setTitle("Админка");
+//            stage.show();
 
             Stage cur_stage = (Stage) subBtn.getScene().getWindow();
             cur_stage.close();
