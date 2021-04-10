@@ -2,17 +2,17 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class team_selector_controller {
     @FXML
@@ -21,11 +21,104 @@ public class team_selector_controller {
     @FXML
     public TextField ansTxt;
 
+    public HashMap<String, Integer> teams_list=Main.teams_list;
+
     public void initialize(){
 
     }
 
-    public HashMap<String, Integer> teams_list=Main.teams_list;
+    public List<BorderPane> allContainerContainer;
+    public VBox v=new VBox();
+
+    public void generateAdmin(Integer apsNumber) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("admin.fxml"));
+
+
+
+        //Undefined
+        Tab undefinedTab=new Tab("Undefined");
+
+        //Apellations
+
+        //Dynamic
+
+        for (int i=0; i<apsNumber; i++){
+            Label qsLbl = new Label("Question");
+            //qsLbl.setPrefSize(708,21);
+            Label ansLbl = new Label("Answer");
+            //ansLbl.setPrefSize(708,21);
+            Label rAnsLbl = new Label("Right answer");
+            //rAnsLbl.setPrefSize(708,21);
+
+            VBox lblContainer = new VBox(qsLbl, ansLbl, rAnsLbl);
+            lblContainer.setMinSize(684,50);
+
+            Button acceptBtn = new Button("A");
+            acceptBtn.setPrefSize(44,50);
+            acceptBtn.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    qsLbl.setText("YES");
+                }
+            });
+
+            Button denyBtn = new Button("D");
+            denyBtn.setPrefSize(44,50);
+            denyBtn.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    qsLbl.setText("NO");
+                }
+            });
+
+            HBox blockContainer = new HBox(lblContainer, acceptBtn, denyBtn);
+            //blockContainer.setPrefSize(765,50);
+            blockContainer.setMinSize(765,50);
+
+            BorderPane allContainer = new BorderPane();
+            allContainer.setLeft(blockContainer);
+            //allContainer.setPrefSize(510,40);
+            v.getChildren().add(allContainer);
+        }
+
+        //static
+
+        v.setLayoutX(14);
+
+        AnchorPane in=new AnchorPane(v);
+        in.setPrefSize(600,350);
+
+        ScrollPane sp=new ScrollPane();
+        sp.setLayoutY(11);
+        sp.setPrefSize(800,400);
+        sp.setContent(in);
+        sp.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        sp.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+
+
+        AnchorPane ap=new AnchorPane(sp);
+        //ap.setPrefSize(800,600);
+        AnchorPane.setTopAnchor(sp,0.0);
+        AnchorPane.setBottomAnchor(sp,0.0);
+        AnchorPane.setRightAnchor(sp,0.0);
+        AnchorPane.setLeftAnchor(sp,0.0);
+
+        Tab appellationsTab=new Tab("Аппеляции");
+        appellationsTab.setContent(ap);
+
+        TabPane root=new TabPane(undefinedTab,appellationsTab);
+        root.setPrefSize(800,600);
+
+
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root,800,600));
+        stage.setTitle("Админка");
+        stage.show();
+
+        Stage cur_stage = (Stage) subBtn.getScene().getWindow();
+        cur_stage.close();
+
+    }
 
     public void selectTeam(ActionEvent actionEvent) throws Exception {
 
@@ -39,45 +132,30 @@ public class team_selector_controller {
 
             //
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("main_menu.fxml"));
-            Parent root = loader.load();
+            Main.team=ansTxt.getText();
 
-            main_menu_controller mmc = loader.getController();
-            mmc.receiveTeam(ansTxt.getText());
+            StageChanger.simpleChangeStage("Что? Где? Когда?", "main_menu", subBtn);
 
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Что? Где? Когда?");
-            stage.show();
-
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("main_menu.fxml"));
+//            Parent root = loader.load();
+//
+//            main_menu_controller mmc = loader.getController();
+//            mmc.receiveTeam(ansTxt.getText());
+//
+//            Stage stage = new Stage();
+//            stage.setScene(new Scene(root));
+//            stage.setTitle("Что? Где? Когда?");
+//            stage.show();
+//
             Stage cur_stage = (Stage) subBtn.getScene().getWindow();
             cur_stage.close();
 
             //
 
         }else if(ansTxt.getText().equals("adminka")){
-            StageChanger.simpleChangeStage("Админка","admin", subBtn);
+            //StageChanger.simpleChangeStage("Админка","admin", subBtn);
 
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource("admin.fxml"));
-//
-//            Button testBtn=new Button("Test");
-//            testBtn.setOnAction(new EventHandler<ActionEvent>() {
-//                @Override
-//                public void handle(ActionEvent actionEvent) {
-//                    System.out.println("ss");
-//                }
-//            });
-//
-//            admin_controller.appsContainer.getChildren().add(testBtn);
-//            Parent root=loader.load();
-//
-//            Stage stage = new Stage();
-//            stage.setScene(new Scene(root));
-//            stage.setTitle("Админка");
-//            stage.show();
-
-            Stage cur_stage = (Stage) subBtn.getScene().getWindow();
-            cur_stage.close();
+            generateAdmin(Main.apsNumber);
 
         }else if(!(teams_list.containsKey(ansTxt.getText()))){
             alert.setContentText("Looks like the team you are trying to access doesn't exist!");

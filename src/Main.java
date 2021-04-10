@@ -10,12 +10,16 @@ public class Main extends Application {
 
     public static HashMap<String,Integer> teams_list=new HashMap<>();
 
+    public static  Integer apsNumber;
 
+    public static String team;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
         get_questions();
         get_teams();
+        apsNumber=3;
+        team="Команда не выбрана";
         primaryStage.setTitle("Что? Где? Когда?");
         primaryStage.setScene(SceneChanger.changeScene("main_menu"));
         primaryStage.show();

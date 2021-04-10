@@ -29,8 +29,8 @@ public class main_menu_controller {
 
 	public void initialize() {
 		currTeamLbl.setText("Команда не выбрана");
+		receiveTeam();
 		drawScoreBoard();
-
 
 	}
 
@@ -74,8 +74,11 @@ public class main_menu_controller {
 		team=currTeamLbl.getText();
 	}
 
-	public void receiveTeam(String team){
-		currTeamLbl.setText(team);
+//	public void receiveTeam(String team){
+//		currTeamLbl.setText(team);
+//	}
+	public void receiveTeam(){
+		currTeamLbl.setText(Main.team);
 	}
 
 	public void updateScore(String key, Integer score){
