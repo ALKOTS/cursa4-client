@@ -84,15 +84,26 @@ public class game_controller {
 
     public void appealDeclined(){
         at.stop();
+        startRound();
     }
 
     public void startRound(){
+    
+        if(vScore>=6){
+            endGame("v");
+        }else if(pScore>=6){
+            endGame("p");
+        }else{
+            
+        
+
         count=60;
         ansTxt.setText("");
         timeBar.setProgress(1);
         right_answer=questions.get(random.nextInt(questions.size())).get(1);
         qsLbl.setText(questions.get(random.nextInt(questions.size())).get(0));
         mt.start();
+        }
     }
 
     public void endRound(String ans){
@@ -117,13 +128,13 @@ public class game_controller {
 
         //end game/continue
 
-        if(vScore>=6){
-            endGame("v");
-        }else if(pScore>=6){
-            endGame("p");
-        }else{
-            startRound();
-        }
+        //if(vScore>=6){
+         //   endGame("v");
+        //}else if(pScore>=6){
+        //    endGame("p");
+       // }else{
+        //    startRound();
+       // }
     }
 
     public void endGame(String winner){
@@ -145,5 +156,8 @@ public class game_controller {
     }
 
     public void onAppeal(ActionEvent actionEvent) {
+        at.stop();
+        //appeal functionality here
+        startRound();
     }
 }
