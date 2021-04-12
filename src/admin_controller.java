@@ -30,24 +30,26 @@ public class admin_controller {
     public ArrayList<Label> infoList=new ArrayList<>();
     public ArrayList<Button> btnList=new ArrayList<>();
 
-    public static ArrayList aps=Main.aps;
+    public static ArrayList<ArrayList<String>> aps=Main.aps;
 
     public static VBox v=new VBox();
+
+    public static int i;
 
     public static void generateAdmin() throws IOException {
         Integer apsNumber= aps.size();
 
         //Undefined
         Tab undefinedTab=new Tab("Undefined");
-
+        System.out.println(aps);
         //Apellations
         //Dynamic
-        for (int i=0; i<apsNumber; i++){
-            Label qsLbl = new Label("Question");
+        for (i=0; i<apsNumber; i++){
+            Label qsLbl = new Label(aps.get(i).get(0));
             //qsLbl.setPrefSize(708,21);
-            Label ansLbl = new Label("Answer");
+            Label ansLbl = new Label(aps.get(i).get(1));
             //ansLbl.setPrefSize(708,21);
-            Label rAnsLbl = new Label("Right answer");
+            Label rAnsLbl = new Label(aps.get(i).get(2));
             //rAnsLbl.setPrefSize(708,21);
 
             VBox lblContainer = new VBox(qsLbl, ansLbl, rAnsLbl);
@@ -58,7 +60,8 @@ public class admin_controller {
             acceptBtn.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
-                    qsLbl.setText("YES");
+                    aps.get(i).get(3).replace(null, "Y");
+                    //qsLbl.setText("YES");
                 }
             });
 
@@ -67,7 +70,8 @@ public class admin_controller {
             denyBtn.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
-                    qsLbl.setText("NO");
+                    aps.get(i).get(3).replace(null, "N");
+                    //qsLbl.setText("NO");
                 }
             });
 
@@ -120,6 +124,7 @@ public class admin_controller {
 
     public static void initialize() throws IOException {
         generateAdmin();
+        System.out.println(aps);
     }
 
     public void addStuff(ActionEvent actionEvent) {

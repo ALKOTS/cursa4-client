@@ -14,7 +14,7 @@ public class Main extends Application {
 
     public static String team;
 
-    public static ArrayList<ArrayList> aps=new ArrayList<>();  //[[question, answer, right answer, team, isApproved(Y, N, null)], [...], ...]
+    public static ArrayList<ArrayList<String>> aps=new ArrayList<>();  //[[question, answer, right answer, team, isApproved(Y, N, null)], [...], ...]
 
     //public static Integer apsNumber= aps.size();
 
