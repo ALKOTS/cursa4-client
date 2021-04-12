@@ -34,17 +34,24 @@ public class admin_controller {
 
     public static VBox v=new VBox();
 
-    public static int i;
 
     public static void generateAdmin() throws IOException {
         Integer apsNumber= aps.size();
 
         //Undefined
         Tab undefinedTab=new Tab("Undefined");
-        System.out.println(aps);
+        Button test=new Button("Test");
+        test.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                System.out.println(aps);
+            }
+        });
+        undefinedTab.setContent(test);
+
         //Apellations
         //Dynamic
-        for (i=0; i<apsNumber; i++){
+        for (int i=0; i<apsNumber; i++){
             Label qsLbl = new Label(aps.get(i).get(0));
             //qsLbl.setPrefSize(708,21);
             Label ansLbl = new Label(aps.get(i).get(1));
@@ -57,11 +64,13 @@ public class admin_controller {
 
             Button acceptBtn = new Button("A");
             acceptBtn.setPrefSize(44,50);
+            Integer index=i;
             acceptBtn.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
-                    aps.get(i).get(3).replace(null, "Y");
+                    aps.get(index).get(3).replace(String.valueOf("null"), "Y");
                     //qsLbl.setText("YES");
+                    System.out.println(aps);
                 }
             });
 
@@ -70,8 +79,9 @@ public class admin_controller {
             denyBtn.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
-                    aps.get(i).get(3).replace(null, "N");
+                    aps.get(index).get(3).replace(String.valueOf("null"), "N");
                     //qsLbl.setText("NO");
+                    System.out.println(aps);
                 }
             });
 

@@ -154,7 +154,7 @@ public class game_controller {
         appeal.add(ansTxt.getText());
         appeal.add(rAns.getText());
         appeal.add(Main.team);
-        appeal.add(null);
+        appeal.add("null");
         Main.aps.add(appeal);
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
