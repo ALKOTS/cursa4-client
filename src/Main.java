@@ -6,30 +6,42 @@ import java.util.*;
 
 public class Main extends Application {
 
-    public static ArrayList<ArrayList<String>> questions_list =new ArrayList<>();
+    public static ArrayList<ArrayList<String>> questions_list =new ArrayList<>(); //ПРОВЕРКА НА РАЗМЕР
 
     public static HashMap<String,Integer> teams_list=new HashMap<>();
 
-    public static  Integer apsNumber;
+    //public static  Integer apsNumber;
 
     public static String team;
+
+    public static ArrayList<ArrayList> aps=new ArrayList<>();  //[[question, answer, right answer, team, isApproved(Y, N, null)], [...], ...]
+
+    //public static Integer apsNumber= aps.size();
 
     @Override
     public void start(Stage primaryStage) throws Exception{
         get_questions();
         get_teams();
-        apsNumber=3;
+
         team=null;
+
         primaryStage.setTitle("Главное меню");
         primaryStage.setScene(SceneChanger.changeScene("main_menu"));
         primaryStage.show();
     }
 
     public void get_questions(){
-        ArrayList<String> question=new ArrayList<>();
-        question.add("What is ss?");
-        question.add("ss");
-        questions_list.add(question);
+
+        for (int i=0; i<12; i++){
+            ArrayList<String> question=new ArrayList<>();
+            question.add("");
+            question.add("");
+            question.set(0, "What is "+i);
+            question.set(1,String.valueOf(i));
+            questions_list.add(question);
+        }
+
+        System.out.println(questions_list);
     }
 
     public void get_teams(){

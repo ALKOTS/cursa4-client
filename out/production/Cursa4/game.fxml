@@ -1,17 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="game_controller">
    <children>
-      <Button fx:id="subBtn" layoutX="352.0" layoutY="300.0" mnemonicParsing="false" onAction="#btnPress" text="Submit answer" />
       <Label fx:id="qsLbl" layoutX="368.0" layoutY="15.0" text="&lt;question&gt;" />
-      <TextField fx:id="ansTxt" layoutX="326.0" layoutY="275.0" promptText="Enter answer" />
-      <Label fx:id="timeLbl" layoutX="725.0" layoutY="15.0" text="0" />
+<!--      <Label fx:id="timeLbl" layoutX="725.0" layoutY="15.0" text="0" />-->
       <Label fx:id="viewerScore" layoutX="22.0" layoutY="24.0" text="0" />
       <Label layoutX="49.0" layoutY="24.0" text="Зрители Знатоки" />
       <Label fx:id="playerScore" layoutX="152.0" layoutY="24.0" text="0" />
-      <Button fx:id="returnBtn" layoutX="336.0" layoutY="325.0" mnemonicParsing="false" onAction="#onReturn" text="Return to main menu" />
+      <VBox alignment="CENTER" layoutX="308.0" layoutY="200.0" prefHeight="200.0" prefWidth="183.0">
+         <children>
+            <TextField fx:id="ansTxt" promptText="Введите ответ" />
+            <Button fx:id="subBtn" mnemonicParsing="false" onAction="#btnPress" text="Ответить" />
+            <Button fx:id="returnBtn" mnemonicParsing="false" onAction="#onReturn" text="Главное меню" />
+            <Button fx:id="appealBtn" mnemonicParsing="false" onAction="#onAppeal" text="Апеллировать" />
+         </children>
+         <rotationAxis>
+            <Point3D x="1.0" y="1.0" z="1.0" />
+         </rotationAxis>
+      </VBox>
+      <ProgressBar fx:id="timeBar" layoutX="7.0" layoutY="568.0" prefHeight="18.0" prefWidth="785.0" progress="0.0" />
+      <Label layoutX="308.0" layoutY="192.0" text="Верный ответ:" />
+      <Label fx:id="rAns" layoutX="463.0" layoutY="192.0" />
    </children>
 </Pane>

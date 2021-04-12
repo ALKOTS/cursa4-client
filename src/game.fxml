@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="game_controller">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="game_controller">
    <children>
       <Label fx:id="qsLbl" layoutX="368.0" layoutY="15.0" text="&lt;question&gt;" />
 <!--      <Label fx:id="timeLbl" layoutX="725.0" layoutY="15.0" text="0" />-->
@@ -23,5 +23,7 @@
          </rotationAxis>
       </VBox>
       <ProgressBar fx:id="timeBar" layoutX="7.0" layoutY="568.0" prefHeight="18.0" prefWidth="785.0" progress="0.0" />
+      <Label layoutX="308.0" layoutY="192.0" text="Верный ответ:" />
+      <Label fx:id="rAns" layoutX="463.0" layoutY="192.0" />
    </children>
 </Pane>
