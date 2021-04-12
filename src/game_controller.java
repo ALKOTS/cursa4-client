@@ -14,15 +14,16 @@ import java.util.Random;
 
 public class game_controller {
     @FXML
-    public Label qsLbl, timeLbl, viewerScore, playerScore;
+    public Label qsLbl, viewerScore, playerScore;
 
     @FXML
-    public Button subBtn, returnBtn;
+    public Button subBtn, returnBtn, appealBtn;
 
     @FXML
     public TextField ansTxt;
 
-
+    @FXML
+    public ProgressBar timeBar;
 
     ArrayList<ArrayList<String>> questions=Main.questions_list;
 
@@ -32,30 +33,41 @@ public class game_controller {
     public int vScore=0;
     public int pScore=0;
 
-    public my_timer mt;
+    public double count;
 
-    public int count;
+    public my_timer mt,at;
 
     public String team;
 
     public void initialize()  {
-
+        timeBar.setProgress(1);
         returnBtn.setVisible(false);
-
+        appealBtn.setVisible(false);
+        team=Main.team;
         mt=new my_timer(){
 
             @Override
             void run() {
                 if(count>=0) {
-                    timeLbl.setText(String.valueOf(count--));
+                    timeBar.setProgress(count--/60.0);
                 }else{
                     outOfTime();
                 }
             }
         };
 
-        startRound();
+        at=new my_timer() {
+            @Override
+            void run() {
+                if(count>=0) {
+                    timeBar.setProgress(count--/5.0);
+                }else{
+                    appealDeclined();
+                }
+            }
+        };
 
+        startRound();
     }
 
     public void btnPress(javafx.event.ActionEvent actionEvent) {
@@ -65,22 +77,29 @@ public class game_controller {
         }
     }
 
-    
-
     public void outOfTime(){
         mt.stop();
         endRound(null);
     }
 
+    public void appealDeclined(){
+        at.stop();
+    }
+
     public void startRound(){
-        count=5;
+        count=60;
         ansTxt.setText("");
+        timeBar.setProgress(1);
         right_answer=questions.get(random.nextInt(questions.size())).get(1);
         qsLbl.setText(questions.get(random.nextInt(questions.size())).get(0));
         mt.start();
     }
 
     public void endRound(String ans){
+
+
+        //update score
+
         if(ans!=null&&ans.equals(right_answer)){
             pScore++;
         }
@@ -90,6 +109,14 @@ public class game_controller {
         viewerScore.setText(String.valueOf(vScore));
         playerScore.setText(String.valueOf(pScore));
 
+        //appeal chance
+
+        count=5;
+        appealBtn.setVisible(true);
+        at.start();
+
+        //end game/continue
+
         if(vScore>=6){
             endGame("v");
         }else if(pScore>=6){
@@ -97,7 +124,6 @@ public class game_controller {
         }else{
             startRound();
         }
-
     }
 
     public void endGame(String winner){
@@ -106,7 +132,6 @@ public class game_controller {
         }else{
             qsLbl.setText("Players won");
         }
-        //Main.teams_list.replace(main_menu_controller.team,0,pScore); //.get(main_menu_controller.team)
 
         subBtn.setVisible(false);
         returnBtn.setVisible(true);
@@ -114,27 +139,11 @@ public class game_controller {
 
 
     public void onReturn(ActionEvent actionEvent) throws Exception {
-        //
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("main_menu.fxml"));
-        Parent root = loader.load();
-
-        main_menu_controller mmc = loader.getController();
-        mmc.updateScore(team, pScore);
-
-        Stage stage = new Stage();
-        stage.setScene(new Scene(root));
-        stage.setTitle("Что? Где? Когда?");
-        stage.show();
-
-        Stage cur_stage = (Stage) returnBtn.getScene().getWindow();
-        cur_stage.close();
-
-        //
-
+        Main.teams_list.put(team, pScore);
+        Main.team=null;
+        StageChanger.simpleChangeStage("Главное меню", "main_menu", returnBtn);
     }
 
-    public void recieveTeam(String Team){
-        team=Team;
+    public void onAppeal(ActionEvent actionEvent) {
     }
 }

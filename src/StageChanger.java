@@ -40,19 +40,18 @@ public class StageChanger {
 
 
 
+//			FXMLLoader loader = new FXMLLoader(getClass().getResource("game.fxml"));
+//			Parent root = loader.load();
 //
-//        FXMLLoader loader = new FXMLLoader(getClass().getResource("main_menu.fxml"));
-//        Parent root = loader.load();
+//			game_controller gc = loader.getController();
+//			gc.recieveTeam(currTeamLbl.getText());
 //
-//        main_menu_controller mmc = loader.getController();
-//        mmc.updateScore(team, pScore);
+//			Stage stage = new Stage();
+//			stage.setScene(new Scene(root));
+//			stage.setTitle("Что? Где? Когда?");
+//			stage.show();
 //
-//        Stage stage = new Stage();
-//        stage.setScene(new Scene(root));
-//        stage.setTitle("Что? Где? Когда?");
-//        stage.show();
-//
-//        Stage cur_stage = (Stage) returnBtn.getScene().getWindow();
-//        cur_stage.close();
+//			Stage cur_stage = (Stage) startBtn.getScene().getWindow();
+//			cur_stage.close();
 
 }

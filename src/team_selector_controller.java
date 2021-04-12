@@ -31,17 +31,11 @@ public class team_selector_controller {
     public VBox v=new VBox();
 
     public void generateAdmin(Integer apsNumber) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("admin.fxml"));
-
-
-
         //Undefined
         Tab undefinedTab=new Tab("Undefined");
 
         //Apellations
-
         //Dynamic
-
         for (int i=0; i<apsNumber; i++){
             Label qsLbl = new Label("Question");
             //qsLbl.setPrefSize(708,21);
@@ -82,7 +76,6 @@ public class team_selector_controller {
         }
 
         //static
-
         v.setLayoutX(14);
 
         AnchorPane in=new AnchorPane(v);
@@ -117,49 +110,28 @@ public class team_selector_controller {
 
         Stage cur_stage = (Stage) subBtn.getScene().getWindow();
         cur_stage.close();
-
     }
 
     public void selectTeam(ActionEvent actionEvent) throws Exception {
-
-
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error Dialog");
         alert.setHeaderText("Error with your team!");
 
-
         if(teams_list.containsKey(ansTxt.getText())&&(teams_list.get(ansTxt.getText())==null)){
-
-            //
-
             Main.team=ansTxt.getText();
 
             StageChanger.simpleChangeStage("Что? Где? Когда?", "main_menu", subBtn);
 
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource("main_menu.fxml"));
-//            Parent root = loader.load();
-//
-//            main_menu_controller mmc = loader.getController();
-//            mmc.receiveTeam(ansTxt.getText());
-//
-//            Stage stage = new Stage();
-//            stage.setScene(new Scene(root));
-//            stage.setTitle("Что? Где? Когда?");
-//            stage.show();
-//
             Stage cur_stage = (Stage) subBtn.getScene().getWindow();
             cur_stage.close();
 
-            //
-
         }else if(ansTxt.getText().equals("adminka")){
-            //StageChanger.simpleChangeStage("Админка","admin", subBtn);
-
             generateAdmin(Main.apsNumber);
 
         }else if(!(teams_list.containsKey(ansTxt.getText()))){
             alert.setContentText("Looks like the team you are trying to access doesn't exist!");
             alert.showAndWait();
+
         }else if(teams_list.get(ansTxt.getText())!=null){
             alert.setContentText("Looks like the team you are trying to access has already played in this tournament!");
             alert.showAndWait();

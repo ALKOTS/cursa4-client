@@ -19,8 +19,8 @@ public class Main extends Application {
         get_questions();
         get_teams();
         apsNumber=3;
-        team="Команда не выбрана";
-        primaryStage.setTitle("Что? Где? Когда?");
+        team=null;
+        primaryStage.setTitle("Главное меню");
         primaryStage.setScene(SceneChanger.changeScene("main_menu"));
         primaryStage.show();
     }
@@ -35,7 +35,6 @@ public class Main extends Application {
     public void get_teams(){
         teams_list.put("ss",null);
         teams_list.put("aa",1);
-
     }
 
     public static void main(String[] args) {
