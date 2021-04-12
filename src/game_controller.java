@@ -88,7 +88,7 @@ public class game_controller {
     }
 
     public void startRound(){
-    
+        appealBtn.setVisible(false);
         if(vScore>=6){
             endGame("v");
         }else if(pScore>=6){
@@ -125,16 +125,6 @@ public class game_controller {
         count=5;
         appealBtn.setVisible(true);
         at.start();
-
-        //end game/continue
-
-        //if(vScore>=6){
-         //   endGame("v");
-        //}else if(pScore>=6){
-        //    endGame("p");
-       // }else{
-        //    startRound();
-       // }
     }
 
     public void endGame(String winner){
