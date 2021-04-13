@@ -1,6 +1,7 @@
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
@@ -68,8 +69,10 @@ public class admin_controller {
             acceptBtn.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
-                    aps.get(index).get(3).replace(String.valueOf("null"), "Y");
+                    //aps.get(index).get(4).replace(String.valueOf("null"), "Y");
+                    aps.get(index).set(4,"Y");
                     //qsLbl.setText("YES");
+                    System.out.println(index);
                     System.out.println(aps);
                 }
             });
@@ -79,8 +82,10 @@ public class admin_controller {
             denyBtn.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
-                    aps.get(index).get(3).replace(String.valueOf("null"), "N");
+                    //aps.get(index).get(4).replace(String.valueOf("null"), "N");
                     //qsLbl.setText("NO");
+                    aps.get(index).set(4,"N");
+                    System.out.println(index);
                     System.out.println(aps);
                 }
             });
@@ -109,12 +114,23 @@ public class admin_controller {
         sp.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
 
-        AnchorPane ap=new AnchorPane(sp);
+        Button accChanges=new Button("Accept changes");
+        Button disChanges=new Button("Discard changes");
+        HBox adBox=new HBox(accChanges,disChanges);
+
+        SplitPane splitPane=new SplitPane(sp,adBox);
+        splitPane.setOrientation(Orientation.VERTICAL);
+        splitPane.setDividerPosition(0,1);
+
+
+        AnchorPane ap=new AnchorPane(splitPane); //sp);
         //ap.setPrefSize(800,600);
-        AnchorPane.setTopAnchor(sp,0.0);
-        AnchorPane.setBottomAnchor(sp,0.0);
-        AnchorPane.setRightAnchor(sp,0.0);
-        AnchorPane.setLeftAnchor(sp,0.0);
+        AnchorPane.setTopAnchor(splitPane,0.0);
+        AnchorPane.setBottomAnchor(splitPane,0.0);
+        AnchorPane.setRightAnchor(splitPane,0.0);
+        AnchorPane.setLeftAnchor(splitPane,0.0);
+
+
 
         Tab appellationsTab=new Tab("Аппеляции");
         appellationsTab.setContent(ap);
