@@ -22,8 +22,6 @@ public class StageChanger {
 
         FXMLLoader loader = new FXMLLoader(StageChanger.class.getResource(scene));
         return loader;
-//        game_controller gc = loader.getController();
-//        gc.recieveTeam(currTeamLbl.getText());
     }
     public static void stageCloseFollow(FXMLLoader loader, String title, Button btn) throws IOException {
         Parent root = loader.load();

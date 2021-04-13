@@ -16,6 +16,8 @@ public class Main extends Application {
 
     public static ArrayList<ArrayList<String>> aps=new ArrayList<>();  //[[question, answer, right answer, team, isApproved(Y, N, null)], [...], ...]
 
+
+
     //public static Integer apsNumber= aps.size();
 
     @Override
@@ -50,7 +52,7 @@ public class Main extends Application {
             questions_list.add(question);
         }
 
-        System.out.println(questions_list);
+        //System.out.println(questions_list);
     }
 
     public void get_teams(){

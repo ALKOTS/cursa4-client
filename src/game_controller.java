@@ -1,10 +1,6 @@
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -85,7 +81,6 @@ public class game_controller {
     }
 
     public void startRound(){
-        System.out.println(questions);
         viewerScore.setText(String.valueOf(vScore));
         playerScore.setText(String.valueOf(pScore));
         appealBtn.setVisible(false);
@@ -164,8 +159,6 @@ public class game_controller {
 
         alert.showAndWait();
 
-        System.out.println(Main.aps);
-        //
         startRound();
     }
 }

@@ -24,13 +24,12 @@ public class main_menu_controller {
 	public HashMap<String, Integer> teams_list=Main.teams_list;
 
 	public void initialize() {
-		currTeamLbl.setText("Команда не выбрана");
 		receiveTeam();
 		drawScoreBoard();
 	}
 
 	public void onStart(ActionEvent actionEvent) throws Exception {
-		if(currTeamLbl.getText()!="Команда не выбрана"){
+		if(Main.team!=null){
 			StageChanger.simpleChangeStage("Что? Где? Когда?","game", startBtn);
 		}
 		else {
