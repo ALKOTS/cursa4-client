@@ -3,17 +3,23 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="admin_controller">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="admin_controller">
   <tabs>
     <Tab text="Untitled Tab 1">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
                   <Button fx:id="addStuff" layoutX="274.0" layoutY="173.0" mnemonicParsing="false" onAction="#addStuff" text="Add Stuff" />
+                  <SplitPane dividerPositions="0.8636363636363636" layoutX="14.0" layoutY="14.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
+                    <items>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
+                    </items>
+                  </SplitPane>
                </children></AnchorPane>
       </content>
     </Tab>
-    <Tab text="Аппеляции" fx:id="appTab">
+    <Tab fx:id="appTab" text="Аппеляции">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
@@ -21,7 +27,7 @@
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="350.0" prefWidth="600.0">
                            <children>
-                              <VBox layoutX="14.0" prefHeight="200.0" prefWidth="550.0" fx:id="appsContainer">
+                              <VBox fx:id="appsContainer" layoutX="14.0" prefHeight="200.0" prefWidth="550.0">
                                  <children>
                                     <BorderPane prefHeight="40.0" prefWidth="503.0">
                                        <left>

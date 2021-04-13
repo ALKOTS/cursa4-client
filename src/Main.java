@@ -30,13 +30,13 @@ public class Main extends Application {
         primaryStage.show();
 
 
-        ArrayList<String> tempal=new ArrayList<>();
-        tempal.add("Test_qs");
-        tempal.add("Test_ans");
-        tempal.add("Test_rans");
-        tempal.add("Test_team");
-        tempal.add("null");
-        aps.add(tempal);
+//        ArrayList<String> tempal=new ArrayList<>();
+//        tempal.add("Test_qs");
+//        tempal.add("Test_ans");
+//        tempal.add("Test_rans");
+//        tempal.add("Test_team");
+//        tempal.add("null");
+//        aps.add(tempal);
     }
 
     public void get_questions(){

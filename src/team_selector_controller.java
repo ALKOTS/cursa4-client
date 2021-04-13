@@ -121,8 +121,7 @@ public class team_selector_controller {
             StageChanger.simpleChangeStage("Что? Где? Когда?", "main_menu", subBtn);
 
         }else if(ansTxt.getText().equals("adminka")){
-            //StageChanger.simpleChangeStage("adminka", "admin", subBtn);
-            //generateAdmin(Main.apsNumber);
+            //System.out.println("--------------\n"+Main.aps);
             admin_controller.initialize();
             Stage cur_stage = (Stage) subBtn.getScene().getWindow();
             cur_stage.close();

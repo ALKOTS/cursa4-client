@@ -13,25 +13,26 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 //https://stackoverflow.com/questions/52320778/javafx-change-scene
 //https://stackoverflow.com/questions/44949774/javafx-how-to-add-elements-eg-buttons-dynamically-created-from-items-stored-in/45033806
 //https://metanit.com/java/javafx/4.1.php
 
 public class admin_controller {
-    @FXML
-    public static Button addStuff; //approveBtn, denyBtn;
-
-    @FXML
-    public VBox appsContainer;
-
-    @FXML
-    public Tab appTab;
+//    @FXML
+//    public static Button addStuff; //approveBtn, denyBtn;
+//
+//    @FXML
+//    public VBox appsContainer;
+//
+//    @FXML
+//    public Tab appTab;
 
     public ArrayList<Label> infoList=new ArrayList<>();
-    public ArrayList<Button> btnList=new ArrayList<>();
+    public static ArrayList<Button> btnList=new ArrayList<>();
 
-    public static ArrayList<ArrayList<String>> aps=Main.aps;
+    public static ArrayList<ArrayList<String>> aps=new ArrayList<>();
 
     public static VBox v=new VBox();
 
@@ -65,28 +66,32 @@ public class admin_controller {
 
             Button acceptBtn = new Button("A");
             acceptBtn.setPrefSize(44,50);
+            btnList.add(acceptBtn);
+
+            Button denyBtn = new Button("D");
+            denyBtn.setPrefSize(44,50);
+            btnList.add(denyBtn);
+
             Integer index=i;
             acceptBtn.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
-                    //aps.get(index).get(4).replace(String.valueOf("null"), "Y");
                     aps.get(index).set(4,"Y");
-                    //qsLbl.setText("YES");
-                    System.out.println(index);
-                    System.out.println(aps);
+//                    System.out.println(index);
+//                    System.out.println(aps);
+                    acceptBtn.setStyle("-fx-background-color: #00ff00; ");
+                    denyBtn.setDisable(true);
                 }
             });
 
-            Button denyBtn = new Button("D");
-            denyBtn.setPrefSize(44,50);
             denyBtn.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
-                    //aps.get(index).get(4).replace(String.valueOf("null"), "N");
-                    //qsLbl.setText("NO");
                     aps.get(index).set(4,"N");
-                    System.out.println(index);
-                    System.out.println(aps);
+//                    System.out.println(index);
+//                    System.out.println(aps);
+                    denyBtn.setStyle("-fx-background-color: #ff0000; ");
+                    acceptBtn.setDisable(true);
                 }
             });
 
@@ -116,7 +121,59 @@ public class admin_controller {
 
         Button accChanges=new Button("Accept changes");
         Button disChanges=new Button("Discard changes");
-        HBox adBox=new HBox(accChanges,disChanges);
+        Button mainMenu=new Button("Main menu");
+
+
+
+        accChanges.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                ArrayList<Integer> toRemove=new ArrayList<>();
+                for (int i=0; i<apsNumber; i++){
+                    switch (aps.get(i).get(4)){
+                        case "N":
+                            //aps.remove(i);
+                            toRemove.add(i);
+                            break;
+                        case "Y":
+                            Main.teams_list.replace(aps.get(i).get(3),Main.teams_list.get(aps.get(i).get(3))+1);
+                            //aps.remove(i);
+                            toRemove.add(i);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+//                System.out.println(toRemove);
+                for(int i=0; i<toRemove.size(); i++){
+//                    //System.out.println(i+" "+toRemove.get(i)+" "+aps.get(toRemove.get(i)));
+                    aps.remove(aps.get(toRemove.get(i)));
+                }
+                Main.aps=aps;
+            }
+        });
+        disChanges.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                for(int i=0; i<btnList.size(); i++){
+                    btnList.get(i).setDisable(false);
+                    btnList.get(i).setStyle(null);
+                }
+                aps=Main.aps;
+            }
+        });
+        mainMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                try {
+                    StageChanger.simpleChangeStage("Главное меню","main_menu", mainMenu);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        HBox adBox=new HBox(accChanges,disChanges,mainMenu);
 
         SplitPane splitPane=new SplitPane(sp,adBox);
         splitPane.setOrientation(Orientation.VERTICAL);
@@ -149,18 +206,9 @@ public class admin_controller {
     }
 
     public static void initialize() throws IOException {
+        for(ArrayList<String> item:Main.aps) aps.add((ArrayList<String>) item.clone());
         generateAdmin();
-        System.out.println(aps);
+//        System.out.println(aps);
     }
 
-    public void addStuff(ActionEvent actionEvent) {
-
-    }
-
-    public void onApprove(ActionEvent actionEvent) {
-
-    }
-
-    public void onDeny(ActionEvent actionEvent) {
-    }
 }
