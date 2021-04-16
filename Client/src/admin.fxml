@@ -9,13 +9,7 @@
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <Button fx:id="addStuff" layoutX="274.0" layoutY="173.0" mnemonicParsing="false" onAction="#addStuff" text="Add Stuff" />
-                  <SplitPane dividerPositions="0.8636363636363636" layoutX="14.0" layoutY="14.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
-                    <items>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
-                    </items>
-                  </SplitPane>
+                  <Button fx:id="addStuff" layoutX="274.0" layoutY="173.0" mnemonicParsing="false" text="Add Stuff" />
                </children></AnchorPane>
       </content>
     </Tab>
@@ -23,11 +17,11 @@
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <ScrollPane layoutY="11.0" prefHeight="350.0" prefWidth="600.0">
+                  <ScrollPane layoutY="11.0" prefHeight="350.0" prefWidth="600.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="11.0">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="350.0" prefWidth="600.0">
                            <children>
-                              <VBox fx:id="appsContainer" layoutX="14.0" prefHeight="200.0" prefWidth="550.0">
+                              <VBox fx:id="appsContainer" prefHeight="200.0" prefWidth="584.0" AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="0.0">
                                  <children>
                                     <BorderPane prefHeight="40.0" prefWidth="503.0">
                                        <left>
@@ -40,8 +34,8 @@
                                                       <Label prefHeight="41.0" prefWidth="508.0" text="Label" />
                                                    </children>
                                                 </VBox>
-                                                <Button fx:id="approveBtn" mnemonicParsing="false" onAction="#onApprove" prefHeight="50.0" prefWidth="44.0" text="+" />
-                                                <Button fx:id="denyBtn" mnemonicParsing="false" onAction="#onDeny" prefHeight="50.0" prefWidth="44.0" text="-" />
+                                                <Button fx:id="approveBtn" mnemonicParsing="false" prefHeight="50.0" prefWidth="44.0" text="+" />
+                                                <Button fx:id="denyBtn" mnemonicParsing="false" prefHeight="50.0" prefWidth="44.0" text="-" />
                                              </children>
                                           </HBox>
                                        </left>

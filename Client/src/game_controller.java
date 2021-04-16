@@ -1,6 +1,7 @@
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -17,6 +18,9 @@ public class game_controller {
 
     @FXML
     public ProgressBar timeBar;
+
+    @FXML
+    public VBox vb;
 
     ArrayList<ArrayList<String>> questions=Main.questions_list;
 
@@ -130,7 +134,9 @@ public class game_controller {
             qsLbl.setText("Players won");
         }
 
-        subBtn.setVisible(false);
+        //subBtn.setVisible(false);
+        vb.getChildren().remove(1);
+        vb.getChildren().remove(1);
         returnBtn.setVisible(true);
     }
 
@@ -144,13 +150,7 @@ public class game_controller {
     public void onAppeal(ActionEvent actionEvent) {
         at.stop();
         //appeal functionality here
-        ArrayList<String> appeal=new ArrayList<>();
-        appeal.add(qsLbl.getText());
-        appeal.add(ansTxt.getText());
-        appeal.add(rAns.getText());
-        appeal.add(Main.team);
-        appeal.add("null");
-        Main.aps.add(appeal);
+        Main.aps.add(new ArrayList<String>(){{add(qsLbl.getText());add(ansTxt.getText());add(rAns.getText());add(Main.team);add("null");}});
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmed");

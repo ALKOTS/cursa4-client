@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="admin_controller">
+  <tabs>
+    <Tab text="Untitled Tab 1">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <Button fx:id="addStuff" layoutX="274.0" layoutY="173.0" mnemonicParsing="false" text="Add Stuff" />
+               </children></AnchorPane>
+      </content>
+    </Tab>
+    <Tab fx:id="appTab" text="Аппеляции">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <ScrollPane layoutY="11.0" prefHeight="350.0" prefWidth="600.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="11.0">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="350.0" prefWidth="600.0">
+                           <children>
+                              <VBox fx:id="appsContainer" prefHeight="200.0" prefWidth="584.0" AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <BorderPane prefHeight="40.0" prefWidth="503.0">
+                                       <left>
+                                          <HBox prefHeight="50.0" prefWidth="565.0" BorderPane.alignment="CENTER">
+                                             <children>
+                                                <VBox prefHeight="50.0" prefWidth="508.0">
+                                                   <children>
+                                                      <Label prefHeight="41.0" prefWidth="508.0" text="Label" />
+                                                      <Label prefHeight="41.0" prefWidth="508.0" text="Label" />
+                                                      <Label prefHeight="41.0" prefWidth="508.0" text="Label" />
+                                                   </children>
+                                                </VBox>
+                                                <Button fx:id="approveBtn" mnemonicParsing="false" prefHeight="50.0" prefWidth="44.0" text="+" />
+                                                <Button fx:id="denyBtn" mnemonicParsing="false" prefHeight="50.0" prefWidth="44.0" text="-" />
+                                             </children>
+                                          </HBox>
+                                       </left>
+                                    </BorderPane>
+<!--                                    <BorderPane prefHeight="40.0" prefWidth="503.0">-->
+<!--                                     <left>-->
+<!--                                       <HBox prefHeight="50.0" prefWidth="565.0" BorderPane.alignment="CENTER">-->
+<!--                                         <children>-->
+<!--                                           <VBox prefHeight="50.0" prefWidth="508.0">-->
+<!--                                             <children>-->
+<!--                                               <Label prefHeight="41.0" prefWidth="508.0" text="Label" />-->
+<!--                                               <Label prefHeight="41.0" prefWidth="508.0" text="Label" />-->
+<!--                                               <Label prefHeight="41.0" prefWidth="508.0" text="Label" />-->
+<!--                                             </children>-->
+<!--                                           </VBox>-->
+<!--                                           <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="44.0" text="+" />-->
+<!--                                           <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="44.0" text="-" />-->
+<!--                                         </children>-->
+<!--                                       </HBox>-->
+<!--                                     </left>-->
+<!--                                   </BorderPane>-->
+                                 </children>
+                              </VBox>
+                           </children></AnchorPane>
+                    </content>
+                  </ScrollPane>
+               </children></AnchorPane>
+      </content>
+    </Tab>
+  </tabs>
+</TabPane>
