@@ -1,7 +1,15 @@
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.*;
 
 public class Main extends Application {
@@ -10,15 +18,9 @@ public class Main extends Application {
 
     public static HashMap<String,Integer> teams_list=new HashMap<>();
 
-    //public static  Integer apsNumber;
-
     public static String team;
 
     public static ArrayList<ArrayList<String>> aps=new ArrayList<>();  //[[question, answer, right answer, team, isApproved(Y, N, null)], [...], ...]
-
-
-
-    //public static Integer apsNumber= aps.size();
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -27,18 +29,17 @@ public class Main extends Application {
 
         team=null;
 
+
+        //URLConnection connection = new URL("http://localhost:8080/questions").openConnection();
+        //connection.setRequestProperty("header1", header1);
+        //Get Response
+//        InputStream is = connection.getInputStream();
+//        System.out.println(connection.getContentType());
+
         primaryStage.setTitle("Главное меню");
         primaryStage.setScene(SceneChanger.changeScene("main_menu"));
         primaryStage.show();
 
-
-//        ArrayList<String> tempal=new ArrayList<>();
-//        tempal.add("Test_qs");
-//        tempal.add("Test_ans");
-//        tempal.add("Test_rans");
-//        tempal.add("Test_team");
-//        tempal.add("null");
-//        aps.add(tempal);
     }
 
     public void get_questions(){
@@ -52,10 +53,13 @@ public class Main extends Application {
             questions_list.add(question);
         }
 
-        //System.out.println(questions_list);
     }
 
-    public void get_teams(){
+    public void get_teams() throws UnirestException {
+        HttpResponse<JsonNode> response = Unirest.get("http://localhost:8080/teams").asJson();
+        //System.out.println(response.getBody().getObject());
+        JSONArray teams=new JSONArray(response.getBody().getObject().getJSONObject("_embedded").getJSONArray("teams"));
+        System.out.println(teams);
         teams_list.put("ss",null);
         teams_list.put("aa",1);
     }
