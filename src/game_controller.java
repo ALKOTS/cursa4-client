@@ -138,12 +138,15 @@ public class game_controller {
         vb.getChildren().remove(1);
         vb.getChildren().remove(1);
         returnBtn.setVisible(true);
+
+        Main.teams_list.put(team, pScore);
+        Main.team=null;
     }
 
 
     public void onReturn(ActionEvent actionEvent) throws Exception {
-        Main.teams_list.put(team, pScore);
-        Main.team=null;
+//        Main.teams_list.put(team, pScore);
+//        Main.team=null;
         StageChanger.simpleChangeStage("Главное меню", "main_menu", returnBtn);
     }
 
