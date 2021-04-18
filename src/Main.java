@@ -18,7 +18,7 @@ public class Main extends Application {
 
     public static ArrayList<ArrayList<String>> questions_list =new ArrayList<>(); //ПРОВЕРКА НА РАЗМЕР
 
-    public static HashMap<String,Integer> teams_list=new HashMap<>();
+    public static HashMap<String, HashMap<String,String>> teams_list=new HashMap<>();  //accessKey: [name:name, state:state(0,1,2), score:score(null)]
 
     public static String team;
 
@@ -55,10 +55,20 @@ public class Main extends Application {
                 case 0:
                     continue;
                 case 1:
-                    teams_list.put(teams.get(0).getJSONObject(i).get("name").toString(),null);
+                    int finalI = i;
+                    teams_list.put(teams.get(0).getJSONObject(finalI).get("accessKey").toString(), new HashMap<>(){{
+                        put("name", teams.get(0).getJSONObject(finalI).get("name").toString());
+                        put("state", teams.get(0).getJSONObject(finalI).get("state").toString());
+                        put("score",null);
+                    }});
                     break;
                 case 2:
-                    teams_list.put(teams.get(0).getJSONObject(i).get("name").toString(), Integer.parseInt(teams.get(0).getJSONObject(i).get("score").toString()));
+                    int finalI1 = i;
+                    teams_list.put(teams.get(0).getJSONObject(finalI1).get("accessKey").toString(), new HashMap<>(){{
+                        put("name", teams.get(0).getJSONObject(finalI1).get("name").toString());
+                        put("state", teams.get(0).getJSONObject(finalI1).get("state").toString());
+                        put("score",teams.get(0).getJSONObject(finalI1).get("score").toString());
+                    }});
                     break;
                 default:
                     System.out.println("Неизвестное значение состояния");
@@ -74,7 +84,7 @@ public class Main extends Application {
         ArrayList<JSONArray> appeals=new ArrayList<JSONArray>(Collections.singleton(get_appeals_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("appeals")));
         for (int i=0; i<appeals.get(0).length(); i++){
             int finalI = i;
-            if(teams_list.get(appeals.get(0).getJSONObject(finalI).get("team").toString())!=null){
+            if(teams_list.get(appeals.get(0).getJSONObject(finalI).get("team").toString()).get("score")!=null){    //если счет не null
                 aps.add(new ArrayList<>(){{
                     add(appeals.get(0).getJSONObject(finalI).get("question").toString());
                     add(appeals.get(0).getJSONObject(finalI).get("answer").toString());
@@ -91,6 +101,9 @@ public class Main extends Application {
            }
         }
 
+        HttpResponse<JsonNode> r= Unirest.delete("http://localhost:8080/appeals/*")
+                .header("Content-type", "application/hal+json")
+                .asJson();
 
     }
 

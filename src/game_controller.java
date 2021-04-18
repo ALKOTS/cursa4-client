@@ -33,7 +33,7 @@ public class game_controller {
     private Random random=new Random();
     public String right_answer;
 
-    public ArrayList<ArrayList<String>> aps=new ArrayList<>();
+    //public ArrayList<ArrayList<String>> aps=new ArrayList<>();
 
     public int vScore=0;
     public int pScore=0;
@@ -150,7 +150,7 @@ public class game_controller {
 
 
 
-        Main.teams_list.put(team, pScore);
+        Main.teams_list.get(team).replace("score", String.valueOf(pScore));
         Main.team=null;
         Main.get_appeals();
 
@@ -165,17 +165,17 @@ public class game_controller {
     public void onAppeal(ActionEvent actionEvent) throws Exception {
         at.stop();
 
-        aps.add(new ArrayList<String>(){{add(qsLbl.getText());add(ansTxt.getText());add(rAns.getText());add(Main.team);add(null);}});
+        //aps.add(new ArrayList<String>(){{add(qsLbl.getText());add(ansTxt.getText());add(rAns.getText());add(Main.team);add(null);}});
 
 
         HttpResponse<JsonNode> r= Unirest.post("http://localhost:8080/appeals")
                 .header("Content-type", "application/hal+json")
                 .body(new JSONObject(){{
-                    put("question", aps.get(aps.size()-1).get(0));
-                    put("answer", aps.get(aps.size()-1).get(1));
-                    put("ranswer", aps.get(aps.size()-1).get(2));
-                    put("team", aps.get(aps.size()-1).get(3));
-                    put("isApproved", aps.get(aps.size()-1).get(4));
+                    put("question", qsLbl.getText());
+                    put("answer", ansTxt.getText());
+                    put("ranswer", rAns.getText());
+                    put("team", Main.team);
+//                    put("isApproved", null);
                 }})
                 .asJson();
         System.out.println(r.getBody().toString());

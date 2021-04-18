@@ -19,7 +19,7 @@ public class admin_controller {
 
     public static ArrayList<ArrayList<String>> aps=new ArrayList<>();
 
-    public static HashMap<String, Integer> teams_list= new HashMap<>();
+    public static HashMap<String, HashMap<String, String>> teams_list= new HashMap<>();
 
     public static ArrayList<BorderPane> allContainerContainer=new ArrayList<>();
 
@@ -138,7 +138,7 @@ public class admin_controller {
                             toRemove.add(i);
                             break;
                         case "Y":
-                            teams_list.replace(aps.get(i).get(3), teams_list.get(aps.get(i).get(3)) + 1);
+                            teams_list.get(aps.get(i).get(3)).put("score", String.valueOf(Integer.parseInt(teams_list.get(aps.get(i).get(3)).get("score"))+1));
                             toRemove.add(i);
                             break;
                         default:
@@ -161,11 +161,14 @@ public class admin_controller {
                 for(ArrayList<String> item:aps) Main.aps.add((ArrayList<String>) item.clone());
                 for (Map.Entry me:teams_list.entrySet()){
                     try{
-                        Main.teams_list.put(String.valueOf(me.getKey()),Integer.parseInt(String.valueOf(me.getValue())));
+                        Main.teams_list.put(String.valueOf(me.getKey()), (HashMap<String, String>) me.getValue());
                     }catch (NumberFormatException nfe){
                         continue;
                     }
                 }
+                System.out.println(teams_list);
+                System.out.println(Main.teams_list);
+
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Success");
                 alert.setHeaderText("Changes saved!");
@@ -182,7 +185,7 @@ public class admin_controller {
                     btnList.get(i).setStyle(null);
                 }
                 btnList.clear();
-                aps=Main.aps;
+                for(ArrayList<String> item:Main.aps) aps.add((ArrayList<String>) item.clone());
 
                 accChanges.setDisable(true);
                 disChanges.setDisable(true);
@@ -193,8 +196,6 @@ public class admin_controller {
             public void handle(ActionEvent actionEvent) {
                 try {
                     StageChanger.simpleChangeStage("Главное меню","main_menu", mainMenu);
-
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -245,10 +246,13 @@ public class admin_controller {
             System.out.println("All clear");
         }
 
+        System.out.println(aps);
+
+
         for(ArrayList<String> item:Main.aps) aps.add((ArrayList<String>) item.clone());
         for (Map.Entry me:Main.teams_list.entrySet()){
             try{
-                teams_list.put(String.valueOf(me.getKey()),Integer.parseInt(String.valueOf(me.getValue())));
+                teams_list.put(String.valueOf(me.getKey()), (HashMap<String, String>) me.getValue());
             }catch (NumberFormatException nfe){
                 continue;
             }

@@ -21,7 +21,7 @@ public class team_selector_controller {
     @FXML
     public TextField ansTxt;
 
-    public HashMap<String, Integer> teams_list=Main.teams_list;
+    public HashMap<String, HashMap<String, String>> teams_list=Main.teams_list;
 
     public void initialize(){
 
@@ -32,23 +32,26 @@ public class team_selector_controller {
         alert.setTitle("Error Dialog");
         alert.setHeaderText("Error with your team!");
 
-        if(teams_list.containsKey(ansTxt.getText())&&(teams_list.get(ansTxt.getText())==null)){
-            Main.team=ansTxt.getText();
+        String team_key=org.apache.commons.codec.digest.DigestUtils.sha256Hex(ansTxt.getText());
+
+        if(teams_list.containsKey(team_key)&&(Integer.parseInt(teams_list.get(team_key).get("state"))==1)){
+            Main.team=team_key;
             StageChanger.simpleChangeStage("Главное меню", "main_menu", subBtn);
+
 
         }else if(ansTxt.getText().equals("adminka")){
             admin_controller ac=new admin_controller();
+            Main.get_appeals();
             ac.initialize();
 
             Stage cur_stage = (Stage) subBtn.getScene().getWindow();
             cur_stage.close();
-//            StageChanger.simpleChangeStage("ss","admin",subBtn);
 
-        }else if(!(teams_list.containsKey(ansTxt.getText()))){
+        }else if(!(teams_list.containsKey(team_key))){
             alert.setContentText("Looks like the team you are trying to access doesn't exist!");
             alert.showAndWait();
 
-        }else if(teams_list.get(ansTxt.getText())!=null){
+        }else if(Integer.parseInt(teams_list.get(team_key).get("state"))==2){
             alert.setContentText("Looks like the team you are trying to access has already played in this tournament!");
             alert.showAndWait();
         }

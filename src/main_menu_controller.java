@@ -21,7 +21,7 @@ public class main_menu_controller {
 	@FXML
 	public Label currTeamLbl,teamLbl;
 
-	public HashMap<String, Integer> teams_list=Main.teams_list;
+	public HashMap<String, HashMap<String, String>> teams_list=Main.teams_list;
 
 	public void initialize() {
 		receiveTeam();
@@ -30,7 +30,7 @@ public class main_menu_controller {
 
 	public void onStart(ActionEvent actionEvent) throws Exception {
 		if(Main.team!=null){
-//			Main.teams_list.replace(Main.team,0);
+//			Main.teams_list.get(Main.team).put(Main.get(Main.team).get("score"),0);
 //			JSONObject jo=new JSONObject(){{put("name",Main.team);put("accessKey","mm");put("state",0);}};
 //			HttpResponse<JsonNode> r=Unirest.put("http://localhost:8080/teams/5")
 //					.header("Content-type", "application/hal+json")
@@ -54,15 +54,15 @@ public class main_menu_controller {
 
 	public void receiveTeam(){
 		if(Main.team!=null){
-			currTeamLbl.setText(Main.team);
+			currTeamLbl.setText(Main.teams_list.get(Main.team).get("name"));
 		}
 	}
 
 	public void drawScoreBoard(){
 		String teams = "";
 		for (Map.Entry me:teams_list.entrySet()){
-			if(me.getValue()!=null){
-				teams+=me.getKey()+": "+me.getValue()+"\n";
+			if(teams_list.get(me.getKey()).get("score")!=null){
+				teams+=teams_list.get(me.getKey()).get("name") +": "+teams_list.get(me.getKey()).get("score")+"\n";
 			}
 		}
 		teamLbl.setText(teams);
