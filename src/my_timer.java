@@ -1,3 +1,4 @@
+import com.mashape.unirest.http.exceptions.UnirestException;
 import javafx.animation.AnimationTimer;
 import javafx.scene.control.Label;
 
@@ -11,10 +12,14 @@ public abstract class my_timer extends AnimationTimer {
         long nanosSinceLastPulse = now - lastPulseTimeStamp;
         if(nanosSinceLastPulse > nanosBetweenPulses){
             lastPulseTimeStamp = now;
-            run();
+            try {
+                run();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    abstract void run();
+    abstract void run() throws Exception;
 
 }

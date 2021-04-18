@@ -30,6 +30,12 @@ public class main_menu_controller {
 
 	public void onStart(ActionEvent actionEvent) throws Exception {
 		if(Main.team!=null){
+//			Main.teams_list.replace(Main.team,0);
+//			JSONObject jo=new JSONObject(){{put("name",Main.team);put("accessKey","mm");put("state",0);}};
+//			HttpResponse<JsonNode> r=Unirest.put("http://localhost:8080/teams/5")
+//					.header("Content-type", "application/hal+json")
+//					.body(jo)
+//					.asJson();
 			StageChanger.simpleChangeStage("Что? Где? Когда?","game", startBtn);
 		}
 		else {

@@ -1,7 +1,13 @@
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -27,6 +33,8 @@ public class game_controller {
     private Random random=new Random();
     public String right_answer;
 
+    public ArrayList<ArrayList<String>> aps=new ArrayList<>();
+
     public int vScore=0;
     public int pScore=0;
 
@@ -36,7 +44,7 @@ public class game_controller {
 
     public String team;
 
-    public void initialize()  {
+    public void initialize() throws Exception {
         timeBar.setProgress(1);
         returnBtn.setVisible(false);
         appealBtn.setVisible(false);
@@ -55,7 +63,7 @@ public class game_controller {
 
         at=new my_timer() {
             @Override
-            void run() {
+            void run() throws Exception {
                 if(count>=0) {
                     timeBar.setProgress(count--/5.0);
                 }else{
@@ -79,12 +87,12 @@ public class game_controller {
         endRound(null);
     }
 
-    public void appealDeclined(){
+    public void appealDeclined() throws Exception {
         at.stop();
         startRound();
     }
 
-    public void startRound(){
+    public void startRound() throws Exception {
         viewerScore.setText(String.valueOf(vScore));
         playerScore.setText(String.valueOf(pScore));
         appealBtn.setVisible(false);
@@ -127,7 +135,7 @@ public class game_controller {
         
     }
 
-    public void endGame(String winner){
+    public void endGame(String winner) throws Exception {
         if(winner=="v"){
             qsLbl.setText("Viewers won");
         }else{
@@ -139,21 +147,40 @@ public class game_controller {
         vb.getChildren().remove(1);
         returnBtn.setVisible(true);
 
+
+
+
         Main.teams_list.put(team, pScore);
         Main.team=null;
+        Main.get_appeals();
+
+
     }
 
 
     public void onReturn(ActionEvent actionEvent) throws Exception {
-//        Main.teams_list.put(team, pScore);
-//        Main.team=null;
         StageChanger.simpleChangeStage("Главное меню", "main_menu", returnBtn);
     }
 
-    public void onAppeal(ActionEvent actionEvent) {
+    public void onAppeal(ActionEvent actionEvent) throws Exception {
         at.stop();
-        //appeal functionality here
-        Main.aps.add(new ArrayList<String>(){{add(qsLbl.getText());add(ansTxt.getText());add(rAns.getText());add(Main.team);add("null");}});
+
+        aps.add(new ArrayList<String>(){{add(qsLbl.getText());add(ansTxt.getText());add(rAns.getText());add(Main.team);add(null);}});
+
+
+        HttpResponse<JsonNode> r= Unirest.post("http://localhost:8080/appeals")
+                .header("Content-type", "application/hal+json")
+                .body(new JSONObject(){{
+                    put("question", aps.get(aps.size()-1).get(0));
+                    put("answer", aps.get(aps.size()-1).get(1));
+                    put("ranswer", aps.get(aps.size()-1).get(2));
+                    put("team", aps.get(aps.size()-1).get(3));
+                    put("isApproved", aps.get(aps.size()-1).get(4));
+                }})
+                .asJson();
+        System.out.println(r.getBody().toString());
+
+
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmed");

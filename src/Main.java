@@ -28,15 +28,9 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         get_questions();
         get_teams();
+        get_appeals();
 
         team=null;
-
-
-        //URLConnection connection = new URL("http://localhost:8080/questions").openConnection();
-        //connection.setRequestProperty("header1", header1);
-        //Get Response
-//        InputStream is = connection.getInputStream();
-//        System.out.println(connection.getContentType());
 
         primaryStage.setTitle("Главное меню");
         primaryStage.setScene(SceneChanger.changeScene("main_menu"));
@@ -46,12 +40,7 @@ public class Main extends Application {
 
     public void get_questions(){
 
-        for (int i=0; i<12; i++){
-//            ArrayList<String> question=new ArrayList<>();
-//            question.add("");
-//            question.add("");
-//            question.set(0, "What is "+i);
-//            question.set(1,String.valueOf(i));
+        for (int i=0; i<24; i++){
             int finalI = i;
             questions_list.add(new ArrayList<>(){{add("What is "+ finalI);add(String.valueOf(finalI));}});
         }
@@ -76,11 +65,51 @@ public class Main extends Application {
                     break;
             }
         }
+    }
+
+
+    public static void get_appeals() throws UnirestException {
+        aps.clear();
+        HttpResponse<JsonNode> get_appeals_response = Unirest.get("http://localhost:8080/appeals").asJson();
+        ArrayList<JSONArray> appeals=new ArrayList<JSONArray>(Collections.singleton(get_appeals_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("appeals")));
+        for (int i=0; i<appeals.get(0).length(); i++){
+            int finalI = i;
+            if(teams_list.get(appeals.get(0).getJSONObject(finalI).get("team").toString())!=null){
+                aps.add(new ArrayList<>(){{
+                    add(appeals.get(0).getJSONObject(finalI).get("question").toString());
+                    add(appeals.get(0).getJSONObject(finalI).get("answer").toString());
+                    add(appeals.get(0).getJSONObject(finalI).get("ranswer").toString());
+                    add(appeals.get(0).getJSONObject(finalI).get("team").toString());
+                    add(appeals.get(0).getJSONObject(finalI).get("isApproved").toString());
+                }});
+            }
+            else{
+                String toDelete=appeals.get(0).getJSONObject(finalI).getJSONObject("_links").getJSONObject("self").getString("href");
+                HttpResponse<JsonNode> r= Unirest.delete(toDelete)
+                        .header("Content-type", "application/hal+json")
+                        .asJson();
+           }
+        }
+
+
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
 
 //        HttpResponse<JsonNode> r= Unirest.delete("http://localhost:8080/teams/8")
 //                .header("Content-type", "application/hal+json")
 //                .asJson();
 
+
+
+//        JSONObject jo=new JSONObject(){{put("name","mm");put("accessKey","mm");put("state",0);}};
+//        HttpResponse<JsonNode> r=Unirest.put("http://localhost:8080/teams/5")
+//                .header("Content-type", "application/hal+json")
+//                .body(jo)
+//                .asJson();
 
 
 
@@ -92,10 +121,3 @@ public class Main extends Application {
 //        .asJson();
 //
 //        System.out.println(r.getBody().toString());
-
-    }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
-}
