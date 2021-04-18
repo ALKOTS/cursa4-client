@@ -1,3 +1,7 @@
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
@@ -8,6 +12,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.*;
@@ -26,7 +31,7 @@ public class admin_controller {
     public static VBox v=new VBox();
 
 
-    public static void generateAdmin() throws IOException {
+    public static void generateAdmin() throws Exception {
         //Undefined
         Tab undefinedTab=new Tab("Undefined");
         Button test=new Button("Test");
@@ -156,18 +161,39 @@ public class admin_controller {
                     aps.remove(aps.get(toRemove.get(i)));
                 }
 
+                Main.aps.removeAll(aps);
+                for(int i=Main.aps.size()-1; i>-1; i--){
+                    try {
+                        Unirest.delete(Main.aps.get(i).get(5))
+                        .header("Content-type", "application/hal+json")
+                        .asJson();
+                        System.out.println("YES");
+                    } catch (UnirestException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
+
                 Main.aps.clear();
                 Main.teams_list.clear();
                 for(ArrayList<String> item:aps) Main.aps.add((ArrayList<String>) item.clone());
                 for (Map.Entry me:teams_list.entrySet()){
                     try{
+                        HttpResponse<JsonNode> r=Unirest.put(teams_list.get(me.getKey()).get("link"))
+                                .header("Content-type", "application/hal+json")
+                                .body(new JSONObject(){{
+                                    put("name",teams_list.get(me.getKey()).get("name"));
+                                    put("accessKey",me.getKey());
+                                    put("state",teams_list.get(me.getKey()).get("state"));
+                                    put("score",teams_list.get(me.getKey()).get("score"));
+                                }})
+                                .asJson();
                         Main.teams_list.put(String.valueOf(me.getKey()), (HashMap<String, String>) me.getValue());
-                    }catch (NumberFormatException nfe){
+                    }catch (NumberFormatException | UnirestException nfe){
                         continue;
                     }
                 }
-                System.out.println(teams_list);
-                System.out.println(Main.teams_list);
 
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Success");
@@ -234,7 +260,7 @@ public class admin_controller {
 //        cur_stage.close();
     }
 
-    public static void initialize() throws IOException {
+    public static void initialize() throws Exception {
         try {
             aps.clear();
             teams_list.clear();

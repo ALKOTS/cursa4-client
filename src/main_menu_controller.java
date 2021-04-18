@@ -1,3 +1,6 @@
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
@@ -6,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,21 +34,26 @@ public class main_menu_controller {
 
 	public void onStart(ActionEvent actionEvent) throws Exception {
 		if(Main.team!=null){
-//			Main.teams_list.get(Main.team).put(Main.get(Main.team).get("score"),0);
-//			JSONObject jo=new JSONObject(){{put("name",Main.team);put("accessKey","mm");put("state",0);}};
-//			HttpResponse<JsonNode> r=Unirest.put("http://localhost:8080/teams/5")
-//					.header("Content-type", "application/hal+json")
-//					.body(jo)
-//					.asJson();
+			Main.teams_list.get(Main.team).put("score","0");
+			JSONObject jo=new JSONObject(){{
+				put("name",Main.teams_list.get(Main.team).get("name"));
+				put("accessKey",Main.team);
+				put("state",2);
+				put("score",0);
+			}};
+			HttpResponse<JsonNode> r= Unirest.put(Main.teams_list.get(Main.team).get("link"))
+					.header("Content-type", "application/hal+json")
+					.body(jo)
+					.asJson();
 			StageChanger.simpleChangeStage("Что? Где? Когда?","game", startBtn);
 		}
 		else {
-			Alert alert = new Alert(Alert.AlertType.ERROR);
-			alert.setTitle("Error Dialog");
-			alert.setHeaderText("Error with your team!");
-			alert.setContentText("Looks like you haven't selected your team yet! You can't start a game without a team!");
-
-			alert.showAndWait();
+			new Alert(Alert.AlertType.ERROR){{
+				setTitle("Error Dialog");
+				setHeaderText("Error with your team!");
+				setContentText("Looks like you haven't selected your team yet! You can't start a game without a team!");
+				showAndWait();
+			}};
 		}
 	}
 

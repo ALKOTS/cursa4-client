@@ -148,11 +148,22 @@ public class game_controller {
         returnBtn.setVisible(true);
 
 
+        //Main.teams_list.get(team).replace("score", String.valueOf(pScore));
 
+        JSONObject jo=new JSONObject(){{
+            put("name",Main.teams_list.get(Main.team).get("name"));
+            put("accessKey",Main.team);
+            put("state",2);
+            put("score",pScore);
+        }};
+        HttpResponse<JsonNode> r= Unirest.put(Main.teams_list.get(Main.team).get("link"))
+                .header("Content-type", "application/hal+json")
+                .body(jo)
+                .asJson();
 
-        Main.teams_list.get(team).replace("score", String.valueOf(pScore));
         Main.team=null;
         Main.get_appeals();
+        Main.get_teams();
 
 
     }
@@ -164,9 +175,6 @@ public class game_controller {
 
     public void onAppeal(ActionEvent actionEvent) throws Exception {
         at.stop();
-
-        //aps.add(new ArrayList<String>(){{add(qsLbl.getText());add(ansTxt.getText());add(rAns.getText());add(Main.team);add(null);}});
-
 
         HttpResponse<JsonNode> r= Unirest.post("http://localhost:8080/appeals")
                 .header("Content-type", "application/hal+json")
@@ -182,12 +190,13 @@ public class game_controller {
 
 
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmed");
-        alert.setHeaderText("Appeal accepted!");
-        alert.setContentText("Your appeal has been accepted and will be reviewed by moderators as soon as possible");
+        new Alert(Alert.AlertType.CONFIRMATION){{
+            setTitle("Confirmed");
+            setHeaderText("Appeal accepted!");
+            setContentText("Your appeal has been accepted and will be reviewed by moderators as soon as possible");
+            showAndWait();
+        }};
 
-        alert.showAndWait();
 
         startRound();
     }

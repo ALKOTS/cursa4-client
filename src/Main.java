@@ -18,17 +18,17 @@ public class Main extends Application {
 
     public static ArrayList<ArrayList<String>> questions_list =new ArrayList<>(); //ПРОВЕРКА НА РАЗМЕР
 
-    public static HashMap<String, HashMap<String,String>> teams_list=new HashMap<>();  //accessKey: [name:name, state:state(0,1,2), score:score(null)]
+    public static HashMap<String, HashMap<String,String>> teams_list=new HashMap<>();  //accessKey: [name:name, state:state(0,1,2), score:score(null), link:link]
 
     public static String team;
 
-    public static ArrayList<ArrayList<String>> aps=new ArrayList<>();  //[[question, answer, right answer, team, isApproved(Y, N, null)], [...], ...]
+    public static ArrayList<ArrayList<String>> aps=new ArrayList<>();  //[[question, answer, right answer, team, isApproved(Y, N, null), link], [...], ...]
 
     @Override
     public void start(Stage primaryStage) throws Exception{
         get_questions();
         get_teams();
-        get_appeals();
+        //get_appeals();
 
         team=null;
 
@@ -47,7 +47,7 @@ public class Main extends Application {
 
     }
 
-    public void get_teams() throws UnirestException, IOException {
+    public static void get_teams() throws UnirestException, IOException {
         HttpResponse<JsonNode> get_teams_response = Unirest.get("http://localhost:8080/teams").asJson();
         ArrayList<JSONArray> teams=new ArrayList<JSONArray>(Collections.singleton(get_teams_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("teams")));
         for(int i=0; i<teams.get(0).length(); i++){
@@ -60,6 +60,7 @@ public class Main extends Application {
                         put("name", teams.get(0).getJSONObject(finalI).get("name").toString());
                         put("state", teams.get(0).getJSONObject(finalI).get("state").toString());
                         put("score",null);
+                        put("link",teams.get(0).getJSONObject(finalI).getJSONObject("_links").getJSONObject("self").getString("href"));
                     }});
                     break;
                 case 2:
@@ -68,6 +69,7 @@ public class Main extends Application {
                         put("name", teams.get(0).getJSONObject(finalI1).get("name").toString());
                         put("state", teams.get(0).getJSONObject(finalI1).get("state").toString());
                         put("score",teams.get(0).getJSONObject(finalI1).get("score").toString());
+                        put("link",teams.get(0).getJSONObject(finalI1).getJSONObject("_links").getJSONObject("self").getString("href"));
                     }});
                     break;
                 default:
@@ -75,6 +77,7 @@ public class Main extends Application {
                     break;
             }
         }
+        System.out.println(teams_list);
     }
 
 
@@ -91,6 +94,7 @@ public class Main extends Application {
                     add(appeals.get(0).getJSONObject(finalI).get("ranswer").toString());
                     add(appeals.get(0).getJSONObject(finalI).get("team").toString());
                     add(appeals.get(0).getJSONObject(finalI).get("isApproved").toString());
+                    add(appeals.get(0).getJSONObject(finalI).getJSONObject("_links").getJSONObject("self").getString("href"));
                 }});
             }
             else{
@@ -100,11 +104,6 @@ public class Main extends Application {
                         .asJson();
            }
         }
-
-        HttpResponse<JsonNode> r= Unirest.delete("http://localhost:8080/appeals/*")
-                .header("Content-type", "application/hal+json")
-                .asJson();
-
     }
 
     public static void main(String[] args) {
