@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main_menu_controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main_menu_controller">
    <children>
       <Button fx:id="startBtn" layoutX="358.0" layoutY="275.0" mnemonicParsing="false" onAction="#onStart" text="Start" />
       <Button fx:id="teamSelectBtn" layoutX="339.0" layoutY="300.0" mnemonicParsing="false" onAction="#onTeamSelect" text="Select Team" />
@@ -19,4 +19,4 @@
         </content>
       </ScrollPane>
    </children>
-</Pane>
+</AnchorPane>

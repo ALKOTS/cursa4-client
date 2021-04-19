@@ -46,6 +46,7 @@ public class team_selector_controller {
 
             Stage cur_stage = (Stage) subBtn.getScene().getWindow();
             cur_stage.close();
+            //StageChanger.simpleChangeStage("a","admin",subBtn);
 
         }else if(!(teams_list.containsKey(team_key))){
             alert.setContentText("Looks like the team you are trying to access doesn't exist!");

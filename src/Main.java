@@ -24,7 +24,7 @@ public class Main extends Application {
 
     public static ArrayList<ArrayList<String>> aps=new ArrayList<>();  //[[question, answer, right answer, team, isApproved(Y, N, null), link], [...], ...]
 
-    public static String dbLink="https://cursa4-server.herokuapp.com/";
+    public static String dbLink="http://localhost:8080";//"https://cursa4-server.herokuapp.com";
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -51,7 +51,7 @@ public class Main extends Application {
     }
 
     public static void get_teams() throws UnirestException, IOException {
-        HttpResponse<JsonNode> get_teams_response = Unirest.get("https://cursa4-server.herokuapp.com/teams").asJson();
+        HttpResponse<JsonNode> get_teams_response = Unirest.get(dbLink+"/teams").asJson();
         ArrayList<JSONArray> teams=new ArrayList<JSONArray>(Collections.singleton(get_teams_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("teams")));
         for(int i=0; i<teams.get(0).length(); i++){
             switch (Integer.parseInt(teams.get(0).getJSONObject(i).get("state").toString())){
@@ -85,17 +85,17 @@ public class Main extends Application {
 
     public static void get_appeals() throws UnirestException {
         aps.clear();
-        HttpResponse<JsonNode> get_appeals_response = Unirest.get("https://cursa4-server.herokuapp.com/appeals").asJson();
-        ArrayList<JSONArray> appeals=new ArrayList<JSONArray>(Collections.singleton(get_appeals_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("appeals")));
+        HttpResponse<JsonNode> get_appeals_response = Unirest.get(dbLink+"/appeals").asJson();
+        ArrayList<JSONArray> appeals=new ArrayList<>(Collections.singleton(get_appeals_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("appeals")));
         for (int i=0; i<appeals.get(0).length(); i++){
             int finalI = i;
-            if(teams_list.get(appeals.get(0).getJSONObject(finalI).get("team").toString()).get("score")!=null){    //если счет не null
+            if(appeals.get(0).getJSONObject(finalI).get("team").toString()!="null" && teams_list.get(appeals.get(0).getJSONObject(finalI).get("team").toString()).get("score")!=null){    //если счет не null
                 aps.add(new ArrayList<>(){{
                     add(appeals.get(0).getJSONObject(finalI).get("question").toString());
                     add(appeals.get(0).getJSONObject(finalI).get("answer").toString());
                     add(appeals.get(0).getJSONObject(finalI).get("ranswer").toString());
                     add(appeals.get(0).getJSONObject(finalI).get("team").toString());
-                    add(appeals.get(0).getJSONObject(finalI).get("isApproved").toString());
+                    add("null");
                     add(appeals.get(0).getJSONObject(finalI).getJSONObject("_links").getJSONObject("self").getString("href"));
                 }});
             }

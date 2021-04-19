@@ -59,19 +59,17 @@ public class admin_controller {
 
             Button acceptBtn = new Button("A");
             acceptBtn.setPrefSize(44,50);
-            //btnList.add(acceptBtn);
 
             Button denyBtn = new Button("D");
             denyBtn.setPrefSize(44,50);
-            //btnList.add(denyBtn);
 
             HBox blockContainer = new HBox(lblContainer, acceptBtn, denyBtn);
-            //blockContainer.setPrefSize(765,50);
+
             blockContainer.setMinSize(765,50);
 
             BorderPane allContainer = new BorderPane();
             allContainer.setLeft(blockContainer);
-            //allContainer.setPrefSize(510,40);
+
             v.getChildren().add(allContainer);
 
             //buttons functionality
@@ -112,7 +110,12 @@ public class admin_controller {
         //static
         v.setLayoutX(14);
 
-        AnchorPane in=new AnchorPane(v);
+        AnchorPane in=new AnchorPane(v){{
+            setTopAnchor(v,0.0);
+            setBottomAnchor(v,0.0);
+            setRightAnchor(v,0.0);
+            setLeftAnchor(v,0.0);
+        }};
         in.setPrefSize(600,350);
 
         ScrollPane sp=new ScrollPane();
@@ -239,11 +242,6 @@ public class admin_controller {
             setRightAnchor(splitPane,0.0);
             setLeftAnchor(splitPane,0.0);
         }};
-        //ap.setPrefSize(800,600);
-//        AnchorPane.setTopAnchor(splitPane,0.0);
-//        AnchorPane.setBottomAnchor(splitPane,0.0);
-//        AnchorPane.setRightAnchor(splitPane,0.0);
-//        AnchorPane.setLeftAnchor(splitPane,0.0);
 
 
         Tab appellationsTab=new Tab("Аппеляции");

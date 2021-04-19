@@ -172,7 +172,7 @@ public class game_controller {
     public void onAppeal(ActionEvent actionEvent) throws Exception {
         at.stop();
 
-        HttpResponse<JsonNode> r= Unirest.post("https://cursa4-server.herokuapp.com/appeals")
+        HttpResponse<JsonNode> r= Unirest.post(Main.dbLink+"/appeals")
                 .header("Content-type", "application/hal+json")
                 .body(new JSONObject(){{
                     put("question", qsLbl.getText());
