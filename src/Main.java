@@ -24,6 +24,8 @@ public class Main extends Application {
 
     public static ArrayList<ArrayList<String>> aps=new ArrayList<>();  //[[question, answer, right answer, team, isApproved(Y, N, null), link], [...], ...]
 
+    public static String dbLink="https://cursa4-server.herokuapp.com/";
+
     @Override
     public void start(Stage primaryStage) throws Exception{
         get_questions();
@@ -38,6 +40,7 @@ public class Main extends Application {
 
     }
 
+
     public void get_questions(){
 
         for (int i=0; i<24; i++){
@@ -48,7 +51,7 @@ public class Main extends Application {
     }
 
     public static void get_teams() throws UnirestException, IOException {
-        HttpResponse<JsonNode> get_teams_response = Unirest.get("http://localhost:8080/teams").asJson();
+        HttpResponse<JsonNode> get_teams_response = Unirest.get("https://cursa4-server.herokuapp.com/teams").asJson();
         ArrayList<JSONArray> teams=new ArrayList<JSONArray>(Collections.singleton(get_teams_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("teams")));
         for(int i=0; i<teams.get(0).length(); i++){
             switch (Integer.parseInt(teams.get(0).getJSONObject(i).get("state").toString())){
@@ -80,10 +83,9 @@ public class Main extends Application {
         System.out.println(teams_list);
     }
 
-
     public static void get_appeals() throws UnirestException {
         aps.clear();
-        HttpResponse<JsonNode> get_appeals_response = Unirest.get("http://localhost:8080/appeals").asJson();
+        HttpResponse<JsonNode> get_appeals_response = Unirest.get("https://cursa4-server.herokuapp.com/appeals").asJson();
         ArrayList<JSONArray> appeals=new ArrayList<JSONArray>(Collections.singleton(get_appeals_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("appeals")));
         for (int i=0; i<appeals.get(0).length(); i++){
             int finalI = i;
@@ -111,14 +113,14 @@ public class Main extends Application {
     }
 }
 
-//        HttpResponse<JsonNode> r= Unirest.delete("http://localhost:8080/teams/8")
+//        HttpResponse<JsonNode> r= Unirest.delete("https://cursa4-server.herokuapp.com/teams/8")
 //                .header("Content-type", "application/hal+json")
 //                .asJson();
 
 
 
 //        JSONObject jo=new JSONObject(){{put("name","mm");put("accessKey","mm");put("state",0);}};
-//        HttpResponse<JsonNode> r=Unirest.put("http://localhost:8080/teams/5")
+//        HttpResponse<JsonNode> r=Unirest.put("https://cursa4-server.herokuapp.com/teams/5")
 //                .header("Content-type", "application/hal+json")
 //                .body(jo)
 //                .asJson();
@@ -127,7 +129,7 @@ public class Main extends Application {
 
 //        JSONObject jo=new JSONObject(){{put("name","mm");put("accessKey","mm");put("state",1);}};
 //
-//        HttpResponse<JsonNode> r= Unirest.post("http://localhost:8080/teams")
+//        HttpResponse<JsonNode> r= Unirest.post("https://cursa4-server.herokuapp.com/teams")
 //                .header("Content-type", "application/hal+json")
 //        .body(jo)
 //        .asJson();

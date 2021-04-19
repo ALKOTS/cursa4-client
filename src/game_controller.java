@@ -132,7 +132,6 @@ public class game_controller {
             vScore++;
         }
         at.start();
-        
     }
 
     public void endGame(String winner) throws Exception {
@@ -145,20 +144,17 @@ public class game_controller {
         //subBtn.setVisible(false);
         vb.getChildren().remove(1);
         vb.getChildren().remove(1);
+        ansTxt.setDisable(true);
         returnBtn.setVisible(true);
 
-
-        //Main.teams_list.get(team).replace("score", String.valueOf(pScore));
-
-        JSONObject jo=new JSONObject(){{
-            put("name",Main.teams_list.get(Main.team).get("name"));
-            put("accessKey",Main.team);
-            put("state",2);
-            put("score",pScore);
-        }};
         HttpResponse<JsonNode> r= Unirest.put(Main.teams_list.get(Main.team).get("link"))
                 .header("Content-type", "application/hal+json")
-                .body(jo)
+                .body(new JSONObject(){{
+                    put("name",Main.teams_list.get(Main.team).get("name"));
+                    put("accessKey",Main.team);
+                    put("state",2);
+                    put("score",pScore);
+                }})
                 .asJson();
 
         Main.team=null;
@@ -176,17 +172,15 @@ public class game_controller {
     public void onAppeal(ActionEvent actionEvent) throws Exception {
         at.stop();
 
-        HttpResponse<JsonNode> r= Unirest.post("http://localhost:8080/appeals")
+        HttpResponse<JsonNode> r= Unirest.post("https://cursa4-server.herokuapp.com/appeals")
                 .header("Content-type", "application/hal+json")
                 .body(new JSONObject(){{
                     put("question", qsLbl.getText());
                     put("answer", ansTxt.getText());
                     put("ranswer", rAns.getText());
                     put("team", Main.team);
-//                    put("isApproved", null);
                 }})
                 .asJson();
-        System.out.println(r.getBody().toString());
 
 
 

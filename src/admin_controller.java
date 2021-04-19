@@ -139,11 +139,9 @@ public class admin_controller {
                 for (int i=0; i<aps.size(); i++){
 
                     switch (aps.get(i).get(4)) {
-                        case "N":
-                            toRemove.add(i);
-                            break;
                         case "Y":
                             teams_list.get(aps.get(i).get(3)).put("score", String.valueOf(Integer.parseInt(teams_list.get(aps.get(i).get(3)).get("score"))+1));
+                        case "N":
                             toRemove.add(i);
                             break;
                         default:
@@ -190,16 +188,16 @@ public class admin_controller {
                                 }})
                                 .asJson();
                         Main.teams_list.put(String.valueOf(me.getKey()), (HashMap<String, String>) me.getValue());
-                    }catch (NumberFormatException | UnirestException nfe){
+                    }catch (Exception nfe){
                         continue;
                     }
                 }
 
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Success");
-                alert.setHeaderText("Changes saved!");
-
-                alert.showAndWait();
+                new Alert(Alert.AlertType.CONFIRMATION){{
+                    setTitle("Success");
+                    setHeaderText("Changes saved!");
+                    showAndWait();
+                }};
             }
         });
         disChanges.setOnAction(new EventHandler<ActionEvent>() {
@@ -235,13 +233,17 @@ public class admin_controller {
         splitPane.setDividerPosition(0,1);
 
 
-        AnchorPane ap=new AnchorPane(splitPane); //sp);
+        AnchorPane ap=new AnchorPane(splitPane){{
+            setTopAnchor(splitPane,0.0);
+            setBottomAnchor(splitPane,0.0);
+            setRightAnchor(splitPane,0.0);
+            setLeftAnchor(splitPane,0.0);
+        }};
         //ap.setPrefSize(800,600);
-        AnchorPane.setTopAnchor(splitPane,0.0);
-        AnchorPane.setBottomAnchor(splitPane,0.0);
-        AnchorPane.setRightAnchor(splitPane,0.0);
-        AnchorPane.setLeftAnchor(splitPane,0.0);
-
+//        AnchorPane.setTopAnchor(splitPane,0.0);
+//        AnchorPane.setBottomAnchor(splitPane,0.0);
+//        AnchorPane.setRightAnchor(splitPane,0.0);
+//        AnchorPane.setLeftAnchor(splitPane,0.0);
 
 
         Tab appellationsTab=new Tab("Аппеляции");
