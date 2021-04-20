@@ -7,13 +7,10 @@ import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
+
 
 import java.util.*;
 
@@ -36,9 +33,24 @@ public class admin_controller {
     public static VBox old_v1=new VBox();
 
 
-    public static void generateAdmin() throws Exception {
-        //Questions
 
+    public static void generateAdmin() throws Exception {
+        Button accChanges=new Button("Accept changes"){{setDisable(true);}};
+        Button disChanges=new Button("Discard changes"){{setDisable(true);}};
+        Button mainMenu=new Button("Main menu");
+
+
+        mainMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                try {
+                    StageChanger.simpleChangeStage("Главное меню","main_menu", mainMenu);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        //Questions
 
         //Dynamic
 
@@ -48,6 +60,7 @@ public class admin_controller {
 
             VBox lblContainer=new VBox(qsLbl,ansLbl);
             lblContainer.setMinSize(684,50);
+            VBox.setVgrow(lblContainer, Priority.ALWAYS);
 
             Button editBtn = new Button("E");
             editBtn.setPrefSize(44,50);
@@ -65,6 +78,7 @@ public class admin_controller {
             }};
 
             v1.getChildren().add(allContainer);
+
 
             //button functionality
 
@@ -141,26 +155,37 @@ public class admin_controller {
                     v1.getChildren().remove(finalI1);
                 }
             });
-
-
-
-
         }
 
 
 
 
         //Static
-        v1.setLayoutX(14);
-        old_v1.getChildren().addAll(v1.getChildren());  //backup for discard changes button
-        Tab undefinedTab=new Tab("Questions");
-        undefinedTab.setContent(v1);
+        //v1.setLayoutX(14);
+
+        AnchorPane in1=new AnchorPane(v1){{
+            setTopAnchor(v1,0.0);
+            setBottomAnchor(v1,0.0);
+            setRightAnchor(v1,0.0);
+            setLeftAnchor(v1,0.0);
+            setPrefSize(600,350);
+        }};
+
+        ScrollPane sp1=new ScrollPane(){{
+            setLayoutY(11);
+            setPrefSize(800,400);
+            setContent(in1);
+            setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+            setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        }};
+
+        old_v1.getChildren().addAll(v1);  //backup for discard changes button
+        Tab questionsTab=new Tab("Questions");
+        questionsTab.setContent(v1);
 
 
-        //Apellations
-        Button accChanges=new Button("Accept changes"){{setDisable(true);}};
-        Button disChanges=new Button("Discard changes"){{setDisable(true);}};
-        Button mainMenu=new Button("Main menu");
+
+        //Appeals
 
         //Dynamic
         for (int i=0; i<aps.size(); i++){
@@ -229,25 +254,22 @@ public class admin_controller {
         //static
         v2.setLayoutX(14);
 
-        AnchorPane in=new AnchorPane(v2){{
+        AnchorPane in2=new AnchorPane(v2){{
             setTopAnchor(v2,0.0);
             setBottomAnchor(v2,0.0);
             setRightAnchor(v2,0.0);
             setLeftAnchor(v2,0.0);
+            setPrefSize(600,350);
         }};
-        in.setPrefSize(600,350);
-
-        ScrollPane sp=new ScrollPane();
-        sp.setLayoutY(11);
-        sp.setPrefSize(800,400);
-        sp.setContent(in);
-        sp.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        sp.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
 
-
-
-
+        ScrollPane sp2=new ScrollPane(){{
+            setLayoutY(11);
+            setPrefSize(800,400);
+            setContent(in2);
+            setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+            setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        }};
 
         accChanges.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -337,20 +359,10 @@ public class admin_controller {
                 disChanges.setDisable(true);
             }
         });
-        mainMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                try {
-                    StageChanger.simpleChangeStage("Главное меню","main_menu", mainMenu);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
 
         HBox adBox=new HBox(accChanges,disChanges,mainMenu);
 
-        SplitPane splitPane=new SplitPane(sp,adBox);
+        SplitPane splitPane=new SplitPane(sp2,adBox);
         splitPane.setOrientation(Orientation.VERTICAL);
         splitPane.setDividerPosition(0,1);
 
@@ -366,7 +378,7 @@ public class admin_controller {
         Tab appellationsTab=new Tab("Аппеляции");
         appellationsTab.setContent(ap);
 
-        TabPane root=new TabPane(undefinedTab,appellationsTab);
+        TabPane root=new TabPane(questionsTab,appellationsTab);
         root.setPrefSize(800,600);
 
 
@@ -407,7 +419,7 @@ public class admin_controller {
             }
 
         }
-
+        System.out.println(questions_list);
         generateAdmin();
     }
 

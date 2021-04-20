@@ -1,69 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="admin_controller">
-  <tabs>
-    <Tab text="Untitled Tab 1">
-      <content>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-               <children>
-                  <Button fx:id="addStuff" layoutX="274.0" layoutY="173.0" mnemonicParsing="false" text="Add Stuff" />
-               </children></AnchorPane>
-      </content>
-    </Tab>
-    <Tab fx:id="appTab" text="Аппеляции">
-      <content>
-        <AnchorPane>
-               <children>
-                  <ScrollPane layoutY="11.0">
+<BorderPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+            <tabs>
+                <Tab text="Untitled Tab 1">
                     <content>
-                      <AnchorPane>
-                           <children>
-                              <VBox fx:id="appsContainer">
-                                 <children>
-                                    <BorderPane prefHeight="40.0" prefWidth="503.0">
-                                       <left>
-                                          <HBox prefHeight="50.0" prefWidth="565.0" BorderPane.alignment="CENTER">
-                                             <children>
-                                                <VBox>
-                                                   <children>
-                                                      <Label prefHeight="41.0" prefWidth="508.0" text="Label" />
-                                                      <Label prefHeight="41.0" prefWidth="508.0" text="Label" />
-                                                      <Label prefHeight="41.0" prefWidth="508.0" text="Label" />
-                                                   </children>
-                                                </VBox>
-                                                <Button fx:id="approveBtn" mnemonicParsing="false" prefHeight="50.0" prefWidth="44.0" text="+" />
-                                                <Button fx:id="denyBtn" mnemonicParsing="false" prefHeight="50.0" prefWidth="44.0" text="-" />
-                                             </children>
-                                          </HBox>
-                                       </left>
-                                    </BorderPane>
-<!--                                    <BorderPane prefHeight="40.0" prefWidth="503.0">-->
-<!--                                     <left>-->
-<!--                                       <HBox prefHeight="50.0" prefWidth="565.0" BorderPane.alignment="CENTER">-->
-<!--                                         <children>-->
-<!--                                           <VBox prefHeight="50.0" prefWidth="508.0">-->
-<!--                                             <children>-->
-<!--                                               <Label prefHeight="41.0" prefWidth="508.0" text="Label" />-->
-<!--                                               <Label prefHeight="41.0" prefWidth="508.0" text="Label" />-->
-<!--                                               <Label prefHeight="41.0" prefWidth="508.0" text="Label" />-->
-<!--                                             </children>-->
-<!--                                           </VBox>-->
-<!--                                           <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="44.0" text="+" />-->
-<!--                                           <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="44.0" text="-" />-->
-<!--                                         </children>-->
-<!--                                       </HBox>-->
-<!--                                     </left>-->
-<!--                                   </BorderPane>-->
-                                 </children>
-                              </VBox>
-                           </children></AnchorPane>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                     </content>
-                  </ScrollPane>
-               </children></AnchorPane>
-      </content>
-    </Tab>
-  </tabs>
-</TabPane>
+                </Tab>
+                <Tab text="Untitled Tab 2">
+                    <content>
+                        <AnchorPane>
+                            <children>
+                                <ScrollPane prefHeight="348.0" prefWidth="625.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <content>
+                                        <AnchorPane>
+                                            <children>
+                                                <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
+                                                    <children>
+                                                        <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" VBox.vgrow="ALWAYS">
+                                                            <children>
+                                                                <VBox maxHeight="-Infinity" prefWidth="523.0" HBox.hgrow="ALWAYS">
+                                                                    <children>
+                                                                        <Label text="Label" />
+                                                                        <Label text="Label" />
+                                                                        <Label text="Label" />
+                                                                    </children>
+                                                                </VBox>
+                                                                <Button maxHeight="-Infinity" mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="A" />
+                                                                <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="D" />
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                        </AnchorPane>
+                                    </content>
+                                </ScrollPane>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </center>
+    <bottom>
+        <AnchorPane BorderPane.alignment="CENTER">
+            <children>
+                <HBox prefHeight="25.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <children>
+                        <Button mnemonicParsing="false" text="Button" />
+                        <Button mnemonicParsing="false" text="Button" />
+                        <Button mnemonicParsing="false" text="Button" />
+                    </children>
+                </HBox>
+            </children>
+        </AnchorPane>
+    </bottom>
+</BorderPane>
