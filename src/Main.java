@@ -24,7 +24,7 @@ public class Main extends Application {
 
     public static ArrayList<ArrayList<String>> aps=new ArrayList<>();  //[[question, answer, right answer, team, isApproved(Y, N, null), link], [...], ...]
 
-    public static String dbLink="http://localhost:8080";//"https://cursa4-server.herokuapp.com";
+    public static String dbLink="https://cursa4-server.herokuapp.com"; //"http://localhost:8080";//"https://cursa4-server.herokuapp.com";
 
     @Override
     public void start(Stage primaryStage) throws Exception{

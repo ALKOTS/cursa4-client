@@ -9,7 +9,26 @@
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <Button fx:id="addStuff" layoutX="274.0" layoutY="173.0" mnemonicParsing="false" text="Add Stuff" />
+                  <SplitPane dividerPositions="0.9" orientation="VERTICAL" prefHeight="371.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <items>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                           <children>
+                              <VBox prefHeight="37.0" prefWidth="32.0">
+                                 <children>
+                                    <Label text="Label" />
+                                    <Label text="Label" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </AnchorPane>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                           <children>
+                              <Button layoutY="5.0" mnemonicParsing="false" text="Button" />
+                              <Button layoutX="52.0" layoutY="5.0" mnemonicParsing="false" text="Button" />
+                           </children>
+                        </AnchorPane>
+                    </items>
+                  </SplitPane>
                </children></AnchorPane>
       </content>
     </Tab>
