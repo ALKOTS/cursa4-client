@@ -1,8 +1,13 @@
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+
+import javafx.event.ActionEvent;
+import javafx.stage.Window;
 
 import java.io.IOException;
 
@@ -14,26 +19,21 @@ public class StageChanger {
         team_selector_stage.show();
 
         Stage cur_stage = (Stage) button.getScene().getWindow();
-
         cur_stage.close();
     }
 
-    public static FXMLLoader passAssistant(String scene) throws IOException {
+//    public static void actionChangeStage(String title, String scene, ActionEvent actionEvent) throws Exception{
+//        Stage team_selector_stage = new Stage();
+//        team_selector_stage.setTitle(title);
+//        team_selector_stage.setScene(SceneChanger.changeScene(scene));
+//
+//        Node w=(Node) actionEvent.getSource();
+//        Stage cur_stage = (Stage) w.getScene().getWindow();
+//        cur_stage.close();
+//
+//    }
 
-        FXMLLoader loader = new FXMLLoader(StageChanger.class.getResource(scene));
-        return loader;
-    }
-    public static void stageCloseFollow(FXMLLoader loader, String title, Button btn) throws IOException {
-        Parent root = loader.load();
-        Stage stage = new Stage();
-        stage.setScene(new Scene(root));
-        stage.setTitle(title);
-        stage.show();
-
-        Stage cur_stage = (Stage) btn.getScene().getWindow();
-        cur_stage.close();
-
-    }
+}
 
 
 
@@ -52,4 +52,4 @@ public class StageChanger {
 //			Stage cur_stage = (Stage) startBtn.getScene().getWindow();
 //			cur_stage.close();
 
-}
+

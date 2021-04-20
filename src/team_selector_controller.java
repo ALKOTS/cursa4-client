@@ -40,13 +40,8 @@ public class team_selector_controller {
 
 
         }else if(ansTxt.getText().equals("adminka")){
-            admin_controller ac=new admin_controller();
             Main.get_appeals();
-            ac.initialize();
-
-            Stage cur_stage = (Stage) subBtn.getScene().getWindow();
-            cur_stage.close();
-            //StageChanger.simpleChangeStage("a","admin",subBtn);
+            StageChanger.simpleChangeStage("a","admin",subBtn);
 
         }else if(!(teams_list.containsKey(team_key))){
             alert.setContentText("Looks like the team you are trying to access doesn't exist!");
@@ -56,8 +51,6 @@ public class team_selector_controller {
             alert.setContentText("Looks like the team you are trying to access has already played in this tournament!");
             alert.showAndWait();
         }
-
-
     }
 
     public void onReturn(ActionEvent actionEvent) throws Exception {
