@@ -16,7 +16,7 @@ import java.util.*;
 
 public class Main extends Application {
 
-    public static ArrayList<ArrayList<String>> questions_list =new ArrayList<>(); //ПРОВЕРКА НА РАЗМЕР
+    public static ArrayList<ArrayList<String>> questions_list =new ArrayList<>(); //question, answer, link //ПРОВЕРКА НА РАЗМЕР
 
     public static HashMap<String, HashMap<String,String>> teams_list=new HashMap<>();  //accessKey: [name:name, state:state(0,1,2), score:score(null), link:link]
 
@@ -41,16 +41,25 @@ public class Main extends Application {
     }
 
 
-    public void get_questions(){
+    public void get_questions() throws UnirestException {
+        HttpResponse<JsonNode> get_questions_response = Unirest.get(dbLink+"/questions").asJson();
+        ArrayList<JSONArray> questions=new ArrayList<>(Collections.singleton(get_questions_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("questions")));
 
-        for (int i=0; i<24; i++){
+
+        for (int i=0; i<questions.get(0).length(); i++){
             int finalI = i;
-            questions_list.add(new ArrayList<>(){{add("What is "+ finalI);add(String.valueOf(finalI));}});
+            questions_list.add(new ArrayList<>(){{
+                add(questions.get(0).getJSONObject(finalI).get("question").toString());
+                add(questions.get(0).getJSONObject(finalI).get("answer").toString());
+                add(questions.get(0).getJSONObject(finalI).getJSONObject("_links").getJSONObject("self").getString("href"));
+            }});
+
         }
+        System.out.println(questions_list);
 
     }
 
-    public static void get_teams() throws UnirestException, IOException {
+    public static void get_teams() throws Exception {
         HttpResponse<JsonNode> get_teams_response = Unirest.get(dbLink+"/teams").asJson();
         ArrayList<JSONArray> teams=new ArrayList<JSONArray>(Collections.singleton(get_teams_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("teams")));
         for(int i=0; i<teams.get(0).length(); i++){

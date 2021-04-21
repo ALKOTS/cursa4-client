@@ -33,6 +33,8 @@ public class admin_controller {
     public static HashMap<Integer, String> changedQ =new HashMap<>();
     public static HashMap<Integer, String> changedA =new HashMap<>();
 
+    public static ArrayList<Integer> question_to_delete=new ArrayList<>();
+
     public static VBox v1 =new VBox();
     public static VBox v2 =new VBox();
 
@@ -146,8 +148,12 @@ public class admin_controller {
                 });
             });
 
+            int finalI1 = i;
             deleteBtn.setOnAction(actionEvent -> {
+                question_to_delete.add(finalI1);
+                System.out.println(v1.getChildren().toString());
                 v1.getChildren().remove(deleteBtn.getParent().getParent());
+                System.out.println(v1.getChildren().toString());
                 accChanges.setDisable(false);
                 disChanges.setDisable(false);
             });
@@ -222,7 +228,7 @@ public class admin_controller {
         in2.getChildren().add(v2);
     }
 
-    public void onAcceptChanges(ActionEvent actionEvent) {
+    public void onAcceptChanges(ActionEvent actionEvent) throws UnirestException {
         for(int i = 0; i< allContainerContainer2.size(); i++){
             allContainerContainer2.get(i).getChildren().clear();
         }
@@ -261,7 +267,30 @@ public class admin_controller {
             }
         }
 
+        //questions_list.clear();
 
+        for (int i=question_to_delete.size()-1; i>-1; i--){
+            Unirest.delete(questions_list.get(question_to_delete.get(i)).get(2))
+                    .header("Content-type", "application/hal+json")
+                    .asJson();
+            questions_list.remove(questions_list.get(question_to_delete.get(i)));
+        }
+        System.out.println(v1.getChildren().toString());
+        System.out.println(questions_list);
+
+        for(int i=0; i<v1.getChildren().size(); i++){
+            HBox bb=(HBox) v1.getChildren().get(i);
+            VBox vv=(VBox) bb.getChildren().get(0);
+            Label llQ=(Label) vv.getChildren().get(0);
+            Label llA=(Label)  vv.getChildren().get(1);
+            questions_list.get(i).set(0,llQ.getText());
+            questions_list.get(i).set(1,llA.getText());
+
+            llQ.setStyle(null);
+            llA.setStyle(null);
+        }
+
+        System.out.println(questions_list);
 
         Main.aps.clear();
         Main.teams_list.clear();
@@ -282,6 +311,14 @@ public class admin_controller {
                 continue;
             }
         }
+
+        old_v1.clear();
+        for (int i=0; i<v1.getChildren().size(); i++){
+            old_v1.add((BorderPane) v1.getChildren().get(i));
+        }
+
+        changedA.clear();
+        changedQ.clear();
 
         new Alert(Alert.AlertType.CONFIRMATION){{
             setTitle("Success");
@@ -305,7 +342,7 @@ public class admin_controller {
             ll.setText(questions_list.get((Integer) me.getKey()).get(0));
             ll.setStyle(null);
         }
-
+        question_to_delete.clear();
         for(Map.Entry me:changedA.entrySet()){
             HBox bb=(HBox) old_v1.get((Integer) me.getKey()).getLeft();
             VBox vv=(VBox) bb.getChildren().get(0);
@@ -342,6 +379,7 @@ public class admin_controller {
             changedA.clear();
             allContainerContainer2.clear();
             questions_list.clear();
+            question_to_delete.clear();
         }catch (Exception e){
             System.out.println("All clear");
         }
