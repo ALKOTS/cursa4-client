@@ -41,7 +41,7 @@ public class Main extends Application {
     }
 
 
-    public void get_questions() throws UnirestException {
+    public static void get_questions() throws UnirestException {
         HttpResponse<JsonNode> get_questions_response = Unirest.get(dbLink+"/questions").asJson();
         ArrayList<JSONArray> questions=new ArrayList<>(Collections.singleton(get_questions_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("questions")));
 

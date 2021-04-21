@@ -4,6 +4,7 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import org.json.JSONObject;
@@ -35,7 +36,8 @@ public class admin_controller {
 
     public static ArrayList<Integer> question_to_delete=new ArrayList<>();
 
-    public static VBox v1 =new VBox();
+    //public static VBox v1 =new VBox();
+    public static ArrayList<BorderPane> v1=new ArrayList<>();
     public static VBox v2 =new VBox();
 
 
@@ -74,8 +76,12 @@ public class admin_controller {
 
 
             old_v1.add(allContainer);
-            v1.getChildren().add(allContainer);
+            //v1.getChildren().add(allContainer);
+            v1.add(allContainer);
 
+
+            //Static
+            in1.getChildren().add(new VBox(){{getChildren().addAll(v1);}});
             //button functionality
 
             int finalI = i;
@@ -151,16 +157,19 @@ public class admin_controller {
             int finalI1 = i;
             deleteBtn.setOnAction(actionEvent -> {
                 question_to_delete.add(finalI1);
-                System.out.println(v1.getChildren().toString());
-                v1.getChildren().remove(deleteBtn.getParent().getParent());
-                System.out.println(v1.getChildren().toString());
+                //System.out.println(v1.getChildren().toString());
+                //v1.getChildren().remove(deleteBtn.getParent().getParent());
+                v1.remove(v1.get(finalI1));
+                in1.getChildren().clear();
+                in1.getChildren().add(new VBox(){{getChildren().addAll(v1);}});
+                System.out.println(v1.get(finalI1));
+                //System.out.println(v1.getChildren().toString());
                 accChanges.setDisable(false);
                 disChanges.setDisable(false);
             });
         }
 
-        //Static
-        in1.getChildren().add(v1);
+
 
         //Appeals
 
@@ -267,7 +276,6 @@ public class admin_controller {
             }
         }
 
-        //questions_list.clear();
 
         for (int i=question_to_delete.size()-1; i>-1; i--){
             Unirest.delete(questions_list.get(question_to_delete.get(i)).get(2))
@@ -275,11 +283,11 @@ public class admin_controller {
                     .asJson();
             questions_list.remove(questions_list.get(question_to_delete.get(i)));
         }
-        System.out.println(v1.getChildren().toString());
+        //System.out.println(v1.getChildren().toString());
         System.out.println(questions_list);
 
-        for(int i=0; i<v1.getChildren().size(); i++){
-            HBox bb=(HBox) v1.getChildren().get(i);
+        for(int i=0; i<v1.size(); i++){
+            HBox bb=(HBox) v1.get(i).getLeft();
             VBox vv=(VBox) bb.getChildren().get(0);
             Label llQ=(Label) vv.getChildren().get(0);
             Label llA=(Label)  vv.getChildren().get(1);
@@ -291,6 +299,17 @@ public class admin_controller {
         }
 
         System.out.println(questions_list);
+        for(int i=0; i<questions_list.size(); i++){
+            HttpResponse<JsonNode> r=Unirest.put(questions_list.get(i).get(2))
+                    .header("Content-type", "application/hal+json")
+                    .body(new JSONObject(){{
+                        put("question",questions_list.get(0));
+                        put("answer", questions_list.get(1));
+                    }})
+                    .asJson();
+        }
+
+
 
         Main.aps.clear();
         Main.teams_list.clear();
@@ -311,10 +330,11 @@ public class admin_controller {
                 continue;
             }
         }
+        Main.get_questions();
 
         old_v1.clear();
-        for (int i=0; i<v1.getChildren().size(); i++){
-            old_v1.add((BorderPane) v1.getChildren().get(i));
+        for (int i=0; i<v1.size(); i++){
+            old_v1.add(v1.get(i));
         }
 
         changedA.clear();
@@ -351,12 +371,12 @@ public class admin_controller {
             ll.setStyle(null);
         }
 
-        v1.getChildren().clear();
+        v1.clear();
         in1.getChildren().clear();
         changedQ.clear();
         changedA.clear();
-        v1.getChildren().addAll(old_v1);
-        in1.getChildren().add(v1);
+        v1.addAll(old_v1);
+        in1.getChildren().add(new VBox(){{getChildren().addAll(v1);}});
 
         accChanges.setDisable(true);
         disChanges.setDisable(true);
@@ -372,7 +392,7 @@ public class admin_controller {
             teams_list.clear();
             btnList.clear();
             v2.getChildren().clear();
-            v1.getChildren().clear();
+            v1.clear();
             old_v1.clear();
             constBtnList.clear();
             changedQ.clear();
