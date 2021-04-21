@@ -3,17 +3,12 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Orientation;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.stage.Stage;
 import org.json.JSONObject;
 
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class admin_controller {
@@ -33,12 +28,15 @@ public class admin_controller {
 
     public static HashMap<String, HashMap<String, String>> teams_list= new HashMap<>();
 
-    public static ArrayList<BorderPane> allContainerContainer=new ArrayList<>();
+    public static ArrayList<BorderPane> old_v1 =new ArrayList<>();
+    public static ArrayList<BorderPane> allContainerContainer2 =new ArrayList<>();
+    public static HashMap<Integer, String> changedQ =new HashMap<>();
+    public static HashMap<Integer, String> changedA =new HashMap<>();
 
     public static VBox v1 =new VBox();
     public static VBox v2 =new VBox();
 
-    public static VBox old_v1=new VBox();
+
 
 
 
@@ -51,23 +49,29 @@ public class admin_controller {
             Label qsLbl=new Label(questions_list.get(i).get(0));
             Label ansLbl=new Label(questions_list.get(i).get(1));
 
-            VBox lblContainer=new VBox(qsLbl,ansLbl);
-            lblContainer.setMinSize(684,50);
+            VBox lblContainer=new VBox(qsLbl,ansLbl){{
+                setMinSize(684,50);
+            }};
             VBox.setVgrow(lblContainer, Priority.ALWAYS);
 
-            Button editBtn = new Button("E");
-            editBtn.setPrefSize(44,50);
+            Button editBtn = new Button("E"){{
+                setPrefSize(44,50);
+            }};
 
-            Button deleteBtn = new Button("D");
-            deleteBtn.setPrefSize(44,50);
+            Button deleteBtn = new Button("D"){{
+                setPrefSize(44,50);
+            }};
 
-            HBox blockContainer = new HBox(lblContainer, editBtn, deleteBtn);// btnContainer);
-            blockContainer.setMinSize(765,50);
+            HBox blockContainer = new HBox(lblContainer, editBtn, deleteBtn){{
+                setMinSize(765,50);
+            }};
 
             BorderPane allContainer = new BorderPane(){{
                 setLeft(blockContainer);
             }};
 
+
+            old_v1.add(allContainer);
             v1.getChildren().add(allContainer);
 
             //button functionality
@@ -81,10 +85,12 @@ public class admin_controller {
                 TextField ansTxt=new TextField(){{setText(old_ans);}};
                 lblContainer.getChildren().clear();
                 lblContainer.getChildren().addAll(qsTxt,ansTxt);
-                Button accBtn=new Button("A");
-                accBtn.setPrefSize(44,50);
-                Button denyBtn=new Button("D");
-                denyBtn.setPrefSize(44,50);
+                Button accBtn=new Button("A"){{
+                    setPrefSize(44,50);
+                }};
+                Button denyBtn=new Button("D"){{
+                    setPrefSize(44,50);
+                }};
 
                 editBtn.setVisible(false);
                 deleteBtn.setVisible(false);
@@ -93,23 +99,24 @@ public class admin_controller {
 
 
                 accBtn.setOnAction(actionEvent1 -> {
-
                     qsLbl.setText(qsTxt.getText());
                     ansLbl.setText(ansTxt.getText());
                     lblContainer.getChildren().clear();
                     lblContainer.getChildren().addAll(qsLbl,ansLbl);
 
                     if(!qsLbl.getText().equals(questions_list.get(finalI).get(0))){
-                        System.out.println(questions_list.get(finalI).get(0));
-                        System.out.println(qsLbl.getText());
                         qsLbl.setStyle("-fx-background-color: #00ff00; ");
+                        changedQ.put(finalI, qsLbl.getText());
                     }else {
                         qsLbl.setStyle(null);
+                        changedQ.remove(finalI);
                     }
                     if(!ansLbl.getText().equals(questions_list.get(finalI).get(1))){
                         ansLbl.setStyle("-fx-background-color: #00ff00; ");
+                        changedA.put(finalI, ansLbl.getText());
                     }else {
                         ansLbl.setStyle(null);
+                        changedA.remove(finalI);
                     }
 
                     blockContainer.getChildren().remove(1);
@@ -119,10 +126,11 @@ public class admin_controller {
                     accChanges.setDisable(false);
                     disChanges.setDisable(false);
 
+                    System.out.println(changedQ);
+                    System.out.println(changedA);
                 });
 
                 denyBtn.setOnAction(actionEvent12 -> {
-
                     qsLbl.setText(old_qs);
                     ansLbl.setText(old_ans);
                     lblContainer.getChildren().clear();
@@ -130,22 +138,22 @@ public class admin_controller {
 
                     blockContainer.getChildren().remove(1);
                     blockContainer.getChildren().remove(1);
-                    editBtn.setDisable(false);
-                    deleteBtn.setDisable(false);
+                    editBtn.setVisible(true);
+                    deleteBtn.setVisible(true);
+                    accChanges.setDisable(false);
+                    disChanges.setDisable(false);
 
                 });
             });
 
-            int finalI1 = i;
             deleteBtn.setOnAction(actionEvent -> {
-                v1.getChildren().remove(finalI1);
+                v1.getChildren().remove(deleteBtn.getParent().getParent());
                 accChanges.setDisable(false);
                 disChanges.setDisable(false);
             });
         }
 
         //Static
-        old_v1.getChildren().addAll(v1);  //backup for discard changes button
         in1.getChildren().add(v1);
 
         //Appeals
@@ -156,18 +164,21 @@ public class admin_controller {
             Label ansLbl = new Label(aps.get(i).get(1));
             Label rAnsLbl = new Label(aps.get(i).get(2));
 
-            VBox lblContainer = new VBox(qsLbl, ansLbl, rAnsLbl);
-            lblContainer.setMinSize(684,50);
+            VBox lblContainer = new VBox(qsLbl, ansLbl, rAnsLbl){{
+                setMinSize(684,50);
+            }};
 
-            Button acceptBtn = new Button("A");
-            acceptBtn.setPrefSize(44,50);
+            Button acceptBtn = new Button("A"){{
+                setPrefSize(44,50);
+            }};
 
-            Button denyBtn = new Button("D");
-            denyBtn.setPrefSize(44,50);
+            Button denyBtn = new Button("D"){{
+                setPrefSize(44,50);
+            }};
 
-            HBox blockContainer = new HBox(lblContainer, acceptBtn, denyBtn);
-
-            blockContainer.setMinSize(765,50);
+            HBox blockContainer = new HBox(lblContainer, acceptBtn, denyBtn){{
+                setMinSize(765,50);
+            }};
 
             BorderPane allContainer = new BorderPane(){{
                 setLeft(blockContainer);
@@ -186,7 +197,7 @@ public class admin_controller {
 
                 btnList.add(acceptBtn);
                 btnList.add(denyBtn);
-                allContainerContainer.add(allContainer);
+                allContainerContainer2.add(allContainer);
                 accChanges.setDisable(false);
                 disChanges.setDisable(false);
 
@@ -200,7 +211,7 @@ public class admin_controller {
 
                 btnList.add(acceptBtn);
                 btnList.add(denyBtn);
-                allContainerContainer.add(allContainer);
+                allContainerContainer2.add(allContainer);
                 accChanges.setDisable(false);
                 disChanges.setDisable(false);
 
@@ -212,8 +223,8 @@ public class admin_controller {
     }
 
     public void onAcceptChanges(ActionEvent actionEvent) {
-        for(int i=0; i<allContainerContainer.size(); i++){
-            allContainerContainer.get(i).getChildren().clear();
+        for(int i = 0; i< allContainerContainer2.size(); i++){
+            allContainerContainer2.get(i).getChildren().clear();
         }
 
         ArrayList<Integer> toRemove=new ArrayList<>();
@@ -232,11 +243,9 @@ public class admin_controller {
             disChanges.setDisable(true);
 
         }
-        System.out.println(toRemove);
         Collections.sort(toRemove);
 
         for(int i=toRemove.size()-1; i>-1; i--){
-            System.out.println(toRemove.get(i));
             aps.remove(aps.get(toRemove.get(i)));
         }
 
@@ -289,7 +298,28 @@ public class admin_controller {
         btnList.clear();
         for(ArrayList<String> item:Main.aps) aps.add((ArrayList<String>) item.clone());
 
+        for(Map.Entry me:changedQ.entrySet()){
+            HBox bb=(HBox) old_v1.get((Integer) me.getKey()).getLeft();
+            VBox vv=(VBox) bb.getChildren().get(0);
+            Label ll=(Label)  vv.getChildren().get(0);
+            ll.setText(questions_list.get((Integer) me.getKey()).get(0));
+            ll.setStyle(null);
+        }
+
+        for(Map.Entry me:changedA.entrySet()){
+            HBox bb=(HBox) old_v1.get((Integer) me.getKey()).getLeft();
+            VBox vv=(VBox) bb.getChildren().get(0);
+            Label ll=(Label)  vv.getChildren().get(1);
+            ll.setText(questions_list.get((Integer) me.getKey()).get(1));
+            ll.setStyle(null);
+        }
+
+        v1.getChildren().clear();
+        in1.getChildren().clear();
+        changedQ.clear();
+        changedA.clear();
         v1.getChildren().addAll(old_v1);
+        in1.getChildren().add(v1);
 
         accChanges.setDisable(true);
         disChanges.setDisable(true);
@@ -306,9 +336,11 @@ public class admin_controller {
             btnList.clear();
             v2.getChildren().clear();
             v1.getChildren().clear();
-            old_v1.getChildren().clear();
+            old_v1.clear();
             constBtnList.clear();
-            allContainerContainer.clear();
+            changedQ.clear();
+            changedA.clear();
+            allContainerContainer2.clear();
             questions_list.clear();
         }catch (Exception e){
             System.out.println("All clear");
