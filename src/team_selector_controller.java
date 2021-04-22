@@ -39,9 +39,9 @@ public class team_selector_controller {
             StageChanger.simpleChangeStage("Главное меню", "main_menu", subBtn);
 
 
-        }else if(ansTxt.getText().equals("adminka")){
+        }else if(team_key.equals("757b7d716be2b8c25fb166ff696b4d3de46b463592d7f96405a320d10cfb5660")){
             Main.get_appeals();
-            StageChanger.simpleChangeStage("a","admin",subBtn);
+            StageChanger.simpleChangeStage("Админка","admin",subBtn);
 
         }else if(!(teams_list.containsKey(team_key))){
             alert.setContentText("Looks like the team you are trying to access doesn't exist!");

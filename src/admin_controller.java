@@ -3,6 +3,7 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -36,8 +37,7 @@ public class admin_controller {
 
     public static ArrayList<Integer> question_to_delete=new ArrayList<>();
 
-    //public static VBox v1 =new VBox();
-    public static ArrayList<BorderPane> v1=new ArrayList<>();
+    public static HashMap<Integer, BorderPane> v1=new HashMap<>();
     public static VBox v2 =new VBox();
 
 
@@ -77,11 +77,10 @@ public class admin_controller {
 
             old_v1.add(allContainer);
             //v1.getChildren().add(allContainer);
-            v1.add(allContainer);
+            v1.put(i,allContainer);
 
 
-            //Static
-            in1.getChildren().add(new VBox(){{getChildren().addAll(v1);}});
+
             //button functionality
 
             int finalI = i;
@@ -157,17 +156,23 @@ public class admin_controller {
             int finalI1 = i;
             deleteBtn.setOnAction(actionEvent -> {
                 question_to_delete.add(finalI1);
-                //System.out.println(v1.getChildren().toString());
-                //v1.getChildren().remove(deleteBtn.getParent().getParent());
-                v1.remove(v1.get(finalI1));
+
+                v1.remove(finalI1);
                 in1.getChildren().clear();
-                in1.getChildren().add(new VBox(){{getChildren().addAll(v1);}});
+                in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());}});
                 System.out.println(v1.get(finalI1));
-                //System.out.println(v1.getChildren().toString());
+
                 accChanges.setDisable(false);
                 disChanges.setDisable(false);
             });
         }
+        //Static
+        Button add_question=new Button("+"){{
+            setOnAction(event -> {
+
+            });
+        }};
+        in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());}});
 
 
 
@@ -300,11 +305,12 @@ public class admin_controller {
 
         System.out.println(questions_list);
         for(int i=0; i<questions_list.size(); i++){
+            int finalI = i;
             HttpResponse<JsonNode> r=Unirest.put(questions_list.get(i).get(2))
                     .header("Content-type", "application/hal+json")
                     .body(new JSONObject(){{
-                        put("question",questions_list.get(0));
-                        put("answer", questions_list.get(1));
+                        put("question",questions_list.get(finalI).get(0));
+                        put("answer", questions_list.get(finalI).get(1));
                     }})
                     .asJson();
         }
@@ -330,6 +336,7 @@ public class admin_controller {
                 continue;
             }
         }
+        Main.questions_list.clear();
         Main.get_questions();
 
         old_v1.clear();
@@ -375,8 +382,11 @@ public class admin_controller {
         in1.getChildren().clear();
         changedQ.clear();
         changedA.clear();
-        v1.addAll(old_v1);
-        in1.getChildren().add(new VBox(){{getChildren().addAll(v1);}});
+        for(int j=0; j<old_v1.size();j++){
+            v1.put(j,old_v1.get(j));
+        }
+
+        in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());}});
 
         accChanges.setDisable(true);
         disChanges.setDisable(true);
