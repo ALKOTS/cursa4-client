@@ -30,7 +30,6 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         get_questions();
         get_teams();
-        //get_appeals();
 
         team=null;
 
@@ -40,6 +39,7 @@ public class Main extends Application {
 
     }
 
+    //check db connection
 
     public static void get_questions() throws UnirestException {
         HttpResponse<JsonNode> get_questions_response = Unirest.get(dbLink+"/questions").asJson();
@@ -60,8 +60,9 @@ public class Main extends Application {
     }
 
     public static void get_teams() throws Exception {
+        teams_list.clear();
         HttpResponse<JsonNode> get_teams_response = Unirest.get(dbLink+"/teams").asJson();
-        ArrayList<JSONArray> teams=new ArrayList<JSONArray>(Collections.singleton(get_teams_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("teams")));
+        ArrayList<JSONArray> teams= new ArrayList<>(Collections.singleton(get_teams_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("teams")));
         for(int i=0; i<teams.get(0).length(); i++){
             switch (Integer.parseInt(teams.get(0).getJSONObject(i).get("state").toString())){
                 case 0:
@@ -122,14 +123,14 @@ public class Main extends Application {
     }
 }
 
-//        HttpResponse<JsonNode> r= Unirest.delete("https://cursa4-server.herokuapp.com/teams/8")
+//        HttpResponse<JsonNode> r= Unirest.delete(dbLink+"/teams/8")
 //                .header("Content-type", "application/hal+json")
 //                .asJson();
 
 
 
 //        JSONObject jo=new JSONObject(){{put("name","mm");put("accessKey","mm");put("state",0);}};
-//        HttpResponse<JsonNode> r=Unirest.put("https://cursa4-server.herokuapp.com/teams/5")
+//        HttpResponse<JsonNode> r=Unirest.put(dbLink+"/teams/5")
 //                .header("Content-type", "application/hal+json")
 //                .body(jo)
 //                .asJson();
@@ -138,7 +139,7 @@ public class Main extends Application {
 
 //        JSONObject jo=new JSONObject(){{put("name","mm");put("accessKey","mm");put("state",1);}};
 //
-//        HttpResponse<JsonNode> r= Unirest.post("https://cursa4-server.herokuapp.com/teams")
+//        HttpResponse<JsonNode> r= Unirest.post(dbLink+"/teams")
 //                .header("Content-type", "application/hal+json")
 //        .body(jo)
 //        .asJson();

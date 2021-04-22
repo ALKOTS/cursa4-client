@@ -52,6 +52,15 @@
                         </AnchorPane>
                     </content>
                 </Tab>
+                <Tab text="Добавить вопрос">
+                    <content>
+                        <AnchorPane>
+                            <children>
+
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
             </tabs>
         </TabPane>
     </center>

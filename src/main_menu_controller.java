@@ -1,6 +1,7 @@
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
@@ -17,34 +18,20 @@ import java.util.Map;
 public class main_menu_controller {
 
 	@FXML
-	public Button startBtn;
-
-	@FXML
-	public Button teamSelectBtn;
+	public Button startBtn, teamSelectBtn, aboutBtn;
 
 	@FXML
 	public Label currTeamLbl,teamLbl;
 
 	public HashMap<String, HashMap<String, String>> teams_list=Main.teams_list;
 
-	public void initialize() {
+	public void initialize() throws UnirestException {
 		receiveTeam();
 		drawScoreBoard();
 	}
 
 	public void onStart(ActionEvent actionEvent) throws Exception {
 		if(Main.team!=null){
-			Main.teams_list.get(Main.team).put("score","0");
-			JSONObject jo=new JSONObject(){{
-				put("name",Main.teams_list.get(Main.team).get("name"));
-				put("accessKey",Main.team);
-				put("state",2);
-				put("score",0);
-			}};
-			HttpResponse<JsonNode> r= Unirest.put(Main.teams_list.get(Main.team).get("link"))
-					.header("Content-type", "application/hal+json")
-					.body(jo)
-					.asJson();
 			StageChanger.simpleChangeStage("Что? Где? Когда?","game", startBtn);
 		}
 		else {
@@ -61,9 +48,21 @@ public class main_menu_controller {
 		StageChanger.simpleChangeStage("Выберите команду", "team_selector", startBtn);
 	}
 
-	public void receiveTeam(){
+	public void receiveTeam() throws UnirestException {
 		if(Main.team!=null){
 			currTeamLbl.setText(Main.teams_list.get(Main.team).get("name"));
+
+			Main.teams_list.get(Main.team).put("score","0");
+			JSONObject jo=new JSONObject(){{
+				put("name",Main.teams_list.get(Main.team).get("name"));
+				put("accessKey",Main.team);
+				put("state",2);
+				put("score",0);
+			}};
+			HttpResponse<JsonNode> r= Unirest.put(Main.teams_list.get(Main.team).get("link"))
+					.header("Content-type", "application/hal+json")
+					.body(jo)
+					.asJson();
 		}
 	}
 
@@ -75,5 +74,9 @@ public class main_menu_controller {
 			}
 		}
 		teamLbl.setText(teams);
+	}
+
+	public void onAbout(ActionEvent actionEvent) throws Exception {
+		StageChanger.aboutChangeStage();
 	}
 }

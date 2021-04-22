@@ -22,16 +22,12 @@ public class StageChanger {
         cur_stage.close();
     }
 
-//    public static void actionChangeStage(String title, String scene, ActionEvent actionEvent) throws Exception{
-//        Stage team_selector_stage = new Stage();
-//        team_selector_stage.setTitle(title);
-//        team_selector_stage.setScene(SceneChanger.changeScene(scene));
-//
-//        Node w=(Node) actionEvent.getSource();
-//        Stage cur_stage = (Stage) w.getScene().getWindow();
-//        cur_stage.close();
-//
-//    }
+    public static void aboutChangeStage() throws Exception {
+        Stage team_selector_stage = new Stage();
+        team_selector_stage.setTitle("Об авторе");
+        team_selector_stage.setScene(SceneChanger.changeScene("about"));
+        team_selector_stage.show();
+    }
 
 }
 

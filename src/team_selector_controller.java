@@ -33,7 +33,8 @@ public class team_selector_controller {
         alert.setHeaderText("Error with your team!");
 
         String team_key=org.apache.commons.codec.digest.DigestUtils.sha256Hex(ansTxt.getText());
-
+        Main.get_teams();
+        teams_list=Main.teams_list;
         if(teams_list.containsKey(team_key)&&(Integer.parseInt(teams_list.get(team_key).get("state"))==1)){
             Main.team=team_key;
             StageChanger.simpleChangeStage("Главное меню", "main_menu", subBtn);
