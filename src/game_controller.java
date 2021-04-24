@@ -1,16 +1,14 @@
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class game_controller {
     @FXML
@@ -29,6 +27,8 @@ public class game_controller {
     public VBox vb;
 
     ArrayList<ArrayList<String>> questions=Main.questions_list;
+
+    ArrayList<ArrayList<String>> appeals=new ArrayList<>();
 
     private Random random=new Random();
     public String right_answer;
@@ -108,7 +108,7 @@ public class game_controller {
             count=60;
             ansTxt.setText("");
             timeBar.setProgress(1);
-            Integer qsIndex=random.nextInt(questions.size());
+            int qsIndex=random.nextInt(questions.size());
             right_answer=questions.get(qsIndex).get(1);
             qsLbl.setText(questions.get(qsIndex).get(0));
             questions.remove(questions.get(qsIndex));
@@ -135,6 +135,8 @@ public class game_controller {
     }
 
     public void endGame(String winner) throws Exception {
+        at.stop();
+        mt.stop();
         if(winner=="v"){
             qsLbl.setText("Viewers won");
         }else{
@@ -147,7 +149,7 @@ public class game_controller {
         ansTxt.setDisable(true);
         returnBtn.setVisible(true);
 
-        HttpResponse<JsonNode> r= Unirest.put(Main.teams_list.get(Main.team).get("link"))
+        Unirest.put(Main.teams_list.get(Main.team).get("link"))
                 .header("Content-type", "application/hal+json")
                 .body(new JSONObject(){{
                     put("name",Main.teams_list.get(Main.team).get("name"));
@@ -157,32 +159,53 @@ public class game_controller {
                 }})
                 .asJson();
 
+        AtomicInteger asyncChecker= new AtomicInteger();
+
+        for(int i=0; i<appeals.size(); i++){
+            int finalI1 = i;
+            new Thread(()->{
+                int finalI = finalI1;
+                try {
+                    Unirest.post(Main.dbLink+"/appeals")
+                            .header("Content-type", "application/hal+json")
+                            .body(new JSONObject(){{
+                                put("question", appeals.get(finalI).get(0));
+                                put("answer", appeals.get(finalI).get(1));
+                                put("ranswer", appeals.get(finalI).get(2));
+                                put("team", appeals.get(finalI).get(3));
+                            }})
+                            .asJson();
+                } catch (UnirestException e) {
+                }
+                asyncChecker.getAndIncrement();
+            }).start();
+
+        }
+
+
+        while (asyncChecker.get() <appeals.size()){
+            Thread.sleep(100);
+            System.out.println(asyncChecker.get());
+        }
+
         Main.team=null;
         Main.get_appeals();
         Main.get_teams();
 
-
     }
-
 
     public void onReturn(ActionEvent actionEvent) throws Exception {
         StageChanger.simpleChangeStage("Главное меню", "main_menu", returnBtn);
     }
 
     public void onAppeal(ActionEvent actionEvent) throws Exception {
-        at.stop();
 
-        HttpResponse<JsonNode> r= Unirest.post(Main.dbLink+"/appeals")
-                .header("Content-type", "application/hal+json")
-                .body(new JSONObject(){{
-                    put("question", qsLbl.getText());
-                    put("answer", ansTxt.getText());
-                    put("ranswer", rAns.getText());
-                    put("team", Main.team);
-                }})
-                .asJson();
-
-
+        appeals.add(new ArrayList<>(){{
+            add(qsLbl.getText());
+            add(ansTxt.getText());
+            add(rAns.getText());
+            add(Main.team);
+        }});
 
         new Alert(Alert.AlertType.CONFIRMATION){{
             setTitle("Confirmed");

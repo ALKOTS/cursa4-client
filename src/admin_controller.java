@@ -167,16 +167,16 @@ public class admin_controller {
     public void generateAppeals(){
         //Dynamic
         for (int i=0; i<aps.size(); i++){
-            VBox lblContainer = new VBox(new Label(aps.get(i).get(0)), new Label(aps.get(i).get(1)), new Label(aps.get(i).get(2))){{
+            VBox lblContainer = new VBox(new Label("Вопрос: "+ aps.get(i).get(0)), new Label("Ответ: "+aps.get(i).get(1)), new Label("Правильный ответ: "+aps.get(i).get(2))){{
                 setMinSize(684,50);
             }};
 
             Button acceptBtn = new Button("A"){{
-                setPrefSize(44,50);
+                setPrefSize(55,60);
             }};
 
             Button denyBtn = new Button("D"){{
-                setPrefSize(44,50);
+                setPrefSize(55,60);
             }};
 
             HBox blockContainer = new HBox(lblContainer, acceptBtn, denyBtn){{
@@ -287,7 +287,7 @@ public class admin_controller {
         changedQ.clear();
     }
 
-    public void acceptAppeals(){
+    public void acceptAppeals() throws Exception{
         for(int i = 0; i< allContainerContainer2.size(); i++){
             allContainerContainer2.get(i).getChildren().clear();
         }
@@ -315,15 +315,25 @@ public class admin_controller {
         }
 
         Main.aps.removeAll(aps);
+
+        AtomicInteger asyncChecker= new AtomicInteger();
+
         for(int i=Main.aps.size()-1; i>-1; i--){
-            try {
-                Unirest.delete(Main.aps.get(i).get(5))
-                        .header("Content-type", "application/hal+json")
-                        .asJson();
-                System.out.println("YES");
-            } catch (UnirestException e) {
-                e.printStackTrace();
-            }
+            int finalI = i;
+            new Thread(()->{
+                try {
+                    Unirest.delete(Main.aps.get(finalI).get(5))
+                            .header("Content-type", "application/hal+json")
+                            .asJson();
+                    System.out.println("YES");
+                } catch (UnirestException e) {
+                }
+                asyncChecker.getAndIncrement();
+            }).start();
+        }
+
+        while (asyncChecker.get() <Main.aps.size()){
+            Thread.sleep(100);
         }
 
         Main.aps.clear();

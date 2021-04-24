@@ -165,17 +165,18 @@ public class Main extends Application {
                 JSONArray appeals=get_appeals_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("appeals");
                 for (int j=0; j<appeals.length(); j++){
                     int finalI = j;
-                    if(!appeals.getJSONObject(finalI).get("team").toString().equals("null") && teams_list.get(appeals.getJSONObject(finalI).get("team").toString()).get("score")!=null){    //если счет не null
-                        aps.add(new ArrayList<>(){{
-                            add(appeals.getJSONObject(finalI).get("question").toString());
-                            add(appeals.getJSONObject(finalI).get("answer").toString());
-                            add(appeals.getJSONObject(finalI).get("ranswer").toString());
-                            add(appeals.getJSONObject(finalI).get("team").toString());
-                            add("null");
-                            add(appeals.getJSONObject(finalI).getJSONObject("_links").getJSONObject("self").getString("href"));
-                        }});
-                    }
-                    else{
+                    try{
+                        if(!appeals.getJSONObject(finalI).get("team").toString().equals(null) && !teams_list.get(appeals.getJSONObject(finalI).get("team").toString()).get("score").equals(null)) {
+                            aps.add(new ArrayList<>() {{
+                                add(appeals.getJSONObject(finalI).get("question").toString());
+                                add(appeals.getJSONObject(finalI).get("answer").toString());
+                                add(appeals.getJSONObject(finalI).get("ranswer").toString());
+                                add(appeals.getJSONObject(finalI).get("team").toString());
+                                add("null");
+                                add(appeals.getJSONObject(finalI).getJSONObject("_links").getJSONObject("self").getString("href"));
+                            }});
+                        }
+                    }catch (NullPointerException npe){
                         String toDelete=appeals.getJSONObject(finalI).getJSONObject("_links").getJSONObject("self").getString("href");
                         try {
                             Unirest.delete(toDelete)
@@ -184,6 +185,12 @@ public class Main extends Application {
                         } catch (UnirestException e) {
                         }
                     }
+                    {    //если счет не null
+
+                    }
+
+
+
                 }
             }
             asyncChecker.getAndIncrement();
