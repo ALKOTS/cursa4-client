@@ -18,5 +18,6 @@
             </AnchorPane>
         </content>
       </ScrollPane>
+      <Button fx:id="aboutBtn" layoutX="14.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAbout" text="?" />
    </children>
 </AnchorPane>

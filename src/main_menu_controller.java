@@ -45,7 +45,7 @@ public class main_menu_controller {
 	}
 
 	public void onTeamSelect(ActionEvent actionEvent) throws Exception {
-		StageChanger.simpleChangeStage("Выберите команду", "team_selector", startBtn);
+		StageChanger.simpleChangeStage("Выберите команду", "team_selector", teamSelectBtn);
 	}
 
 	public void receiveTeam() throws UnirestException {
@@ -59,7 +59,7 @@ public class main_menu_controller {
 				put("state",2);
 				put("score",0);
 			}};
-			HttpResponse<JsonNode> r= Unirest.put(Main.teams_list.get(Main.team).get("link"))
+			Unirest.put(Main.teams_list.get(Main.team).get("link"))
 					.header("Content-type", "application/hal+json")
 					.body(jo)
 					.asJson();

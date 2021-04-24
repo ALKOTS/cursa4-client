@@ -1,17 +1,14 @@
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import org.json.JSONObject;
 
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class admin_controller {
     @FXML
@@ -41,12 +38,7 @@ public class admin_controller {
     public static VBox v2 =new VBox();
 
 
-
-
-
-    public void generateAdmin() throws Exception {
-        //Questions
-
+    public void generateQuestions(){
         //Dynamic
 
         for(int i=0; i<questions_list.size(); i++){
@@ -76,10 +68,7 @@ public class admin_controller {
 
 
             old_v1.add(allContainer);
-            //v1.getChildren().add(allContainer);
             v1.put(i,allContainer);
-
-
 
             //button functionality
 
@@ -172,19 +161,13 @@ public class admin_controller {
 
             });
         }};
-        in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());}});
+        in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());getChildren().add(add_question);}});
+    }
 
-
-
-        //Appeals
-
+    public void generateAppeals(){
         //Dynamic
         for (int i=0; i<aps.size(); i++){
-            Label qsLbl = new Label(aps.get(i).get(0));
-            Label ansLbl = new Label(aps.get(i).get(1));
-            Label rAnsLbl = new Label(aps.get(i).get(2));
-
-            VBox lblContainer = new VBox(qsLbl, ansLbl, rAnsLbl){{
+            VBox lblContainer = new VBox(new Label(aps.get(i).get(0)), new Label(aps.get(i).get(1)), new Label(aps.get(i).get(2))){{
                 setMinSize(684,50);
             }};
 
@@ -207,7 +190,7 @@ public class admin_controller {
             v2.getChildren().add(allContainer);
 
             //buttons functionality
-            Integer index=i;
+            int index=i;
             acceptBtn.setOnAction(actionEvent -> {
 
                 aps.get(index).set(4,"Y");
@@ -242,7 +225,69 @@ public class admin_controller {
         in2.getChildren().add(v2);
     }
 
-    public void onAcceptChanges(ActionEvent actionEvent) throws UnirestException {
+    public void acceptQuestions() throws Exception {
+        for (int i=question_to_delete.size()-1; i>-1; i--){
+            Unirest.delete(questions_list.get(question_to_delete.get(i)).get(2))
+                    .header("Content-type", "application/hal+json")
+                    .asJson();
+            questions_list.remove(questions_list.get(question_to_delete.get(i)));
+        }
+        System.out.println(questions_list);
+
+        for(int i=0; i<v1.size(); i++){
+            HBox bb=(HBox) v1.get(i).getLeft();
+            VBox vv=(VBox) bb.getChildren().get(0);
+            Label llQ=(Label) vv.getChildren().get(0);
+            Label llA=(Label)  vv.getChildren().get(1);
+            questions_list.get(i).set(0,llQ.getText());
+            questions_list.get(i).set(1,llA.getText());
+
+            llQ.setStyle(null);
+            llA.setStyle(null);
+        }
+
+        //needs optimization
+
+        AtomicInteger asyncChecker= new AtomicInteger();
+
+        System.out.println(questions_list);
+        for(int i=0; i<questions_list.size(); i++){
+            int finalI1 = i;
+            new Thread(()->{
+                int finalI = finalI1;
+                try {
+                    Unirest.put(questions_list.get(finalI1).get(2))
+                            .header("Content-type", "application/hal+json")
+                            .body(new JSONObject(){{
+                                put("question",questions_list.get(finalI).get(0));
+                                put("answer", questions_list.get(finalI).get(1));
+                            }})
+                            .asJson();
+                } catch (UnirestException e) {
+                    e.printStackTrace();
+                }
+
+                asyncChecker.getAndIncrement();
+            }).start();
+        }
+
+        while (asyncChecker.get()<questions_list.size()){
+            Thread.sleep(100);
+        }
+        Main.get_questions();
+
+        System.out.println(Main.questions_list);
+
+        old_v1.clear();
+        for (int i=0; i<v1.size(); i++){
+            old_v1.add(v1.get(i));
+        }
+
+        changedA.clear();
+        changedQ.clear();
+    }
+
+    public void acceptAppeals(){
         for(int i = 0; i< allContainerContainer2.size(); i++){
             allContainerContainer2.get(i).getChildren().clear();
         }
@@ -281,48 +326,12 @@ public class admin_controller {
             }
         }
 
-
-        for (int i=question_to_delete.size()-1; i>-1; i--){
-            Unirest.delete(questions_list.get(question_to_delete.get(i)).get(2))
-                    .header("Content-type", "application/hal+json")
-                    .asJson();
-            questions_list.remove(questions_list.get(question_to_delete.get(i)));
-        }
-        //System.out.println(v1.getChildren().toString());
-        System.out.println(questions_list);
-
-        for(int i=0; i<v1.size(); i++){
-            HBox bb=(HBox) v1.get(i).getLeft();
-            VBox vv=(VBox) bb.getChildren().get(0);
-            Label llQ=(Label) vv.getChildren().get(0);
-            Label llA=(Label)  vv.getChildren().get(1);
-            questions_list.get(i).set(0,llQ.getText());
-            questions_list.get(i).set(1,llA.getText());
-
-            llQ.setStyle(null);
-            llA.setStyle(null);
-        }
-
-        System.out.println(questions_list);
-        for(int i=0; i<questions_list.size(); i++){
-            int finalI = i;
-            HttpResponse<JsonNode> r=Unirest.put(questions_list.get(i).get(2))
-                    .header("Content-type", "application/hal+json")
-                    .body(new JSONObject(){{
-                        put("question",questions_list.get(finalI).get(0));
-                        put("answer", questions_list.get(finalI).get(1));
-                    }})
-                    .asJson();
-        }
-
-
-
         Main.aps.clear();
         Main.teams_list.clear();
         for(ArrayList<String> item:aps) Main.aps.add((ArrayList<String>) item.clone());
         for (Map.Entry me:teams_list.entrySet()){
             try{
-                HttpResponse<JsonNode> r=Unirest.put(teams_list.get(me.getKey()).get("link"))
+                Unirest.put(teams_list.get(me.getKey()).get("link"))
                         .header("Content-type", "application/hal+json")
                         .body(new JSONObject(){{
                             put("name",teams_list.get(me.getKey()).get("name"));
@@ -333,35 +342,11 @@ public class admin_controller {
                         .asJson();
                 Main.teams_list.put(String.valueOf(me.getKey()), (HashMap<String, String>) me.getValue());
             }catch (Exception nfe){
-                continue;
             }
         }
-        Main.questions_list.clear();
-        Main.get_questions();
-
-        old_v1.clear();
-        for (int i=0; i<v1.size(); i++){
-            old_v1.add(v1.get(i));
-        }
-
-        changedA.clear();
-        changedQ.clear();
-
-        new Alert(Alert.AlertType.CONFIRMATION){{
-            setTitle("Success");
-            setHeaderText("Changes saved!");
-            showAndWait();
-        }};
     }
 
-    public void onDiscardChanges(ActionEvent actionEvent) {
-        for(int i=0; i<btnList.size(); i++){
-            btnList.get(i).setDisable(false);
-            btnList.get(i).setStyle(null);
-        }
-        btnList.clear();
-        for(ArrayList<String> item:Main.aps) aps.add((ArrayList<String>) item.clone());
-
+    public void discardQuestions(){
         for(Map.Entry me:changedQ.entrySet()){
             HBox bb=(HBox) old_v1.get((Integer) me.getKey()).getLeft();
             VBox vv=(VBox) bb.getChildren().get(0);
@@ -387,6 +372,38 @@ public class admin_controller {
         }
 
         in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());}});
+    }
+
+    public void discardAppeals(){
+        for (Button button : btnList) {
+            button.setDisable(false);
+            button.setStyle(null);
+        }
+        btnList.clear();
+        for(ArrayList<String> item:Main.aps) aps.add((ArrayList<String>) item.clone());
+    }
+
+    public void generateAdmin() throws Exception {
+        generateQuestions();
+        generateAppeals();
+    }
+
+
+    public void onAcceptChanges(ActionEvent actionEvent) throws Exception {
+        acceptQuestions();
+        acceptAppeals();
+
+
+        new Alert(Alert.AlertType.CONFIRMATION){{
+            setTitle("Success");
+            setHeaderText("Changes saved!");
+            showAndWait();
+        }};
+    }
+
+    public void onDiscardChanges(ActionEvent actionEvent) {
+        discardQuestions();
+        discardAppeals();
 
         accChanges.setDisable(true);
         disChanges.setDisable(true);
@@ -414,8 +431,6 @@ public class admin_controller {
             System.out.println("All clear");
         }
 
-
-
         accChanges.setDisable(true);
         disChanges.setDisable(true);
 
@@ -425,11 +440,10 @@ public class admin_controller {
             try{
                 teams_list.put(String.valueOf(me.getKey()), (HashMap<String, String>) me.getValue());
             }catch (NumberFormatException nfe){
-                continue;
             }
 
         }
-//        System.out.println(Main.aps);
+
         System.out.println(questions_list);
         System.out.println(aps);
         generateAdmin();

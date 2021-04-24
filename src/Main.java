@@ -7,12 +7,8 @@ import javafx.stage.Stage;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.Character.UnicodeBlock;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main extends Application {
 
@@ -24,10 +20,12 @@ public class Main extends Application {
 
     public static ArrayList<ArrayList<String>> aps=new ArrayList<>();  //[[question, answer, right answer, team, isApproved(Y, N, null), link], [...], ...]
 
-    public static String dbLink="https://cursa4-server.herokuapp.com";//"http://localhost:8080";
+    public static String dbLink="http://localhost:8080";//"https://cursa4-server.herokuapp.com";
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+        //need to check db connection
+        //generate_questions();
         get_questions();
         get_teams();
 
@@ -39,83 +37,170 @@ public class Main extends Application {
 
     }
 
-    //check db connection
-
-    public static void get_questions() throws UnirestException {
-        HttpResponse<JsonNode> get_questions_response = Unirest.get(dbLink+"/questions").asJson();
-        ArrayList<JSONArray> questions=new ArrayList<>(Collections.singleton(get_questions_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("questions")));
-
-
-        for (int i=0; i<questions.get(0).length(); i++){
+    public void generate_questions() throws UnirestException {
+        for(int i=0; i<24; i++){
             int finalI = i;
-            questions_list.add(new ArrayList<>(){{
-                add(questions.get(0).getJSONObject(finalI).get("question").toString());
-                add(questions.get(0).getJSONObject(finalI).get("answer").toString());
-                add(questions.get(0).getJSONObject(finalI).getJSONObject("_links").getJSONObject("self").getString("href"));
-            }});
+            JSONObject jo=new JSONObject(){{put("question","What is "+ finalI);put("answer",finalI);}};
 
+            Unirest.post(dbLink+"/questions")
+                    .header("Content-type", "application/hal+json")
+                    .body(jo)
+                    .asJson();
         }
+    }
+
+
+    public static void get_questions() throws Exception {
+        questions_list.clear();
+        AtomicInteger asyncChecker= new AtomicInteger();
+        int pages=Integer.parseInt(Unirest.get(dbLink+"/questions").asJson().getBody().getObject().getJSONObject("page").get("totalPages").toString());
+
+        new Thread(()->{
+            for(int i=0; i<pages; i++){
+                HttpResponse<JsonNode> get_questions_response= null;
+                try {
+                    get_questions_response = Unirest.get(dbLink+"/questions/?page="+i).asJson();
+                } catch (UnirestException e) {
+                }
+                JSONArray questions=get_questions_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("questions");
+
+                for (int j=0; j<questions.length(); j++){
+                    int finalJ = j;
+                    questions_list.add(new ArrayList<>(){{
+                        add(questions.getJSONObject(finalJ).get("question").toString());
+                        add(questions.getJSONObject(finalJ).get("answer").toString());
+                        add(questions.getJSONObject(finalJ).getJSONObject("_links").getJSONObject("self").getString("href"));
+                    }});
+                }
+            }
+            asyncChecker.getAndIncrement();
+        }).start();
+
+        if(pages!=1){
+            while (asyncChecker.get()<pages-1){
+                Thread.sleep(100);
+            }
+        }else {
+            while (asyncChecker.get()<pages){
+                Thread.sleep(100);
+            }
+        }
+
+
+
         System.out.println(questions_list);
 
     }
 
     public static void get_teams() throws Exception {
         teams_list.clear();
-        HttpResponse<JsonNode> get_teams_response = Unirest.get(dbLink+"/teams").asJson();
-        ArrayList<JSONArray> teams= new ArrayList<>(Collections.singleton(get_teams_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("teams")));
-        for(int i=0; i<teams.get(0).length(); i++){
-            switch (Integer.parseInt(teams.get(0).getJSONObject(i).get("state").toString())){
-                case 0:
-                    continue;
-                case 1:
-                    int finalI = i;
-                    teams_list.put(teams.get(0).getJSONObject(finalI).get("accessKey").toString(), new HashMap<>(){{
-                        put("name", teams.get(0).getJSONObject(finalI).get("name").toString());
-                        put("state", teams.get(0).getJSONObject(finalI).get("state").toString());
-                        put("score",null);
-                        put("link",teams.get(0).getJSONObject(finalI).getJSONObject("_links").getJSONObject("self").getString("href"));
-                    }});
-                    break;
-                case 2:
-                    int finalI1 = i;
-                    teams_list.put(teams.get(0).getJSONObject(finalI1).get("accessKey").toString(), new HashMap<>(){{
-                        put("name", teams.get(0).getJSONObject(finalI1).get("name").toString());
-                        put("state", teams.get(0).getJSONObject(finalI1).get("state").toString());
-                        put("score",teams.get(0).getJSONObject(finalI1).get("score").toString());
-                        put("link",teams.get(0).getJSONObject(finalI1).getJSONObject("_links").getJSONObject("self").getString("href"));
-                    }});
-                    break;
-                default:
-                    System.out.println("Неизвестное значение состояния");
-                    break;
+        AtomicInteger asyncChecker= new AtomicInteger();
+        int pages=Integer.parseInt(Unirest.get(dbLink+"/teams").asJson().getBody().getObject().getJSONObject("page").get("totalPages").toString());
+        new Thread(()->{
+            for(int i=0; i<pages; i++) {
+                HttpResponse<JsonNode> get_teams_response = null;
+                try {
+                    get_teams_response = Unirest.get(dbLink+"/teams/?page="+i).asJson();
+                } catch (UnirestException e) {
+                }
+                JSONArray teams = get_teams_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("teams");
+                for (int j = 0; j < teams.length(); j++) {
+
+                    switch (Integer.parseInt(teams.getJSONObject(j).get("state").toString())) {
+                        case 0:
+                            continue;
+                        case 1:
+                            int finalI = j;
+                            teams_list.put(teams.getJSONObject(finalI).get("accessKey").toString(), new HashMap<>() {{
+                                put("name", teams.getJSONObject(finalI).get("name").toString());
+                                put("state", teams.getJSONObject(finalI).get("state").toString());
+                                put("score", null);
+                                put("link", teams.getJSONObject(finalI).getJSONObject("_links").getJSONObject("self").getString("href"));
+                            }});
+                            break;
+                        case 2:
+                            int finalI1 = j;
+                            teams_list.put(teams.getJSONObject(finalI1).get("accessKey").toString(), new HashMap<>() {{
+                                put("name", teams.getJSONObject(finalI1).get("name").toString());
+                                put("state", teams.getJSONObject(finalI1).get("state").toString());
+                                put("score", teams.getJSONObject(finalI1).get("score").toString());
+                                put("link", teams.getJSONObject(finalI1).getJSONObject("_links").getJSONObject("self").getString("href"));
+                            }});
+                            break;
+                        default:
+                            System.out.println("Неизвестное значение состояния");
+                            break;
+                    }
+                }
+            }
+            asyncChecker.getAndIncrement();
+        }).start();
+
+        if(pages!=1){
+            while (asyncChecker.get()<pages-1){
+                Thread.sleep(100);
+            }
+        }else {
+            while (asyncChecker.get()<pages){
+                Thread.sleep(100);
             }
         }
+
         System.out.println(teams_list);
     }
 
-    public static void get_appeals() throws UnirestException {
+    public static void get_appeals() throws Exception {
         aps.clear();
-        HttpResponse<JsonNode> get_appeals_response = Unirest.get(dbLink+"/appeals").asJson();
-        ArrayList<JSONArray> appeals=new ArrayList<>(Collections.singleton(get_appeals_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("appeals")));
-        for (int i=0; i<appeals.get(0).length(); i++){
-            int finalI = i;
-            if(appeals.get(0).getJSONObject(finalI).get("team").toString()!="null" && teams_list.get(appeals.get(0).getJSONObject(finalI).get("team").toString()).get("score")!=null){    //если счет не null
-                aps.add(new ArrayList<>(){{
-                    add(appeals.get(0).getJSONObject(finalI).get("question").toString());
-                    add(appeals.get(0).getJSONObject(finalI).get("answer").toString());
-                    add(appeals.get(0).getJSONObject(finalI).get("ranswer").toString());
-                    add(appeals.get(0).getJSONObject(finalI).get("team").toString());
-                    add("null");
-                    add(appeals.get(0).getJSONObject(finalI).getJSONObject("_links").getJSONObject("self").getString("href"));
-                }});
+        AtomicInteger asyncChecker= new AtomicInteger();
+        int pages=Integer.parseInt(Unirest.get(dbLink+"/appeals").asJson().getBody().getObject().getJSONObject("page").get("totalPages").toString());
+
+        new Thread(()->{
+            for(int i=0; i<pages; i++)
+            {
+                HttpResponse<JsonNode> get_appeals_response = null;
+                try {
+                    get_appeals_response = Unirest.get(dbLink+"/appeals/?page="+i).asJson();
+                } catch (UnirestException e) {
+                }
+                JSONArray appeals=get_appeals_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("appeals");
+                for (int j=0; j<appeals.length(); j++){
+                    int finalI = j;
+                    if(!appeals.getJSONObject(finalI).get("team").toString().equals("null") && teams_list.get(appeals.getJSONObject(finalI).get("team").toString()).get("score")!=null){    //если счет не null
+                        aps.add(new ArrayList<>(){{
+                            add(appeals.getJSONObject(finalI).get("question").toString());
+                            add(appeals.getJSONObject(finalI).get("answer").toString());
+                            add(appeals.getJSONObject(finalI).get("ranswer").toString());
+                            add(appeals.getJSONObject(finalI).get("team").toString());
+                            add("null");
+                            add(appeals.getJSONObject(finalI).getJSONObject("_links").getJSONObject("self").getString("href"));
+                        }});
+                    }
+                    else{
+                        String toDelete=appeals.getJSONObject(finalI).getJSONObject("_links").getJSONObject("self").getString("href");
+                        try {
+                            Unirest.delete(toDelete)
+                                    .header("Content-type", "application/hal+json")
+                                    .asJson();
+                        } catch (UnirestException e) {
+                        }
+                    }
+                }
             }
-            else{
-                String toDelete=appeals.get(0).getJSONObject(finalI).getJSONObject("_links").getJSONObject("self").getString("href");
-                HttpResponse<JsonNode> r= Unirest.delete(toDelete)
-                        .header("Content-type", "application/hal+json")
-                        .asJson();
-           }
+            asyncChecker.getAndIncrement();
+        }).start();
+
+
+        if(pages!=1){
+            while (asyncChecker.get()<pages-1){
+                Thread.sleep(100);
+            }
+        }else {
+            while (asyncChecker.get()<pages){
+                Thread.sleep(100);
+            }
         }
+
+
     }
 
     public static void main(String[] args) {

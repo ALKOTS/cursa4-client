@@ -24,13 +24,13 @@ public class team_selector_controller {
     public HashMap<String, HashMap<String, String>> teams_list=Main.teams_list;
 
     public void initialize(){
-
     }
 
     public void selectTeam(ActionEvent actionEvent) throws Exception {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error Dialog");
-        alert.setHeaderText("Error with your team!");
+        Alert alert = new Alert(Alert.AlertType.ERROR){{
+            setTitle("Error Dialog");
+            setHeaderText("Error with your team!");
+        }};
 
         String team_key=org.apache.commons.codec.digest.DigestUtils.sha256Hex(ansTxt.getText());
         Main.get_teams();
@@ -38,7 +38,6 @@ public class team_selector_controller {
         if(teams_list.containsKey(team_key)&&(Integer.parseInt(teams_list.get(team_key).get("state"))==1)){
             Main.team=team_key;
             StageChanger.simpleChangeStage("Главное меню", "main_menu", subBtn);
-
 
         }else if(team_key.equals("757b7d716be2b8c25fb166ff696b4d3de46b463592d7f96405a320d10cfb5660")){
             Main.get_appeals();
