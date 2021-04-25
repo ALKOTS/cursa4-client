@@ -41,6 +41,7 @@ public class team_selector_controller {
 
         }else if(team_key.equals("757b7d716be2b8c25fb166ff696b4d3de46b463592d7f96405a320d10cfb5660")){
             Main.get_appeals();
+            Main.get_questions();
             StageChanger.simpleChangeStage("Админка","admin",subBtn);
 
         }else if(!(teams_list.containsKey(team_key))){

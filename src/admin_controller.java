@@ -19,7 +19,7 @@ public class admin_controller {
 
     public static ArrayList<Button> btnList =new ArrayList<>();
 
-    public static ArrayList<Button> constBtnList=new ArrayList<>();
+    //public static ArrayList<Button> constBtnList=new ArrayList<>();
 
     public static ArrayList<ArrayList<String>> aps=new ArrayList<>();
 
@@ -34,13 +34,14 @@ public class admin_controller {
 
     public static ArrayList<Integer> question_to_delete=new ArrayList<>();
 
+    public static HashMap<Integer,ArrayList<String>> added_questions=new HashMap<>();
+
     public static HashMap<Integer, BorderPane> v1=new HashMap<>();
     public static VBox v2 =new VBox();
 
 
     public void generateQuestions(){
         //Dynamic
-
         for(int i=0; i<questions_list.size(); i++){
             Label qsLbl=new Label(questions_list.get(i).get(0));
             Label ansLbl=new Label(questions_list.get(i).get(1));
@@ -156,11 +157,55 @@ public class admin_controller {
             });
         }
         //Static
-        Button add_question=new Button("+"){{
-            setOnAction(event -> {
+        Button add_question=new Button("+");
 
+        add_question.setOnAction(event -> {
+            in1.getChildren().remove(in1.getChildren().size()-1);
+
+            TextField qsTxt=new TextField();
+            TextField ansTxt=new TextField();
+
+            VBox lblContainer=new VBox(qsTxt,ansTxt){{
+                setMinSize(684,50);
+            }};
+            VBox.setVgrow(lblContainer, Priority.ALWAYS);
+
+            Button accBtn = new Button("A"){{
+                setPrefSize(44,50);
+            }};
+
+            Button denBtn = new Button("D"){{
+                setPrefSize(44,50);
+            }};
+
+            HBox blockContainer = new HBox(lblContainer, accBtn, denBtn){{
+                setMinSize(765,50);
+            }};
+
+            BorderPane allContainer = new BorderPane(){{
+                setLeft(blockContainer);
+            }};
+
+
+            accBtn.setOnAction(actionEvent -> {
+                if(ansTxt.getText().length()>0 && qsTxt.getText().length()>0){
+                    allContainer.getChildren().removeAll(accBtn,denBtn);
+                    added_questions.put(added_questions.size(),new ArrayList<>(){{add(qsTxt.getText()); add(ansTxt.getText());}});
+                }
+                else {
+//                    new Alert()
+                }
             });
-        }};
+
+            denBtn.setOnAction(actionEvent -> {
+                in1.getChildren().clear();
+                in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());getChildren().add(add_question);}});
+            });
+
+            in1.getChildren().clear();
+            in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());getChildren().add(allContainer);}});
+        });
+
         in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());getChildren().add(add_question);}});
     }
 
@@ -226,7 +271,12 @@ public class admin_controller {
     }
 
     public void acceptQuestions() throws Exception {
-        for (int i=question_to_delete.size()-1; i>-1; i--){
+
+        Collections.sort(question_to_delete, Collections.reverseOrder());
+        System.out.println(question_to_delete);
+
+        for (int i=0; i<question_to_delete.size(); i++){
+            System.out.println(question_to_delete.get(i));
             Unirest.delete(questions_list.get(question_to_delete.get(i)).get(2))
                     .header("Content-type", "application/hal+json")
                     .asJson();
@@ -235,18 +285,23 @@ public class admin_controller {
         System.out.println(questions_list);
 
         for(int i=0; i<v1.size(); i++){
-            HBox bb=(HBox) v1.get(i).getLeft();
-            VBox vv=(VBox) bb.getChildren().get(0);
-            Label llQ=(Label) vv.getChildren().get(0);
-            Label llA=(Label)  vv.getChildren().get(1);
-            questions_list.get(i).set(0,llQ.getText());
-            questions_list.get(i).set(1,llA.getText());
+            try{
+                HBox bb=(HBox) v1.get(i).getLeft();
+                VBox vv=(VBox) bb.getChildren().get(0);
+                Label llQ=(Label) vv.getChildren().get(0);
+                Label llA=(Label)  vv.getChildren().get(1);
+                questions_list.get(i).set(0,llQ.getText());
+                questions_list.get(i).set(1,llA.getText());
 
-            llQ.setStyle(null);
-            llA.setStyle(null);
+                System.out.println(questions_list.get(i));
+
+                llQ.setStyle(null);
+                llA.setStyle(null);
+            }catch (NullPointerException npe){
+                System.out.println("Tried to operate on a deleted element");
+            }
         }
 
-        //needs optimization
 
         AtomicInteger asyncChecker= new AtomicInteger();
 
@@ -263,15 +318,34 @@ public class admin_controller {
                                 put("answer", questions_list.get(finalI).get(1));
                             }})
                             .asJson();
-                } catch (UnirestException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
                 }
 
                 asyncChecker.getAndIncrement();
             }).start();
         }
 
-        while (asyncChecker.get()<questions_list.size()){
+        AtomicInteger asyncChecker2= new AtomicInteger();
+
+        for(int i=0; i<added_questions.size(); i++){
+            int finalI = i;
+            new Thread(()->{
+                try {
+                    Unirest.post(Main.dbLink+"/questions")
+                            .header("Content-type", "application/hal+json")
+                            .body(new JSONObject(){{
+                                put("question",added_questions.get(finalI).get(0));
+                                put("answer", added_questions.get(finalI).get(1));
+                            }})
+                            .asJson();
+                } catch (Exception e) {
+                    System.out.println("Хоба");
+                }
+                asyncChecker2.getAndIncrement();
+            }).start();
+        }
+
+        while (asyncChecker.get()<questions_list.size() || asyncChecker2.get() <added_questions.size()){
             Thread.sleep(100);
         }
         Main.get_questions();
@@ -285,6 +359,10 @@ public class admin_controller {
 
         changedA.clear();
         changedQ.clear();
+
+        //добавить повторную отрисовку
+
+        generateAdmin();
     }
 
     public void acceptAppeals() throws Exception{
@@ -394,6 +472,34 @@ public class admin_controller {
     }
 
     public void generateAdmin() throws Exception {
+        try{
+            in1.getChildren().clear();
+            v1.clear();
+            old_v1.clear();
+            changedQ.clear();
+            changedA.clear();
+            questions_list.clear();
+            question_to_delete.clear();
+            added_questions.clear();
+
+            in2.getChildren().clear();
+            aps.clear();
+            teams_list.clear();
+            btnList.clear();
+            v2.getChildren().clear();
+            allContainerContainer2.clear();
+        }catch (Exception nfe){ System.out.println("All clear"); }
+
+        for(ArrayList<String> item:Main.questions_list) questions_list.add((ArrayList<String>) item.clone());
+        for(ArrayList<String> item:Main.aps) aps.add((ArrayList<String>) item.clone());
+        for (Map.Entry me:Main.teams_list.entrySet()){
+            try{
+                teams_list.put(String.valueOf(me.getKey()), (HashMap<String, String>) me.getValue());
+            }catch (NumberFormatException nfe){
+            }
+
+        }
+
         generateQuestions();
         generateAppeals();
     }
@@ -425,18 +531,12 @@ public class admin_controller {
 
     public void initialize() throws Exception {
         try {
-            aps.clear();
-            teams_list.clear();
-            btnList.clear();
-            v2.getChildren().clear();
-            v1.clear();
-            old_v1.clear();
-            constBtnList.clear();
-            changedQ.clear();
-            changedA.clear();
-            allContainerContainer2.clear();
-            questions_list.clear();
-            question_to_delete.clear();
+
+
+
+            //constBtnList.clear();
+
+
         }catch (Exception e){
             System.out.println("All clear");
         }
@@ -444,19 +544,10 @@ public class admin_controller {
         accChanges.setDisable(true);
         disChanges.setDisable(true);
 
-        for(ArrayList<String> item:Main.aps) aps.add((ArrayList<String>) item.clone());
-        for(ArrayList<String> item:Main.questions_list) questions_list.add((ArrayList<String>) item.clone());
-        for (Map.Entry me:Main.teams_list.entrySet()){
-            try{
-                teams_list.put(String.valueOf(me.getKey()), (HashMap<String, String>) me.getValue());
-            }catch (NumberFormatException nfe){
-            }
 
-        }
-
+        generateAdmin();
         System.out.println(questions_list);
         System.out.println(aps);
-        generateAdmin();
     }
 
 }
