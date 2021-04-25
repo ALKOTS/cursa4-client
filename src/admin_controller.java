@@ -17,12 +17,8 @@ public class admin_controller {
     @FXML
     public AnchorPane in1,in2;
 
-//    @FXML
-//    public VBox presentQs, addedQs;
 
     public static ArrayList<Button> btnList =new ArrayList<>();
-
-    //public static ArrayList<Button> constBtnList=new ArrayList<>();
 
     public static ArrayList<ArrayList<String>> aps=new ArrayList<>();
 
@@ -40,11 +36,15 @@ public class admin_controller {
     public static HashMap<Integer,ArrayList<String>> added_questions=new HashMap<>();
 
     public static HashMap<Integer, BorderPane> v1=new HashMap<>();
+    public static HashMap<Integer, BorderPane> added_v1=new HashMap<>();
     public static VBox v2 =new VBox();
 
 
     public void generateQuestions(){
+        Button add_question=new Button("+");
+
         //Dynamic
+
         for(Map.Entry me:questions_list.entrySet()){
 
             Label qsLbl=new Label(questions_list.get(Integer.parseInt(me.getKey().toString())).get(0));
@@ -127,8 +127,6 @@ public class admin_controller {
                     accChanges.setDisable(false);
                     disChanges.setDisable(false);
 
-                    //System.out.println(changedQ);
-                    //System.out.println(changedA);
                 });
 
                 denyBtn.setOnAction(actionEvent12 -> {
@@ -153,15 +151,14 @@ public class admin_controller {
 
                 v1.remove(finalI1);
                 in1.getChildren().clear();
-                in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());}});
-                //System.out.println(v1.get(finalI1));
+                in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values()); getChildren().addAll(added_v1.values()); getChildren().add(add_question);}});
 
                 accChanges.setDisable(false);
                 disChanges.setDisable(false);
             });
         }
+
         //Static
-        Button add_question=new Button("+");
 
         add_question.setOnAction(event -> {
             in1.getChildren().remove(in1.getChildren().size()-1);
@@ -190,28 +187,47 @@ public class admin_controller {
                 setLeft(blockContainer);
             }};
 
+            in1.getChildren().clear();
+            in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());getChildren().addAll(added_v1.values()); getChildren().add(allContainer);}});
 
             accBtn.setOnAction(actionEvent -> {
                 if(ansTxt.getText().length()>0 && qsTxt.getText().length()>0){
-                    allContainer.getChildren().removeAll(accBtn,denBtn);
+
+                    added_v1.put(added_v1.size(), allContainer);
+
                     added_questions.put(added_questions.size(),new ArrayList<>(){{add(qsTxt.getText()); add(ansTxt.getText());}});
-                    
+
+                    blockContainer.getChildren().remove(1);
+                    blockContainer.getChildren().remove(1);
+
+
+                    lblContainer.getChildren().clear();
+                    lblContainer.getChildren().addAll(new Label(qsTxt.getText()), new Label(ansTxt.getText()));
+
+                    in1.getChildren().clear();
+                    in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());getChildren().addAll(added_v1.values());getChildren().add(add_question);}});
+
+                    accChanges.setDisable(false);
+                    disChanges.setDisable(false);
+
+
                 }
                 else {
-//                    new Alert()
+                    new Alert(Alert.AlertType.ERROR){{
+                        setTitle("Error");
+                        setHeaderText("One of the fields is empty");
+                        showAndWait();
+                    }};
                 }
             });
 
             denBtn.setOnAction(actionEvent -> {
                 in1.getChildren().clear();
-                in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());getChildren().add(add_question);}});
+                in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values()); getChildren().addAll(added_v1.values()); getChildren().add(add_question);}});
             });
-
-            in1.getChildren().clear();
-            in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());getChildren().add(allContainer);}});
         });
 
-        in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());getChildren().add(add_question);}});
+        in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());getChildren().addAll(added_v1.values()); getChildren().add(add_question);}});
     }
 
     public void generateAppeals(){
@@ -442,31 +458,18 @@ public class admin_controller {
     }
 
     public void discardQuestions(){
-        for(Map.Entry me:changedQ.entrySet()){
-            HBox bb=(HBox) old_v1.get((Integer) me.getKey()).getLeft();
-            VBox vv=(VBox) bb.getChildren().get(0);
-            Label ll=(Label)  vv.getChildren().get(0);
-            ll.setText(questions_list.get((Integer) me.getKey()).get(0));
-            ll.setStyle(null);
-        }
-        question_to_delete.clear();
-        for(Map.Entry me:changedA.entrySet()){
-            HBox bb=(HBox) old_v1.get((Integer) me.getKey()).getLeft();
-            VBox vv=(VBox) bb.getChildren().get(0);
-            Label ll=(Label)  vv.getChildren().get(1);
-            ll.setText(questions_list.get((Integer) me.getKey()).get(1));
-            ll.setStyle(null);
-        }
-
         v1.clear();
         in1.getChildren().clear();
+
+        added_v1.clear();
+        added_questions.clear();
         changedQ.clear();
         changedA.clear();
         for(int j=0; j<old_v1.size();j++){
             v1.put(j,old_v1.get(j));
         }
 
-        in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());}});
+        generateQuestions();
     }
 
     public void discardAppeals(){
@@ -488,6 +491,8 @@ public class admin_controller {
             questions_list.clear();
             question_to_delete.clear();
             added_questions.clear();
+            added_v1.clear();
+
 
             in2.getChildren().clear();
             aps.clear();
