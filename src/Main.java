@@ -3,10 +3,13 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import javafx.application.Application;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
+import org.apache.http.conn.HttpHostConnectException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.net.ConnectException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -26,14 +29,24 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         //need to check db connection
         //generate_questions();
-        get_questions();
-        get_teams();
+        try{
+            get_questions();
+            get_teams();
 
-        team=null;
+            team=null;
 
-        primaryStage.setTitle("Главное меню");
-        primaryStage.setScene(SceneChanger.changeScene("main_menu"));
-        primaryStage.show();
+            primaryStage.setTitle("Главное меню");
+            primaryStage.setScene(SceneChanger.changeScene("main_menu"));
+            primaryStage.show();
+        }catch (Exception e){
+            new Alert(Alert.AlertType.ERROR) {{
+                    setTitle("Error");
+                    setHeaderText("Error connecting to server!");
+                    setContentText("Looks like you can't connect to the server. Please check your connection and try later.");
+                    showAndWait();
+                }};
+            }
+
 
     }
 
@@ -48,7 +61,6 @@ public class Main extends Application {
                     .asJson();
         }
     }
-
 
     public static void get_questions() throws Exception {
         questions_list.clear();
