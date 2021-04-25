@@ -17,13 +17,16 @@ public class admin_controller {
     @FXML
     public AnchorPane in1,in2;
 
+//    @FXML
+//    public VBox presentQs, addedQs;
+
     public static ArrayList<Button> btnList =new ArrayList<>();
 
     //public static ArrayList<Button> constBtnList=new ArrayList<>();
 
     public static ArrayList<ArrayList<String>> aps=new ArrayList<>();
 
-    public static ArrayList<ArrayList<String>> questions_list=new ArrayList<>();
+    public static HashMap<Integer, ArrayList<String>> questions_list=new HashMap<>();
 
     public static HashMap<String, HashMap<String, String>> teams_list= new HashMap<>();
 
@@ -42,9 +45,10 @@ public class admin_controller {
 
     public void generateQuestions(){
         //Dynamic
-        for(int i=0; i<questions_list.size(); i++){
-            Label qsLbl=new Label(questions_list.get(i).get(0));
-            Label ansLbl=new Label(questions_list.get(i).get(1));
+        for(Map.Entry me:questions_list.entrySet()){
+
+            Label qsLbl=new Label(questions_list.get(Integer.parseInt(me.getKey().toString())).get(0));
+            Label ansLbl=new Label(questions_list.get(Integer.parseInt(me.getKey().toString())).get(1));
 
             VBox lblContainer=new VBox(qsLbl,ansLbl){{
                 setMinSize(684,50);
@@ -69,11 +73,11 @@ public class admin_controller {
 
 
             old_v1.add(allContainer);
-            v1.put(i,allContainer);
+            v1.put(Integer.parseInt(me.getKey().toString()),allContainer);
 
             //button functionality
 
-            int finalI = i;
+            int finalI = Integer.parseInt(me.getKey().toString());
             editBtn.setOnAction(actionEvent -> {
 
                 String old_qs=qsLbl.getText();
@@ -123,8 +127,8 @@ public class admin_controller {
                     accChanges.setDisable(false);
                     disChanges.setDisable(false);
 
-                    System.out.println(changedQ);
-                    System.out.println(changedA);
+                    //System.out.println(changedQ);
+                    //System.out.println(changedA);
                 });
 
                 denyBtn.setOnAction(actionEvent12 -> {
@@ -143,14 +147,14 @@ public class admin_controller {
                 });
             });
 
-            int finalI1 = i;
+            int finalI1 = Integer.parseInt(me.getKey().toString());
             deleteBtn.setOnAction(actionEvent -> {
                 question_to_delete.add(finalI1);
 
                 v1.remove(finalI1);
                 in1.getChildren().clear();
                 in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());}});
-                System.out.println(v1.get(finalI1));
+                //System.out.println(v1.get(finalI1));
 
                 accChanges.setDisable(false);
                 disChanges.setDisable(false);
@@ -191,6 +195,7 @@ public class admin_controller {
                 if(ansTxt.getText().length()>0 && qsTxt.getText().length()>0){
                     allContainer.getChildren().removeAll(accBtn,denBtn);
                     added_questions.put(added_questions.size(),new ArrayList<>(){{add(qsTxt.getText()); add(ansTxt.getText());}});
+                    
                 }
                 else {
 //                    new Alert()
@@ -273,27 +278,28 @@ public class admin_controller {
     public void acceptQuestions() throws Exception {
 
         Collections.sort(question_to_delete, Collections.reverseOrder());
-        System.out.println(question_to_delete);
+        //System.out.println(question_to_delete);
 
         for (int i=0; i<question_to_delete.size(); i++){
-            System.out.println(question_to_delete.get(i));
+            //System.out.println(questions_list.get(question_to_delete.get(i)).get(2));
             Unirest.delete(questions_list.get(question_to_delete.get(i)).get(2))
                     .header("Content-type", "application/hal+json")
                     .asJson();
-            questions_list.remove(questions_list.get(question_to_delete.get(i)));
+            questions_list.remove(question_to_delete.get(i));
         }
-        System.out.println(questions_list);
+//        System.out.println(questions_list);
+//        System.out.println(v1);
 
-        for(int i=0; i<v1.size(); i++){
+        for (Map.Entry me:v1.entrySet()){
             try{
-                HBox bb=(HBox) v1.get(i).getLeft();
+                HBox bb=(HBox) v1.get(Integer.parseInt(me.getKey().toString())).getLeft();
                 VBox vv=(VBox) bb.getChildren().get(0);
                 Label llQ=(Label) vv.getChildren().get(0);
                 Label llA=(Label)  vv.getChildren().get(1);
-                questions_list.get(i).set(0,llQ.getText());
-                questions_list.get(i).set(1,llA.getText());
+                questions_list.get(Integer.parseInt(me.getKey().toString())).set(0,llQ.getText());
+                questions_list.get(Integer.parseInt(me.getKey().toString())).set(1,llA.getText());
 
-                System.out.println(questions_list.get(i));
+                //System.out.println(questions_list.get(Integer.parseInt(me.getKey().toString())));
 
                 llQ.setStyle(null);
                 llA.setStyle(null);
@@ -305,9 +311,10 @@ public class admin_controller {
 
         AtomicInteger asyncChecker= new AtomicInteger();
 
-        System.out.println(questions_list);
-        for(int i=0; i<questions_list.size(); i++){
-            int finalI1 = i;
+        //System.out.println(questions_list);
+        for(Map.Entry me:questions_list.entrySet()){
+
+            int finalI1 = Integer.parseInt(me.getKey().toString());
             new Thread(()->{
                 int finalI = finalI1;
                 try {
@@ -350,7 +357,7 @@ public class admin_controller {
         }
         Main.get_questions();
 
-        System.out.println(Main.questions_list);
+        //System.out.println(Main.questions_list);
 
         old_v1.clear();
         for (int i=0; i<v1.size(); i++){
@@ -490,7 +497,9 @@ public class admin_controller {
             allContainerContainer2.clear();
         }catch (Exception nfe){ System.out.println("All clear"); }
 
-        for(ArrayList<String> item:Main.questions_list) questions_list.add((ArrayList<String>) item.clone());
+        for(int i=0; i<Main.questions_list.size(); i++){
+            questions_list.put(i, (ArrayList<String>) Main.questions_list.get(i).clone());
+        }
         for(ArrayList<String> item:Main.aps) aps.add((ArrayList<String>) item.clone());
         for (Map.Entry me:Main.teams_list.entrySet()){
             try{
@@ -530,17 +539,7 @@ public class admin_controller {
     }
 
     public void initialize() throws Exception {
-        try {
-
-
-
-            //constBtnList.clear();
-
-
-        }catch (Exception e){
-            System.out.println("All clear");
-        }
-
+        System.out.println("-------------------Admin-----------------------");
         accChanges.setDisable(true);
         disChanges.setDisable(true);
 
