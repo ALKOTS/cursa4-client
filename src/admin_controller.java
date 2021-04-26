@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import org.json.JSONObject;
@@ -11,6 +12,7 @@ import org.json.JSONObject;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+
 
 public class admin_controller {
     @FXML
@@ -33,7 +35,7 @@ public class admin_controller {
 
     public static ArrayList<BorderPane> old_v1 =new ArrayList<>();
 
-    public static HashMap<Integer,HashMap<Integer, String>> changed=new HashMap<>();
+    public static HashMap<Integer,HashMap<Integer, String>> changed1 =new HashMap<>();
 
     public static ArrayList<Integer> question_to_delete=new ArrayList<>();
 
@@ -43,6 +45,29 @@ public class admin_controller {
     public static HashMap<Integer, BorderPane> added_v1=new HashMap<>();
     public static VBox v2 =new VBox();
 
+    public void acceptVersion(VBox lblContainer, HashMap<Integer, ArrayList<String>> requiredList, HashMap<Integer,HashMap<Integer, String>> changed, int finalI, HBox blockContainer, Button editBtn, Button deleteBtn){
+        for(int j=0; j<lblContainer.getChildren().size(); j++){
+            if(!((Label) lblContainer.getChildren().get(j)).getText().equals(requiredList.get(finalI).get(j))){
+                lblContainer.getChildren().get(j).setStyle("-fx-background-color: #00ff00; ");
+                int finalJ = j;
+                try{
+                    changed.get(j).put(finalI, ((Label) lblContainer.getChildren().get(finalJ)).getText());
+                }catch (NullPointerException npe){
+                    changed.put(j, new HashMap<>(){{put(finalI, ((Label) lblContainer.getChildren().get(finalJ)).getText());}});
+                }
+
+            }else {
+                lblContainer.getChildren().get(j).setStyle(null);
+                changed.get(j).remove(finalI);
+            }
+        }
+
+        blockContainer.getChildren().set(1,editBtn);
+        blockContainer.getChildren().set(2,deleteBtn);
+        accChanges.setDisable(false);
+        disChanges.setDisable(false);
+
+    }
 
     public void generateQuestions(){
         Button add_question=new Button("+");
@@ -107,26 +132,8 @@ public class admin_controller {
                     lblContainer.getChildren().clear();
                     lblContainer.getChildren().addAll(qsLbl,ansLbl);
 
-                    for(int j=0; j<2; j++){
-                        if(!((Label) lblContainer.getChildren().get(j)).getText().equals(questions_list.get(finalI).get(j))){
-                            lblContainer.getChildren().get(j).setStyle("-fx-background-color: #00ff00; ");
-                            int finalJ = j;
-                            try{
-                                changed.get(j).put(finalI, ((Label) lblContainer.getChildren().get(finalJ)).getText());
-                            }catch (NullPointerException npe){
-                                changed.put(j, new HashMap<>(){{put(finalI, ((Label) lblContainer.getChildren().get(finalJ)).getText());}});
-                            }
 
-                        }else {
-                            lblContainer.getChildren().get(j).setStyle(null);
-                            changed.get(j).remove(finalI);
-                        }
-                    }
-
-                    blockContainer.getChildren().set(1,editBtn);
-                    blockContainer.getChildren().set(2,deleteBtn);
-                    accChanges.setDisable(false);
-                    disChanges.setDisable(false);
+                    acceptVersion(lblContainer,questions_list,changed1,finalI,blockContainer,editBtn,deleteBtn);
 
                 });
 
@@ -332,6 +339,9 @@ public class admin_controller {
                     lblContainer.getChildren().clear();
                     lblContainer.getChildren().addAll(nameLbl,stateLbl,scoreLbl);
 
+                    //чтобы сюда подошел acceptVersion необходимо изменить формат questions_list на id:[question:question, answer:answer, link:link]
+
+
                 });
 
                 denBtn.setOnAction(actionEvent1 -> {
@@ -351,11 +361,11 @@ public class admin_controller {
             questions_list.remove(question_to_delete.get(i));
         }
 
-        System.out.println(changed);
-        for(Map.Entry me:changed.entrySet()){
-            for(Map.Entry he:changed.get(me.getKey()).entrySet()){
+        System.out.println(changed1);
+        for(Map.Entry me: changed1.entrySet()){
+            for(Map.Entry he: changed1.get(me.getKey()).entrySet()){
                 try{
-                    questions_list.get(he.getKey()).set(Integer.parseInt(me.getKey().toString()),changed.get(me.getKey()).get(he.getKey()));
+                    questions_list.get(he.getKey()).set(Integer.parseInt(me.getKey().toString()), changed1.get(me.getKey()).get(he.getKey()));
                 }catch (NullPointerException npe){
                     System.out.println("Trying to access non-existing element");
                 }
@@ -415,7 +425,7 @@ public class admin_controller {
             old_v1.add(v1.get(i));
         }
 
-        changed.clear();
+        changed1.clear();
 
     }
 
@@ -496,7 +506,7 @@ public class admin_controller {
         added_v1.clear();
         added_questions.clear();
 
-        changed.clear();
+        changed1.clear();
         for(int j=0; j<old_v1.size();j++){
             v1.put(j,old_v1.get(j));
         }
@@ -522,7 +532,7 @@ public class admin_controller {
             in1.getChildren().clear();
             v1.clear();
             old_v1.clear();
-            changed.clear();
+            changed1.clear();
             questions_list.clear();
             question_to_delete.clear();
             added_questions.clear();
