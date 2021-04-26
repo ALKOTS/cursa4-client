@@ -120,7 +120,6 @@ public class Main extends Application {
 
                     switch (Integer.parseInt(teams.getJSONObject(j).get("state").toString())) {
                         case 0:
-                            continue;
                         case 1:
                             int finalI = j;
                             teams_list.put(teams.getJSONObject(finalI).get("accessKey").toString(), new HashMap<>() {{
