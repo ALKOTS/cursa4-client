@@ -31,17 +31,28 @@ public class main_menu_controller {
 	}
 
 	public void onStart(ActionEvent actionEvent) throws Exception {
-		if(Main.team!=null){
-			StageChanger.simpleChangeStage("Что? Где? Когда?","game", startBtn);
-		}
-		else {
-			new Alert(Alert.AlertType.ERROR){{
-				setTitle("Error Dialog");
-				setHeaderText("Error with your team!");
-				setContentText("Looks like you haven't selected your team yet! You can't start a game without a team!");
+		Main.get_questions();
+		if(Main.questions_list.size()<23){
+			new Alert(Alert.AlertType.ERROR) {{
+				setTitle("Error");
+				setHeaderText("Too little questions available");
+				setContentText("You need at least 24 questions to play the game. Please, contact your admin for more information");
 				showAndWait();
 			}};
+		}else{
+			if(Main.team!=null){
+				StageChanger.simpleChangeStage("Что? Где? Когда?","game", startBtn);
+			}
+			else {
+				new Alert(Alert.AlertType.ERROR){{
+					setTitle("Error Dialog");
+					setHeaderText("Error with your team!");
+					setContentText("Looks like you haven't selected your team yet! You can't start a game without a team!");
+					showAndWait();
+				}};
+			}
 		}
+
 	}
 
 	public void onTeamSelect(ActionEvent actionEvent) throws Exception {
