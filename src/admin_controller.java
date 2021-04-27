@@ -36,6 +36,7 @@ public class admin_controller {
     public static ArrayList<BorderPane> old_v1 =new ArrayList<>();
 
     public static HashMap<Integer,HashMap<Integer, String>> changed1 =new HashMap<>();
+    public static HashMap<Integer,HashMap<String, String>> changed3 =new HashMap<>();
 
     public static ArrayList<Integer> question_to_delete=new ArrayList<>();
 
@@ -318,6 +319,8 @@ public class admin_controller {
             HBox blockContainer=new HBox(lblContainer, editBtn, deleteBtn);
             in3.getChildren().add(blockContainer);
 
+            String finalI=me.getKey().toString();
+
             editBtn.setOnAction(actionEvent -> {
                 lblContainer.getChildren().clear();
                 ObservableList<String> statesList=FXCollections.observableArrayList("0", "1", "2");
@@ -340,7 +343,30 @@ public class admin_controller {
                     lblContainer.getChildren().addAll(nameLbl,stateLbl,scoreLbl);
 
                     //чтобы сюда подошел acceptVersion необходимо изменить формат questions_list на id:[question:question, answer:answer, link:link]
+                    //changed3 string key
+                    //acceptVersion();
+                    for(int j=0; j<lblContainer.getChildren().size(); j++){
+                        if(!((Label) lblContainer.getChildren().get(j)).getText().equals(teams_list.get(finalI).get(j))){
+                            lblContainer.getChildren().get(j).setStyle("-fx-background-color: #00ff00; ");
+                            int finalJ = j;
+                            try{
+                                changed3.get(j).put(finalI, ((Label) lblContainer.getChildren().get(finalJ)).getText());
+                            }catch (NullPointerException npe){
+                                changed3.put(j, new HashMap<>(){{put(finalI, ((Label) lblContainer.getChildren().get(finalJ)).getText());}});
+                            }
 
+                        }else {
+                            lblContainer.getChildren().get(j).setStyle(null);
+                            changed3.get(j).remove(finalI);
+                        }
+                    }
+
+                    blockContainer.getChildren().set(1,editBtn);
+                    blockContainer.getChildren().set(2,deleteBtn);
+                    accChanges.setDisable(false);
+                    disChanges.setDisable(false);
+                    //
+                    System.out.println(changed3);
 
                 });
 

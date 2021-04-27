@@ -64,13 +64,14 @@ public class main_menu_controller {
 		if(Main.team!=null){
 			currTeamLbl.setText(Main.teams_list.get(Main.team).get("name"));
 
-			Main.teams_list.get(Main.team).put("score","0");
+			Main.teams_list.get(Main.team).put("score","0");  // перенести это в старт гейм
 			JSONObject jo=new JSONObject(){{
 				put("name",Main.teams_list.get(Main.team).get("name"));
 				put("accessKey",Main.team);
 				put("state",2);
 				put("score",0);
 			}};
+
 			Unirest.put(Main.teams_list.get(Main.team).get("link"))
 					.header("Content-type", "application/hal+json")
 					.body(jo)
