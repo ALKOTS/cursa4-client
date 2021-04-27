@@ -18,14 +18,15 @@ import java.util.Map;
 public class main_menu_controller {
 
 	@FXML
-	public Button startBtn, teamSelectBtn, aboutBtn;
+	public Button startBtn, teamSelectBtn, updateBtn;
 
 	@FXML
 	public Label currTeamLbl,teamLbl;
 
-	public HashMap<String, HashMap<String, String>> teams_list=Main.teams_list;
+	public HashMap<String, HashMap<String, String>> teams_list;
 
 	public void initialize() throws UnirestException {
+		teams_list=Main.teams_list;
 		receiveTeam();
 		drawScoreBoard();
 	}
@@ -89,5 +90,11 @@ public class main_menu_controller {
 
 	public void onAbout(ActionEvent actionEvent) throws Exception {
 		StageChanger.aboutChangeStage();
+	}
+
+	public void onUpdateBtn(ActionEvent actionEvent) throws Exception {
+		Main.get_teams();
+		teams_list=Main.teams_list;
+		drawScoreBoard();
 	}
 }

@@ -116,6 +116,7 @@
                         <Button fx:id="accChanges" disable="true" mnemonicParsing="false" onAction="#onAcceptChanges" text="Принять" />
                         <Button fx:id="disChanges" disable="true" mnemonicParsing="false" onAction="#onDiscardChanges" text="Отклонить" />
                         <Button fx:id="mainMenu" mnemonicParsing="false" onAction="#onMainMenu" text="Главное меню" />
+                  <Button fx:id="updateBtn" mnemonicParsing="false" onAction="#onUpdateBtn" text="Обновить страницу" />
                     </children>
                 </HBox>
             </children>

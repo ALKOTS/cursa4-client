@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class admin_controller {
     @FXML
-    public Button accChanges, disChanges, mainMenu;
+    public Button accChanges, disChanges, mainMenu, updateBtn;
 
     @FXML
     public AnchorPane in1, in2;
@@ -500,13 +500,6 @@ public class admin_controller {
     }
 
     public void discardQuestions(){
-        v1.clear();
-        in1.getChildren().clear();
-
-        added_v1.clear();
-        added_questions.clear();
-
-        changed1.clear();
         for(int j=0; j<old_v1.size();j++){
             v1.put(j,old_v1.get(j));
         }
@@ -546,6 +539,9 @@ public class admin_controller {
             v2.getChildren().clear();
 
             in3.getChildren().clear();
+
+            accChanges.setDisable(true);
+            disChanges.setDisable(true);
         }catch (Exception nfe){ System.out.println("All clear"); }
 
         for(int i=0; i<Main.questions_list.size(); i++){
@@ -589,6 +585,13 @@ public class admin_controller {
 
     public void onMainMenu(ActionEvent actionEvent) throws Exception {
         StageChanger.simpleChangeStage("Главное меню","main_menu", mainMenu);
+    }
+
+    public void onUpdateBtn(ActionEvent actionEvent) throws Exception {
+        Main.get_questions();
+        Main.get_teams();
+        Main.get_appeals();
+        generateAdmin();
     }
 
     public void initialize() throws Exception {

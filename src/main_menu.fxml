@@ -19,5 +19,6 @@
         </content>
       </ScrollPane>
       <Button fx:id="aboutBtn" layoutX="14.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAbout" text="Об авторе" />
+      <Button fx:id="updateBtn" layoutX="586.0" layoutY="214.0" mnemonicParsing="false" onAction="#onUpdateBtn" text="Обновить" />
    </children>
 </AnchorPane>
