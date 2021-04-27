@@ -15,7 +15,7 @@
                                     <content>
                                         <AnchorPane fx:id="in1">
                                              <children>
-                                                <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+
                                              </children></AnchorPane>
                                     </content>
                                 </ScrollPane>
@@ -63,22 +63,9 @@
                                     <children>
                                         <ScrollPane prefHeight="348.0" prefWidth="380.0" HBox.hgrow="ALWAYS">
                                             <content>
-                                                <AnchorPane>
+                                                <AnchorPane fx:id="in3">
                                                     <children>
-                                                        <VBox fx:id="in3" prefHeight="425.0" prefWidth="434.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                            <children>
-<!--                                                                <HBox alignment="CENTER">-->
-<!--                                                                    <children>-->
-<!--                                                                        <TextField promptText="Name" />-->
-<!--                                                                        <ComboBox prefHeight="25.0" prefWidth="9.0" promptText="0" />-->
-<!--                                                                        <Label text="Score" />-->
-<!--                                                                        <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="Button" />-->
-<!--                                                                        <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" text="Button" />-->
-<!--                                                                    </children>-->
-<!--                                                                </HBox>-->
-<!--                                                <Button mnemonicParsing="false" text="+" />-->
-                                                            </children>
-                                                        </VBox>
+
                                                     </children>
                                                 </AnchorPane>
                                             </content>

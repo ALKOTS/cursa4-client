@@ -19,10 +19,8 @@ public class admin_controller {
     public Button accChanges, disChanges, mainMenu, updateBtn;
 
     @FXML
-    public AnchorPane  in1,in2;
+    public AnchorPane  in1,in2, in3;
 
-    @FXML
-    public VBox in3;
 
 
     public static ArrayList<ArrayList<String>> aps=new ArrayList<>();
@@ -40,13 +38,13 @@ public class admin_controller {
 
     public static HashMap<Integer,ArrayList<String>> added_questions=new HashMap<>();
 
-    public static HashMap<Integer, BorderPane> v1=new HashMap<>();
-    public static HashMap<Integer, BorderPane> added_v1=new HashMap<>();
+    public static HashMap<Integer, HBox> v1=new HashMap<>();
+    public static HashMap<Integer, HBox> added_v1=new HashMap<>();
 
     public static VBox v2 =new VBox();
 
-    public static HashMap<Integer, BorderPane> v3=new HashMap<>();
-    public static HashMap<Integer, BorderPane> added_v3=new HashMap<>();
+    public static HashMap<String, HBox> v3=new HashMap<>();
+    public static HashMap<String, HBox> added_v3=new HashMap<>();
 
     public void acceptVersion(VBox lblContainer, HashMap<String, ArrayList<String>> requiredList, HashMap<Integer,HashMap<String, String>> changed, String finalI, HBox blockContainer, Button editBtn, Button deleteBtn){
         for(int j=0; j<2; j++){
@@ -114,12 +112,7 @@ public class admin_controller {
                 setMinSize(765,50);
             }};
 
-            BorderPane allContainer = new BorderPane(){{
-                setLeft(blockContainer);
-            }};
-
-
-            v1.put(Integer.parseInt(me.getKey().toString()),allContainer);
+            v1.put(Integer.parseInt(me.getKey().toString()),blockContainer);
 
             //button functionality
 
@@ -174,7 +167,7 @@ public class admin_controller {
 
                 v1.remove(Integer.parseInt(finalI1));
                 in1.getChildren().clear();
-                in1.getChildren().addAll(new VBox(){{getChildren().addAll(v1.values()); getChildren().addAll(added_v1.values()); getChildren().add(add_question);}});
+                in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values()); getChildren().addAll(added_v1.values()); getChildren().add(add_question);}});
 
                 accChanges.setDisable(false);
                 disChanges.setDisable(false);
@@ -206,17 +199,14 @@ public class admin_controller {
                 setMinSize(765,50);
             }};
 
-            BorderPane allContainer = new BorderPane(){{
-                setLeft(blockContainer);
-            }};
 
             in1.getChildren().clear();
-            in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());getChildren().addAll(added_v1.values()); getChildren().add(allContainer);}});
+            in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());getChildren().addAll(added_v1.values()); getChildren().add(blockContainer);}});
 
             accBtn.setOnAction(actionEvent -> {
                 if(ansTxt.getText().length()>0 && qsTxt.getText().length()>0){
 
-                    added_v1.put(added_v1.size(), allContainer);
+                    added_v1.put(added_v1.size(), blockContainer);
 
                     added_questions.put(added_questions.size(),new ArrayList<>(){{add(qsTxt.getText()); add(ansTxt.getText());}});
 
@@ -333,7 +323,8 @@ public class admin_controller {
             }};
 
             HBox blockContainer=new HBox(lblContainer, editBtn, deleteBtn);
-            in3.getChildren().add(blockContainer);
+
+            v3.put(me.getKey().toString(),blockContainer);
 
             String finalI=me.getKey().toString();
 
@@ -382,6 +373,7 @@ public class admin_controller {
 
             });
         }
+        in3.getChildren().add(new VBox(){{getChildren().addAll(v3.values());}});
     }
 
     public void acceptQuestions() throws Exception {
