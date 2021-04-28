@@ -65,17 +65,15 @@ public class main_menu_controller {
 			currTeamLbl.setText(Main.teams_list.get(Main.team).get("name"));
 
 			Main.teams_list.get(Main.team).put("score","0");  // перенести это в старт гейм
-			JSONObject jo=new JSONObject(){{
+
+			JSONObject toPut=new JSONObject(){{
 				put("name",Main.teams_list.get(Main.team).get("name"));
 				put("accessKey",Main.team);
 				put("state",2);
 				put("score",0);
 			}};
 
-			Unirest.put(Main.teams_list.get(Main.team).get("link"))
-					.header("Content-type", "application/hal+json")
-					.body(jo)
-					.asJson();
+			Unirests.put(Main.teams_list.get(Main.team).get("link"), toPut);
 		}
 	}
 
@@ -90,11 +88,12 @@ public class main_menu_controller {
 	}
 
 	public void onAbout(ActionEvent actionEvent) throws Exception {
-		StageChanger.aboutChangeStage();
+		StageChanger.noCloseChangeStage("Об авторе","about");
 	}
 
 	public void onUpdateBtn(ActionEvent actionEvent) throws Exception {
 		Main.get_teams();
+		Main.get_questions();
 		teams_list=Main.teams_list;
 		drawScoreBoard();
 	}

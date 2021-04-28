@@ -27,27 +27,14 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        //need to check db connection
-        //generate_questions();
-        try{
-            get_questions();
-            get_teams();
+        get_questions();
+        get_teams();
 
-            team=null;
+        team=null;
 
-            primaryStage.setTitle("Главное меню");
-            primaryStage.setScene(SceneChanger.changeScene("main_menu"));
-            primaryStage.show();
-        }catch (Exception e){
-            new Alert(Alert.AlertType.ERROR) {{
-                    setTitle("Error");
-                    setHeaderText("Error connecting to server!");
-                    setContentText("Looks like you can't connect to the server. Please check your connection and try later.");
-                    showAndWait();
-                }};
-            }
-
-
+        primaryStage.setTitle("Главное меню");
+        primaryStage.setScene(SceneChanger.changeScene("main_menu"));
+        primaryStage.show();
     }
 
     public void generate_questions() throws UnirestException {
@@ -55,24 +42,28 @@ public class Main extends Application {
             int finalI = i;
             JSONObject jo=new JSONObject(){{put("question","What is "+ finalI);put("answer",finalI);}};
 
-            Unirest.post(dbLink+"/questions")
-                    .header("Content-type", "application/hal+json")
-                    .body(jo)
-                    .asJson();
+            Unirests.post(dbLink+"/questions", jo);
+
+//            Unirest.post(dbLink+"/questions")
+//                    .header("Content-type", "application/hal+json")
+//                    .body(jo)
+//                    .asJson();
         }
     }
 
     public static void get_questions() throws Exception {
         questions_list.clear();
         AtomicInteger asyncChecker= new AtomicInteger();
-        int pages=Integer.parseInt(Unirest.get(dbLink+"/questions").asJson().getBody().getObject().getJSONObject("page").get("totalPages").toString());
+
+        int pages=Integer.parseInt(Unirests.get(dbLink+"/questions").getBody().getObject().getJSONObject("page").get("totalPages").toString());
+
 
         new Thread(()->{
             for(int i=0; i<pages; i++){
                 HttpResponse<JsonNode> get_questions_response= null;
                 try {
-                    get_questions_response = Unirest.get(dbLink+"/questions/?page="+i).asJson();
-                } catch (UnirestException e) {
+                    get_questions_response = Unirests.get(dbLink+"/questions/?page="+i);
+                } catch (Exception e) {
                 }
                 JSONArray questions=get_questions_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("questions");
 
@@ -107,13 +98,14 @@ public class Main extends Application {
     public static void get_teams() throws Exception {
         teams_list.clear();
         AtomicInteger asyncChecker= new AtomicInteger();
-        int pages=Integer.parseInt(Unirest.get(dbLink+"/teams").asJson().getBody().getObject().getJSONObject("page").get("totalPages").toString());
+        int pages=Integer.parseInt(Unirests.get(dbLink+"/teams").getBody().getObject().getJSONObject("page").get("totalPages").toString());
         new Thread(()->{
             for(int i=0; i<pages; i++) {
                 HttpResponse<JsonNode> get_teams_response = null;
                 try {
-                    get_teams_response = Unirest.get(dbLink+"/teams/?page="+i).asJson();
-                } catch (UnirestException e) {
+//                    get_teams_response = Unirest.get(dbLink+"/teams/?page="+i).asJson();
+                    get_teams_response = Unirests.get(dbLink+"/teams/?page="+i);
+                } catch (Exception e) {
                 }
                 JSONArray teams = get_teams_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("teams");
                 for (int j = 0; j < teams.length(); j++) {
@@ -127,6 +119,7 @@ public class Main extends Application {
                                 put("state", teams.getJSONObject(finalI).get("state").toString());
                                 put("score", null);
                                 put("link", teams.getJSONObject(finalI).getJSONObject("_links").getJSONObject("self").getString("href"));
+                                put("email", teams.getJSONObject(finalI).get("email").toString());
                             }});
                             break;
                         case 2:
@@ -136,6 +129,7 @@ public class Main extends Application {
                                 put("state", teams.getJSONObject(finalI1).get("state").toString());
                                 put("score", teams.getJSONObject(finalI1).get("score").toString());
                                 put("link", teams.getJSONObject(finalI1).getJSONObject("_links").getJSONObject("self").getString("href"));
+                                put("email", teams.getJSONObject(finalI1).get("email").toString());
                             }});
                             break;
                         default:
@@ -163,15 +157,15 @@ public class Main extends Application {
     public static void get_appeals() throws Exception {
         aps.clear();
         AtomicInteger asyncChecker= new AtomicInteger();
-        int pages=Integer.parseInt(Unirest.get(dbLink+"/appeals").asJson().getBody().getObject().getJSONObject("page").get("totalPages").toString());
+        int pages=Integer.parseInt(Unirests.get(dbLink+"/appeals").getBody().getObject().getJSONObject("page").get("totalPages").toString());
 
         new Thread(()->{
             for(int i=0; i<pages; i++)
             {
                 HttpResponse<JsonNode> get_appeals_response = null;
                 try {
-                    get_appeals_response = Unirest.get(dbLink+"/appeals/?page="+i).asJson();
-                } catch (UnirestException e) {
+                    get_appeals_response = Unirests.get(dbLink+"/appeals/?page="+i);
+                } catch (Exception e) {
                 }
                 JSONArray appeals=get_appeals_response.getBody().getObject().getJSONObject("_embedded").getJSONArray("appeals");
                 for (int j=0; j<appeals.length(); j++){
@@ -190,18 +184,13 @@ public class Main extends Application {
                     }catch (NullPointerException npe){
                         String toDelete=appeals.getJSONObject(finalI).getJSONObject("_links").getJSONObject("self").getString("href");
                         try {
-                            Unirest.delete(toDelete)
-                                    .header("Content-type", "application/hal+json")
-                                    .asJson();
+//                            Unirest.delete(toDelete)
+//                                    .header("Content-type", "application/hal+json")
+//                                    .asJson();
+                            Unirests.delete(toDelete);
                         } catch (UnirestException e) {
                         }
                     }
-                    {    //если счет не null
-
-                    }
-
-
-
                 }
             }
             asyncChecker.getAndIncrement();
@@ -217,34 +206,9 @@ public class Main extends Application {
                 Thread.sleep(100);
             }
         }
-
-
     }
 
     public static void main(String[] args) {
         launch(args);
     }
 }
-
-//        HttpResponse<JsonNode> r= Unirest.delete(dbLink+"/teams/8")
-//                .header("Content-type", "application/hal+json")
-//                .asJson();
-
-
-
-//        JSONObject jo=new JSONObject(){{put("name","mm");put("accessKey","mm");put("state",0);}};
-//        HttpResponse<JsonNode> r=Unirest.put(dbLink+"/teams/5")
-//                .header("Content-type", "application/hal+json")
-//                .body(jo)
-//                .asJson();
-
-
-
-//        JSONObject jo=new JSONObject(){{put("name","mm");put("accessKey","mm");put("state",1);}};
-//
-//        HttpResponse<JsonNode> r= Unirest.post(dbLink+"/teams")
-//                .header("Content-type", "application/hal+json")
-//        .body(jo)
-//        .asJson();
-//
-//        System.out.println(r.getBody().toString());

@@ -10,6 +10,7 @@ import javafx.scene.layout.*;
 import org.json.JSONObject;
 
 
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -19,7 +20,7 @@ public class admin_controller {
     public Button accChanges, disChanges, mainMenu, updateBtn;
 
     @FXML
-    public AnchorPane  in1,in2, in3;
+    public AnchorPane  in1, in2, in3;
 
 
 
@@ -37,14 +38,24 @@ public class admin_controller {
     public static ArrayList<String> teams_to_delete=new ArrayList<>();
 
     public static HashMap<Integer,ArrayList<String>> added_questions=new HashMap<>();
+    public static HashMap<String,ArrayList<String>> added_teams=new HashMap<>();
 
-    public static HashMap<Integer, HBox> v1=new HashMap<>();
-    public static HashMap<Integer, HBox> added_v1=new HashMap<>();
+    public static HashMap<String, HBox> v1=new HashMap<>();
+    public static HashMap<String, HBox> added_v1=new HashMap<>();
 
     public static VBox v2 =new VBox();
 
     public static HashMap<String, HBox> v3=new HashMap<>();
     public static HashMap<String, HBox> added_v3=new HashMap<>();
+
+    public String generateKey(){
+        String key="";
+        String alph="0123456789QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm";
+        for(int i=0; i<8; i++){
+            key+=alph.charAt(new Random().nextInt(alph.length()-1));
+        }
+        return key;
+    }
 
     public void acceptVersion(VBox lblContainer, HashMap<String, ArrayList<String>> requiredList, HashMap<Integer,HashMap<String, String>> changed, String finalI, HBox blockContainer, Button editBtn, Button deleteBtn){
         for(int j=0; j<2; j++){
@@ -74,15 +85,47 @@ public class admin_controller {
 
     }
 
-    public void deleteVersion(ArrayList<String> what_to_delete, String finalI1, HashMap<Integer,BorderPane> v, VBox in, VBox toFill){
+    public void deleteVersion(ArrayList<String> what_to_delete, String finalI1, HashMap<String,HBox> v, AnchorPane in, HashMap<String, HBox> added_v, Button add_el){
         what_to_delete.add(finalI1);
 
-        v.remove(Integer.parseInt(finalI1));
+        v.remove(finalI1);
         in.getChildren().clear();
-        in.getChildren().add(toFill);//new VBox(){{getChildren().addAll(v.values()); getChildren().addAll(added_v.values()); getChildren().add(add_question);}});
+        in.getChildren().add(new VBox(){{getChildren().addAll(v.values()); getChildren().addAll(added_v.values()); getChildren().add(add_el);}});
 
         accChanges.setDisable(false);
         disChanges.setDisable(false);
+    }
+
+    public void denyBtnFunction(Label lbl1, Label lbl2, String old_lbl1, String old_lbl2, VBox lblContainer, HBox blockContainer, Button editBtn, Button deleteBtn){
+        lbl1.setText(old_lbl1);
+        lbl2.setText(old_lbl2);
+        lblContainer.getChildren().clear();
+        lblContainer.getChildren().addAll(lbl1,lbl2);
+
+        blockContainer.getChildren().set(1,editBtn);
+        blockContainer.getChildren().set(2,deleteBtn);
+        accChanges.setDisable(false);
+        disChanges.setDisable(false);
+    }
+
+    public void acceptUpdater(ArrayList<String> list_to_delete, HashMap<String, ArrayList<String>> list, int link_index, HashMap<Integer,HashMap<String, String>> changed) throws UnirestException {
+        Collections.sort(list_to_delete, Collections.reverseOrder());
+        System.out.println("-----\n"+ list_to_delete+"\n------");
+        for (int i=0; i<list_to_delete.size(); i++){
+
+            Unirests.delete(list.get(list_to_delete.get(i)).get(link_index));
+            list.remove(list_to_delete.get(i));
+        }
+
+        for(Map.Entry me: changed.entrySet()){
+            for(Map.Entry he: changed.get(me.getKey()).entrySet()){
+                try{
+                    list.get(he.getKey().toString()).set(Integer.parseInt(me.getKey().toString()), changed.get(me.getKey()).get(he.getKey()));
+                }catch (NullPointerException npe){
+                    System.out.println("Trying to access non-existing element");
+                }
+            }
+        }
     }
 
     public void generateQuestions(){
@@ -112,7 +155,7 @@ public class admin_controller {
                 setMinSize(765,50);
             }};
 
-            v1.put(Integer.parseInt(me.getKey().toString()),blockContainer);
+            v1.put(me.getKey().toString(),blockContainer);
 
             //button functionality
 
@@ -148,29 +191,13 @@ public class admin_controller {
                 });
 
                 denyBtn.setOnAction(actionEvent2 -> {
-                    qsLbl.setText(old_qs);
-                    ansLbl.setText(old_ans);
-                    lblContainer.getChildren().clear();
-                    lblContainer.getChildren().addAll(qsLbl,ansLbl);
-
-                    blockContainer.getChildren().set(1,editBtn);
-                    blockContainer.getChildren().set(2,deleteBtn);
-                    accChanges.setDisable(false);
-                    disChanges.setDisable(false);
-
+                    denyBtnFunction(qsLbl, ansLbl, old_qs, old_ans, lblContainer, blockContainer, editBtn, deleteBtn);
                 });
             });
 
             String finalI1 = me.getKey().toString();
             deleteBtn.setOnAction(actionEvent -> {
-                question_to_delete.add(finalI1);
-
-                v1.remove(Integer.parseInt(finalI1));
-                in1.getChildren().clear();
-                in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values()); getChildren().addAll(added_v1.values()); getChildren().add(add_question);}});
-
-                accChanges.setDisable(false);
-                disChanges.setDisable(false);
+                deleteVersion(question_to_delete, finalI1, v1, in1, added_v1, add_question);
             });
         }
 
@@ -206,7 +233,7 @@ public class admin_controller {
             accBtn.setOnAction(actionEvent -> {
                 if(ansTxt.getText().length()>0 && qsTxt.getText().length()>0){
 
-                    added_v1.put(added_v1.size(), blockContainer);
+                    added_v1.put(String.valueOf(added_v1.size()), blockContainer);
 
                     added_questions.put(added_questions.size(),new ArrayList<>(){{add(qsTxt.getText()); add(ansTxt.getText());}});
 
@@ -303,12 +330,13 @@ public class admin_controller {
     }
 
     public void generateTeams(){
-        Button addTeam=new Button("+");
+        Button add_team=new Button("+");
 
         for (Map.Entry me:teams_list.entrySet()){
             Label nameLbl=new Label(((ArrayList<String>)me.getValue()).get(0));
             Label stateLbl=new Label(((ArrayList<String>)me.getValue()).get(1));
             Label scoreLbl=new Label("Счет: "+((ArrayList)me.getValue()).get(2));
+
 
             VBox lblContainer=new VBox(nameLbl,stateLbl,scoreLbl){{
                 setMinSize(300,50);
@@ -349,6 +377,11 @@ public class admin_controller {
                     nameLbl.setText(((TextField) lblContainer.getChildren().get(0)).getText());
                     stateLbl.setText(((ComboBox) lblContainer.getChildren().get(1)).getValue().toString());
                     lblContainer.getChildren().clear();
+                    if(!stateLbl.getText().equals("2")){
+                        scoreLbl.setText("Счет: "+null);
+                    }else{
+                        scoreLbl.setText("Счет: "+0);
+                    }
                     lblContainer.getChildren().addAll(nameLbl,stateLbl,scoreLbl);
 
                     acceptVersion(lblContainer, teams_list, changed3, finalI, blockContainer, editBtn, deleteBtn);
@@ -356,63 +389,125 @@ public class admin_controller {
                 });
 
                 denBtn.setOnAction(actionEvent1 -> {
-                    nameLbl.setText(old_name);
-                    stateLbl.setText(old_state);
-                    lblContainer.getChildren().clear();
-                    lblContainer.getChildren().addAll(nameLbl, stateLbl, scoreLbl);
-
-                    blockContainer.getChildren().set(1,editBtn);
-                    blockContainer.getChildren().set(2,deleteBtn);
-                    accChanges.setDisable(false);
-                    disChanges.setDisable(false);
+                    denyBtnFunction(nameLbl, stateLbl, old_name, old_state, lblContainer, blockContainer, editBtn, deleteBtn);
 
                 });
             });
 
             deleteBtn.setOnAction(actionEvent -> {
+                deleteVersion(teams_to_delete, finalI, v3, in3, added_v3, add_team);
 
             });
         }
-        in3.getChildren().add(new VBox(){{getChildren().addAll(v3.values());}});
+
+        add_team.setOnAction(actionEvent -> {
+
+            in3.getChildren().remove(in3.getChildren().size()-1);
+
+            TextField nameTxt=new TextField() {{
+                    setPromptText("Название команды");
+                }};
+            ObservableList<String> statesList=FXCollections.observableArrayList("0", "1", "2");
+
+            ComboBox stateBox=new ComboBox(statesList){{
+                setValue(0);
+            }};
+
+            VBox lblContainer=new VBox(nameTxt, stateBox, new Label()){{
+                setMinSize(342,50);
+            }};
+            VBox.setVgrow(lblContainer, Priority.ALWAYS);
+
+            Button accBtn = new Button("A"){{
+                setPrefSize(44,50);
+            }};
+
+            Button denBtn = new Button("D"){{
+                setPrefSize(44,50);
+            }};
+
+            HBox blockContainer = new HBox(lblContainer, accBtn, denBtn){{
+                setMinSize(765,50);
+            }};
+
+
+            in3.getChildren().clear();
+            in3.getChildren().add(new VBox(){{getChildren().addAll(v3.values());getChildren().addAll(added_v3.values()); getChildren().add(blockContainer);}});
+
+            accBtn.setOnAction(actionEvent1 -> {
+
+//                String key=;
+//
+//                key=org.apache.commons.codec.digest.DigestUtils.sha256Hex(key);
+
+                if(nameTxt.getText().length()>0){
+
+                    String simple_key=generateKey();
+                    String key=org.apache.commons.codec.digest.DigestUtils.sha256Hex(simple_key);
+
+                    while (teams_list.containsKey(key) || added_teams.containsKey(key)){
+                        simple_key=generateKey();
+                        key=org.apache.commons.codec.digest.DigestUtils.sha256Hex(simple_key);
+                    }
+
+                    System.out.println(simple_key);
+
+                    added_v3.put(key , blockContainer);
+
+                    added_teams.put(key ,new ArrayList<>(){{add(nameTxt.getText()); add(stateBox.getValue().toString()); add(null);}});
+
+                    System.out.println(added_teams);
+
+                    blockContainer.getChildren().remove(1);
+                    blockContainer.getChildren().remove(1);
+
+
+                    lblContainer.getChildren().clear();
+                    lblContainer.getChildren().addAll(new Label(nameTxt.getText()), new Label(stateBox.getValue().toString()), new Label(){{setText("Счет: "+null);}});
+
+                    in3.getChildren().clear();
+                    in3.getChildren().add(new VBox(){{getChildren().addAll(v3.values());getChildren().addAll(added_v3.values());getChildren().add(add_team);}});
+
+                    accChanges.setDisable(false);
+                    disChanges.setDisable(false);
+
+
+                }
+                else {
+                    new Alert(Alert.AlertType.ERROR){{
+                        setTitle("Error");
+                        setHeaderText("One of the fields is empty");
+                        showAndWait();
+                    }};
+                }
+            });
+
+            denBtn.setOnAction(actionEvent1 -> {
+                in3.getChildren().clear();
+                in3.getChildren().add(new VBox(){{getChildren().addAll(v3.values()); getChildren().addAll(added_v3.values()); getChildren().add(add_team);}});
+            });
+
+        });
+
+        in3.getChildren().add(new VBox(){{getChildren().addAll(v3.values());getChildren().addAll(added_v3.values());getChildren().add(add_team);}});
     }
 
     public void acceptQuestions() throws Exception {
-        Collections.sort(question_to_delete, Collections.reverseOrder());
-
-        for (int i=0; i<question_to_delete.size(); i++){
-            Unirest.delete(questions_list.get(question_to_delete.get(i)).get(2))
-                    .header("Content-type", "application/hal+json")
-                    .asJson();
-            questions_list.remove(question_to_delete.get(i));
-        }
-
-        System.out.println(changed1);
-        for(Map.Entry me: changed1.entrySet()){
-            for(Map.Entry he: changed1.get(me.getKey()).entrySet()){
-                try{
-                    questions_list.get(he.getKey().toString()).set(Integer.parseInt(me.getKey().toString()), changed1.get(me.getKey()).get(he.getKey()));
-                }catch (NullPointerException npe){
-                    System.out.println("Trying to access non-existing element");
-                }
-
-            }
-        }
+        acceptUpdater(question_to_delete, questions_list, 2, changed1);
 
         AtomicInteger asyncChecker= new AtomicInteger();
 
         for(Map.Entry me:questions_list.entrySet()){
 
-            int finalI1 = Integer.parseInt(me.getKey().toString());
+            String finalI1 = me.getKey().toString();
             new Thread(()->{
-                int finalI = finalI1;
+                String finalI = finalI1;
                 try {
-                    Unirest.put(questions_list.get(String.valueOf(finalI1)).get(2))
-                            .header("Content-type", "application/hal+json")
-                            .body(new JSONObject(){{
-                                put("question",questions_list.get(String.valueOf(finalI)).get(0));
-                                put("answer", questions_list.get(String.valueOf(finalI)).get(1));
-                            }})
-                            .asJson();
+                    JSONObject toPut=new JSONObject(){{
+                        put("question",questions_list.get(finalI).get(0));
+                        put("answer", questions_list.get(finalI).get(1));
+                    }};
+                    Unirests.put(questions_list.get(finalI1).get(2),toPut);
                 } catch (Exception e) {
                 }
 
@@ -426,13 +521,14 @@ public class admin_controller {
             int finalI = i;
             new Thread(()->{
                 try {
-                    Unirest.post(Main.dbLink+"/questions")
-                            .header("Content-type", "application/hal+json")
-                            .body(new JSONObject(){{
-                                put("question",added_questions.get(finalI).get(0));
-                                put("answer", added_questions.get(finalI).get(1));
-                            }})
-                            .asJson();
+
+                    JSONObject toPost=new JSONObject(){{
+                        put("question",added_questions.get(finalI).get(0));
+                        put("answer", added_questions.get(finalI).get(1));
+                    }};
+
+                    Unirests.post(Main.dbLink+"/questions", toPost);
+
                 } catch (Exception e) {
                     System.out.println("Хоба");
                 }
@@ -481,44 +577,111 @@ public class admin_controller {
         for(int i=Main.aps.size()-1; i>-1; i--){
             try {
                 System.out.println(Main.aps.get(i));
-                Unirest.delete(Main.aps.get(i).get(5))
-                        .header("Content-type", "application/hal+json")
-                        .asJson();
+                Unirests.delete(Main.aps.get(i).get(5));
             } catch (UnirestException e) {
             }
-
         }
-
-
 
         Main.aps.clear();
-        Main.teams_list.clear();
+        //Main.teams_list.clear();
         for(ArrayList<String> item:aps) Main.aps.add((ArrayList<String>) item.clone());
-        for (Map.Entry me:teams_list.entrySet()){
-            new Thread(()->{
-                try{
-                    Unirest.put(((ArrayList<String>)me.getValue()).get(3))
-                            .header("Content-type", "application/hal+json")
-                            .body(new JSONObject(){{
-                                put("name",((ArrayList<String>) me.getValue()).get(0));
-                                put("accessKey",me.getKey());
-                                put("state",((ArrayList<String>) me.getValue()).get(1));
-                                put("score",((ArrayList<String>) me.getValue()).get(2));
-                            }})
-                            .asJson();
-                }catch (Exception nfe){
-                }
-                asyncChecker2.getAndIncrement();
-            }).start();
-            while (asyncChecker2.get()<Main.teams_list.size()){
-                Thread.sleep(100);
-            }
-        }
-        Main.get_teams();
+//        for (Map.Entry me:teams_list.entrySet()){
+//            new Thread(()->{
+//                try{
+//                    JSONObject toPut=new JSONObject(){{
+//                        put("name",((ArrayList<String>) me.getValue()).get(0));
+//                        put("accessKey",me.getKey());
+//                        put("state",((ArrayList<String>) me.getValue()).get(1));
+//                        put("score",((ArrayList<String>) me.getValue()).get(2));
+//                        put("email", ((ArrayList<String>) me.getValue()).get(4));
+//                    }};
+//
+//                    Unirests.put(((ArrayList<String>)me.getValue()).get(3), toPut);
+//
+//                }catch (Exception e){
+//                }
+//                asyncChecker2.getAndIncrement();
+//            }).start();
+//            while (asyncChecker2.get()<Main.teams_list.size()){
+//                Thread.sleep(100);
+//            }
+//        }
+//        Main.get_teams();
 
     }
 
-    public void acceptTeams(){
+    public void acceptTeams() throws Exception {
+        acceptUpdater(teams_to_delete, teams_list, 3, changed3);
+
+        AtomicInteger asyncChecker = new AtomicInteger();
+
+        for (Map.Entry me : teams_list.entrySet()) {
+
+            if(!teams_list.get(me.getKey().toString()).get(1).equals("2")){
+                teams_list.get(me.getKey().toString()).set(2,null);
+            }else if(teams_list.get(me.getKey().toString()).get(2)==null && teams_list.get(me.getKey().toString()).get(1).equals("2")) {
+                teams_list.get(me.getKey().toString()).set(2,"0");
+            }
+
+
+            String finalI1 = me.getKey().toString();
+            new Thread(() -> {
+                String finalI = finalI1;
+                try {
+                    JSONObject toPut = new JSONObject() {{
+                        put("name", teams_list.get(finalI).get(0));
+                        put("accessKey", finalI);
+                        put("state", teams_list.get(finalI).get(1));
+                        put("score",teams_list.get(finalI).get(2));
+                        put("email", teams_list.get(finalI).get(4));
+                    }};
+                    Unirests.put(teams_list.get(finalI).get(3), toPut);
+                } catch (Exception e) {
+                }
+                asyncChecker.getAndIncrement();
+            }).start();
+        }
+
+        AtomicInteger asyncChecker2 = new AtomicInteger();
+
+        for (Map.Entry he:added_teams.entrySet()) {
+
+            if(!added_teams.get(he.getKey().toString()).get(1).equals("2")){
+                added_teams.get(he.getKey().toString()).set(2,null);
+            }else if(added_teams.get(he.getKey().toString()).get(2)==null && added_teams.get(he.getKey().toString()).get(1).equals("2")) {
+                added_teams.get(he.getKey().toString()).set(2,"0");
+            }
+
+            System.out.println("----");
+            System.out.println(added_teams);
+
+            String finalI = he.getKey().toString();
+            new Thread(() -> {
+                try {
+
+                    JSONObject toPost = new JSONObject() {{
+                        put("name", added_teams.get(finalI).get(0));
+                        put("accessKey", finalI);
+                        put("state", added_teams.get(finalI).get(1));
+                        put("score",added_teams.get(finalI).get(2));
+                        //put email
+                    }};
+
+                    Unirests.post(Main.dbLink + "/teams", toPost);
+
+                } catch (Exception e) {
+                    System.out.println("Хоба");
+                }
+                asyncChecker2.getAndIncrement();
+            }).start();
+        }
+
+        while (asyncChecker.get() < teams_list.size() || asyncChecker2.get() < added_teams.size()) {
+            Thread.sleep(100);
+        }
+        Main.get_teams();
+
+        changed3.clear();
 
     }
 
@@ -533,7 +696,7 @@ public class admin_controller {
     }
 
     public void discardTeams(){
-
+        generateTeams();
     }
 
     public void generateAdmin() throws Exception {
@@ -556,6 +719,8 @@ public class admin_controller {
             in3.getChildren().clear();
             v3.clear();
             added_v3.clear();
+            added_teams.clear();
+            teams_to_delete.clear();
 
             accChanges.setDisable(true);
             disChanges.setDisable(true);
@@ -566,10 +731,6 @@ public class admin_controller {
         }
         for(ArrayList<String> item:Main.aps) aps.add((ArrayList<String>) item.clone());
         for (Map.Entry me:Main.teams_list.entrySet()){
-//            try{
-//                teams_list.put(me.getKey().toString(), (HashMap<String, String>) me.getValue());
-//            }catch (NumberFormatException nfe){
-//            }
 
             try {
                 teams_list.put(me.getKey().toString(), new ArrayList<>(){{
@@ -577,6 +738,7 @@ public class admin_controller {
                     add(((HashMap<String,String>) me.getValue()).get("state"));
                     add(((HashMap<String,String>) me.getValue()).get("score"));
                     add(((HashMap<String,String>) me.getValue()).get("link"));
+                    add(((HashMap<String,String>) me.getValue()).get("email"));
                 }});
             }catch (NumberFormatException nfe){
             }
@@ -587,10 +749,10 @@ public class admin_controller {
         generateTeams();
     }
 
-
     public void onAcceptChanges(ActionEvent actionEvent) throws Exception {
         acceptQuestions();
         acceptAppeals();
+        acceptTeams();
 
 
         generateAdmin();
@@ -605,6 +767,7 @@ public class admin_controller {
     public void onDiscardChanges(ActionEvent actionEvent) throws Exception {
         discardQuestions();
         discardAppeals();
+        discardTeams();
 
         accChanges.setDisable(true);
         disChanges.setDisable(true);

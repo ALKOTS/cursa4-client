@@ -22,13 +22,14 @@ public class StageChanger {
         cur_stage.close();
     }
 
-    public static void aboutChangeStage() throws Exception {
+    public static Stage noCloseChangeStage(String title, String scene) throws Exception {
         Stage team_selector_stage = new Stage();
-        team_selector_stage.setTitle("Об авторе");
-        team_selector_stage.setScene(SceneChanger.changeScene("about"));
+        team_selector_stage.setTitle(title);
+        team_selector_stage.setScene(SceneChanger.changeScene(scene));
         team_selector_stage.show();
-    }
 
+        return team_selector_stage;
+    }
 }
 
 
