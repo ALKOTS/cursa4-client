@@ -14,7 +14,6 @@ import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-
 public class admin_controller {
     @FXML
     public Button accChanges, disChanges, mainMenu, updateBtn;
@@ -471,6 +470,14 @@ public class admin_controller {
                     accChanges.setDisable(false);
                     disChanges.setDisable(false);
 
+                    String finalSimple_key = simple_key;
+                    new Alert(Alert.AlertType.CONFIRMATION){{
+                        setTitle("Team created");
+                        setHeaderText("Code:"+ finalSimple_key);
+                        setContentText("Remember this code, as there is no other way to see it after you close the alert");
+                        showAndWait();
+                    }};
+
 
                 }
                 else {
@@ -583,31 +590,8 @@ public class admin_controller {
         }
 
         Main.aps.clear();
-        //Main.teams_list.clear();
-        for(ArrayList<String> item:aps) Main.aps.add((ArrayList<String>) item.clone());
-//        for (Map.Entry me:teams_list.entrySet()){
-//            new Thread(()->{
-//                try{
-//                    JSONObject toPut=new JSONObject(){{
-//                        put("name",((ArrayList<String>) me.getValue()).get(0));
-//                        put("accessKey",me.getKey());
-//                        put("state",((ArrayList<String>) me.getValue()).get(1));
-//                        put("score",((ArrayList<String>) me.getValue()).get(2));
-//                        put("email", ((ArrayList<String>) me.getValue()).get(4));
-//                    }};
-//
-//                    Unirests.put(((ArrayList<String>)me.getValue()).get(3), toPut);
-//
-//                }catch (Exception e){
-//                }
-//                asyncChecker2.getAndIncrement();
-//            }).start();
-//            while (asyncChecker2.get()<Main.teams_list.size()){
-//                Thread.sleep(100);
-//            }
-//        }
-//        Main.get_teams();
 
+        for(ArrayList<String> item:aps) Main.aps.add((ArrayList<String>) item.clone());
     }
 
     public void acceptTeams() throws Exception {
@@ -685,20 +669,6 @@ public class admin_controller {
 
     }
 
-    public void discardQuestions(){
-        generateQuestions();
-    }
-
-    public void discardAppeals() throws Exception {
-        for(ArrayList<String> item:Main.aps) aps.add((ArrayList<String>) item.clone());
-
-        generateAdmin();
-    }
-
-    public void discardTeams(){
-        generateTeams();
-    }
-
     public void generateAdmin() throws Exception {
         try{
             in1.getChildren().clear();
@@ -721,6 +691,7 @@ public class admin_controller {
             added_v3.clear();
             added_teams.clear();
             teams_to_delete.clear();
+            changed3.clear();
 
             accChanges.setDisable(true);
             disChanges.setDisable(true);
@@ -765,9 +736,10 @@ public class admin_controller {
     }
 
     public void onDiscardChanges(ActionEvent actionEvent) throws Exception {
-        discardQuestions();
-        discardAppeals();
-        discardTeams();
+//        discardQuestions();
+//        discardAppeals();
+//        discardTeams();
+        generateAdmin();
 
         accChanges.setDisable(true);
         disChanges.setDisable(true);
@@ -785,6 +757,11 @@ public class admin_controller {
     }
 
     public void initialize() throws Exception {
+        new Alert(Alert.AlertType.WARNING){{
+            setTitle("Warning");
+            setHeaderText("Multiple changes from different people will overwrite each other");
+            showAndWait();
+        }};
         System.out.println("-------------------Admin-----------------------");
         accChanges.setDisable(true);
         disChanges.setDisable(true);

@@ -159,17 +159,6 @@ public class game_controller {
 
         Unirests.put(Main.teams_list.get(Main.team).get("link"), toPut);
 
-//        Unirest.put(Main.teams_list.get(Main.team).get("link"))
-//                .header("Content-type", "application/hal+json")
-//                .body(new JSONObject(){{
-//                    put("name",Main.teams_list.get(Main.team).get("name"));
-//                    put("accessKey",Main.team);
-//                    put("state",2);
-//                    put("score",pScore);
-//                    put("email", Main.teams_list.get(Main.team).get("email"));
-//                }})
-//                .asJson();
-
         AtomicInteger asyncChecker= new AtomicInteger();
 
         for(int i=0; i<appeals.size(); i++){
@@ -186,15 +175,6 @@ public class game_controller {
 
                     Unirests.post(Main.dbLink+"/appeals", toPost);
 
-//                    Unirest.post(Main.dbLink+"/appeals")
-//                            .header("Content-type", "application/hal+json")
-//                            .body(new JSONObject(){{
-//                                put("question", appeals.get(finalI).get(0));
-//                                put("answer", appeals.get(finalI).get(1));
-//                                put("ranswer", appeals.get(finalI).get(2));
-//                                put("team", appeals.get(finalI).get(3));
-//                            }})
-//                            .asJson();
                 } catch (UnirestException e) {
                 }
                 asyncChecker.getAndIncrement();

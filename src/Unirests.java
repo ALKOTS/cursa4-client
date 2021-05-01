@@ -2,6 +2,9 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.json.JSONObject;
 
 import java.net.ConnectException;
@@ -36,8 +39,12 @@ public class Unirests {
                 value=Unirest.get(what).asJson();
                 return value;
             }catch (Exception e){
-                System.out.println("No");
-                Thread.sleep(400);
+                new Alert(Alert.AlertType.ERROR){{
+                    setTitle("Error Dialog");
+                    setHeaderText("No connection");
+                    setGraphic(new ImageView( new Image(getClass().getResource("/main/resources/video.gif").toExternalForm())));
+                    showAndWait();
+                }};
             }
         }
     }

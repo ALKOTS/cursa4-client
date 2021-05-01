@@ -29,6 +29,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         get_questions();
         get_teams();
+        //generate_questions();
 
         team=null;
 
@@ -44,10 +45,6 @@ public class Main extends Application {
 
             Unirests.post(dbLink+"/questions", jo);
 
-//            Unirest.post(dbLink+"/questions")
-//                    .header("Content-type", "application/hal+json")
-//                    .body(jo)
-//                    .asJson();
         }
     }
 
@@ -184,9 +181,6 @@ public class Main extends Application {
                     }catch (NullPointerException npe){
                         String toDelete=appeals.getJSONObject(finalI).getJSONObject("_links").getJSONObject("self").getString("href");
                         try {
-//                            Unirest.delete(toDelete)
-//                                    .header("Content-type", "application/hal+json")
-//                                    .asJson();
                             Unirests.delete(toDelete);
                         } catch (UnirestException e) {
                         }

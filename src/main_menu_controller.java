@@ -26,6 +26,7 @@ public class main_menu_controller {
 	public HashMap<String, HashMap<String, String>> teams_list;
 
 	public void initialize() throws UnirestException {
+		startBtn.setDisable(true);
 		teams_list=Main.teams_list;
 		receiveTeam();
 		drawScoreBoard();
@@ -41,6 +42,18 @@ public class main_menu_controller {
 				showAndWait();
 			}};
 		}else{
+			Main.teams_list.get(Main.team).put("score","0");  // перенести это в старт гейм
+
+			JSONObject toPut=new JSONObject(){{
+				put("name",Main.teams_list.get(Main.team).get("name"));
+				put("accessKey",Main.team);
+				put("state",2);
+				put("score",0);
+				put("email", Main.teams_list.get(Main.team).get("email"));
+			}};
+
+			Unirests.put(Main.teams_list.get(Main.team).get("link"), toPut);
+
 			if(Main.team!=null){
 				StageChanger.simpleChangeStage("Что? Где? Когда?","game", startBtn);
 			}
@@ -63,17 +76,7 @@ public class main_menu_controller {
 	public void receiveTeam() throws UnirestException {
 		if(Main.team!=null){
 			currTeamLbl.setText(Main.teams_list.get(Main.team).get("name"));
-
-			Main.teams_list.get(Main.team).put("score","0");  // перенести это в старт гейм
-
-			JSONObject toPut=new JSONObject(){{
-				put("name",Main.teams_list.get(Main.team).get("name"));
-				put("accessKey",Main.team);
-				put("state",2);
-				put("score",0);
-			}};
-
-			Unirests.put(Main.teams_list.get(Main.team).get("link"), toPut);
+			startBtn.setDisable(false);
 		}
 	}
 
