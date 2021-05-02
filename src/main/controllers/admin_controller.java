@@ -793,9 +793,8 @@ public class admin_controller {
     }
 
     /**
-     * Функция генерация динамической части панели администратора
+     * Генерация таблицы лидеров
      *
-     * @throws Exception
      */
 
     public void generateScoreBoard(){
@@ -809,6 +808,12 @@ public class admin_controller {
             }
         }
     }
+
+    /**
+     * Функция генерация динамической части панели администратора
+     *
+     * @throws Exception
+     */
 
     public void generateAdmin() throws Exception {
         //очистка всех параметров
