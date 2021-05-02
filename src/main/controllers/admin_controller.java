@@ -25,6 +25,8 @@ public class admin_controller {
     @FXML
     public AnchorPane  in1, in2, in3;
 
+    @FXML
+    public VBox scoreBoard;
 
 
     public static ArrayList<ArrayList<String>> aps=new ArrayList<>();
@@ -796,6 +798,18 @@ public class admin_controller {
      * @throws Exception
      */
 
+    public void generateScoreBoard(){
+        for (Map.Entry me:teams_list.entrySet()){
+            System.out.println(((ArrayList<String>) me.getValue()).get(1).equals("2"));
+
+            if( ((ArrayList<String>) me.getValue()).get(1).equals("2")){
+                scoreBoard.getChildren().add(new Label(){{
+                    setText("Название: "+((ArrayList<String>) me.getValue()).get(0)+", Счет: "+((ArrayList<String>) me.getValue()).get(2));
+                }});
+            }
+        }
+    }
+
     public void generateAdmin() throws Exception {
         //очистка всех параметров
         try{
@@ -822,6 +836,7 @@ public class admin_controller {
 
             accChanges.setDisable(true);
             disChanges.setDisable(true);
+            scoreBoard.getChildren().clear();
         }catch (Exception nfe){ System.out.println("All clear"); }
 
         //получение параметров
@@ -830,7 +845,6 @@ public class admin_controller {
         }
         for(ArrayList<String> item:Main.aps) aps.add((ArrayList<String>) item.clone());
         for (Map.Entry me:Main.teams_list.entrySet()){
-
             try {
                 teams_list.put(me.getKey().toString(), new ArrayList<>(){{
                     add(((HashMap<String,String>) me.getValue()).get("name"));
@@ -847,6 +861,7 @@ public class admin_controller {
         generateQuestions();
         generateAppeals();
         generateTeams();
+        generateScoreBoard();
     }
 
     /**
