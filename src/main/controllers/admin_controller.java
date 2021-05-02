@@ -6,6 +6,8 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import main.Main;
 import main.utils.StageChanger;
@@ -49,6 +51,17 @@ public class admin_controller {
     public static HashMap<String, HBox> v3=new HashMap<>();
     public static HashMap<String, HBox> added_v3=new HashMap<>();
 
+    public static Image accept_icon=new Image(admin_controller.class.getResource("/main/resources/checkmark.png").toExternalForm());
+    public static Image cancel_icon=new Image(admin_controller.class.getResource("/main/resources/xmark.png").toExternalForm());
+    public static Image edit_icon=new Image(admin_controller.class.getResource("/main/resources/pencil.png").toExternalForm());
+    public static Image delete_icon=new Image(admin_controller.class.getResource("/main/resources/trash.png").toExternalForm());
+
+    /**
+     * Метод генерации уникального ключа для команды
+     *
+     * @return randomly generated key
+     */
+
     public String generateKey(){
         String key="";
         String alph="0123456789QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm";
@@ -57,6 +70,18 @@ public class admin_controller {
         }
         return key;
     }
+
+    /**
+     * Метод документации изменений формы
+     *
+     * @param lblContainer container for text- elements
+     * @param requiredList list of original data for comparison
+     * @param changed list of changed elements
+     * @param finalI id of elements needed to be checked
+     * @param blockContainer container for form- elements
+     * @param editBtn button for editing elements
+     * @param deleteBtn button for deleting elements
+     */
 
     public void acceptVersion(VBox lblContainer, HashMap<String, ArrayList<String>> requiredList, HashMap<Integer,HashMap<String, String>> changed, String finalI, HBox blockContainer, Button editBtn, Button deleteBtn){
         for(int j=0; j<2; j++){
@@ -86,6 +111,17 @@ public class admin_controller {
 
     }
 
+    /**
+     * Метод удаления элементов
+     *
+     * @param what_to_delete list of elements to delete
+     * @param finalI1 id of container
+     * @param v Collection of containers
+     * @param in FXML form
+     * @param added_v list of added elements
+     * @param add_el button to add elements
+     */
+
     public void deleteVersion(ArrayList<String> what_to_delete, String finalI1, HashMap<String,HBox> v, AnchorPane in, HashMap<String, HBox> added_v, Button add_el){
         what_to_delete.add(finalI1);
 
@@ -97,17 +133,39 @@ public class admin_controller {
         disChanges.setDisable(false);
     }
 
-    public void denyBtnFunction(Label lbl1, Label lbl2, String old_lbl1, String old_lbl2, VBox lblContainer, HBox blockContainer, Button editBtn, Button deleteBtn){
-        lbl1.setText(old_lbl1);
-        lbl2.setText(old_lbl2);
+    /**
+     * Метод отмены изменений в блоке
+     *
+     * @param labels list of changed labels
+     * @param old_labels original text
+     * @param lblContainer container for labels
+     * @param blockContainer container for form elements
+     * @param editBtn button to edit info
+     * @param deleteBtn button to delete info
+     */
+
+    public void denyBtnFunction(ArrayList<Label> labels, ArrayList<String> old_labels, VBox lblContainer, HBox blockContainer, Button editBtn, Button deleteBtn){
+        for(int i=0; i<labels.size(); i++){
+            labels.get(i).setText(old_labels.get(i));
+        }
         lblContainer.getChildren().clear();
-        lblContainer.getChildren().addAll(lbl1,lbl2);
+        lblContainer.getChildren().addAll(labels);
 
         blockContainer.getChildren().set(1,editBtn);
         blockContainer.getChildren().set(2,deleteBtn);
         accChanges.setDisable(false);
         disChanges.setDisable(false);
     }
+
+    /**
+     * Вспомогательная функция удаления элементов при подтверждении изменений и изменения списка
+     *
+     * @param list_to_delete list of elements to delete
+     * @param list list to delete elements from
+     * @param link_index index of table link
+     * @param changed changed elements
+     * @throws UnirestException
+     */
 
     public void acceptUpdater(ArrayList<String> list_to_delete, HashMap<String, ArrayList<String>> list, int link_index, HashMap<Integer,HashMap<String, String>> changed) throws UnirestException {
         Collections.sort(list_to_delete, Collections.reverseOrder());
@@ -117,6 +175,8 @@ public class admin_controller {
             Unirests.delete(list.get(list_to_delete.get(i)).get(link_index));
             list.remove(list_to_delete.get(i));
         }
+
+        //обновления оригинального списка
 
         for(Map.Entry me: changed.entrySet()){
             for(Map.Entry he: changed.get(me.getKey()).entrySet()){
@@ -128,6 +188,11 @@ public class admin_controller {
             }
         }
     }
+
+    /**
+     * Функция генерации вкладки с вопросами
+     *
+     */
 
     public void generateQuestions(){
         Button add_question=new Button("+");
@@ -144,12 +209,14 @@ public class admin_controller {
             }};
             VBox.setVgrow(lblContainer, Priority.ALWAYS);
 
-            Button editBtn = new Button("E"){{
+            Button editBtn = new Button(){{
                 setPrefSize(44,50);
+                setGraphic(new ImageView(edit_icon));
             }};
 
-            Button deleteBtn = new Button("D"){{
+            Button deleteBtn = new Button(){{
                 setPrefSize(44,50);
+                setGraphic(new ImageView(delete_icon));
             }};
 
             HBox blockContainer = new HBox(lblContainer, editBtn, deleteBtn){{
@@ -161,6 +228,8 @@ public class admin_controller {
             //button functionality
 
             String finalI = me.getKey().toString();
+
+            //изменение элемента
             editBtn.setOnAction(actionEvent -> {
 
                 String old_qs=qsLbl.getText();
@@ -169,17 +238,19 @@ public class admin_controller {
                 TextField ansTxt=new TextField(){{setText(old_ans);}};
                 lblContainer.getChildren().clear();
                 lblContainer.getChildren().addAll(qsTxt,ansTxt);
-                Button accBtn=new Button("A"){{
+                Button accBtn=new Button(){{
                     setPrefSize(44,50);
+                    setGraphic(new ImageView(accept_icon));
                 }};
-                Button denyBtn=new Button("D"){{
+                Button denyBtn=new Button(){{
                     setPrefSize(44,50);
+                    setGraphic(new ImageView(cancel_icon));
                 }};
 
                 blockContainer.getChildren().set(1,accBtn);
                 blockContainer.getChildren().set(2,denyBtn);
 
-
+                //подтверждение локальных изменений
                 accBtn.setOnAction(actionEvent1 -> {
                     qsLbl.setText(qsTxt.getText());
                     ansLbl.setText(ansTxt.getText());
@@ -191,12 +262,15 @@ public class admin_controller {
 
                 });
 
+                //отмена глобальных изменений
                 denyBtn.setOnAction(actionEvent2 -> {
-                    denyBtnFunction(qsLbl, ansLbl, old_qs, old_ans, lblContainer, blockContainer, editBtn, deleteBtn);
+                    denyBtnFunction(new ArrayList<>(){{add(qsLbl); add(ansLbl);}}, new ArrayList<>(){{add(old_qs); add(old_ans);}}, lblContainer, blockContainer, editBtn, deleteBtn);
                 });
             });
 
             String finalI1 = me.getKey().toString();
+
+            //удаление элемента
             deleteBtn.setOnAction(actionEvent -> {
                 deleteVersion(question_to_delete, finalI1, v1, in1, added_v1, add_question);
             });
@@ -204,6 +278,7 @@ public class admin_controller {
 
         //Static
 
+        //добавление нового элемента в список
         add_question.setOnAction(event -> {
             in1.getChildren().remove(in1.getChildren().size()-1);
 
@@ -215,12 +290,14 @@ public class admin_controller {
             }};
             VBox.setVgrow(lblContainer, Priority.ALWAYS);
 
-            Button accBtn = new Button("A"){{
+            Button accBtn = new Button(){{
                 setPrefSize(44,50);
+                setGraphic(new ImageView(accept_icon));
             }};
 
-            Button denBtn = new Button("D"){{
+            Button denBtn = new Button(){{
                 setPrefSize(44,50);
+                setGraphic(new ImageView(cancel_icon));
             }};
 
             HBox blockContainer = new HBox(lblContainer, accBtn, denBtn){{
@@ -231,6 +308,7 @@ public class admin_controller {
             in1.getChildren().clear();
             in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());getChildren().addAll(added_v1.values()); getChildren().add(blockContainer);}});
 
+            //подтверждение добавления
             accBtn.setOnAction(actionEvent -> {
                 if(ansTxt.getText().length()>0 && qsTxt.getText().length()>0){
 
@@ -262,6 +340,7 @@ public class admin_controller {
                 }
             });
 
+            //отмена добавления
             denBtn.setOnAction(actionEvent -> {
                 in1.getChildren().clear();
                 in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values()); getChildren().addAll(added_v1.values()); getChildren().add(add_question);}});
@@ -271,6 +350,11 @@ public class admin_controller {
         in1.getChildren().add(new VBox(){{getChildren().addAll(v1.values());getChildren().addAll(added_v1.values()); getChildren().add(add_question);}});
     }
 
+    /**
+     * Функция генерации вкладки с аппеляциями
+     *
+     */
+
     public void generateAppeals(){
         //Dynamic
         for (int i=0; i<aps.size(); i++){
@@ -278,12 +362,14 @@ public class admin_controller {
                 setMinSize(684,50);
             }};
 
-            Button acceptBtn = new Button("A"){{
+            Button acceptBtn = new Button(){{
                 setPrefSize(55,60);
+                setGraphic(new ImageView(accept_icon));
             }};
 
-            Button denyBtn = new Button("D"){{
+            Button denyBtn = new Button(){{
                 setPrefSize(55,60);
+                setGraphic(new ImageView(cancel_icon));
             }};
 
             HBox blockContainer = new HBox(lblContainer, acceptBtn, denyBtn){{
@@ -298,6 +384,8 @@ public class admin_controller {
 
             //buttons functionality
             int index=i;
+
+            //одобрение аппеляции
             acceptBtn.setOnAction(actionEvent -> {
 
                 aps.get(index).set(4,"Y");
@@ -305,21 +393,18 @@ public class admin_controller {
                 acceptBtn.setStyle("-fx-background-color: #00ff00; ");
                 denyBtn.setDisable(true);
 
-//                btnList.add(acceptBtn);
-//                btnList.add(denyBtn);
                 accChanges.setDisable(false);
                 disChanges.setDisable(false);
 
             });
 
+            //отклонение аппеляции
             denyBtn.setOnAction(actionEvent -> {
 
                 aps.get(index).set(4,"N");
                 denyBtn.setStyle("-fx-background-color: #ff0000; ");
                 acceptBtn.setDisable(true);
 
-//                btnList.add(acceptBtn);
-//                btnList.add(denyBtn);
                 accChanges.setDisable(false);
                 disChanges.setDisable(false);
 
@@ -329,6 +414,11 @@ public class admin_controller {
         //static
         in2.getChildren().add(v2);
     }
+
+    /**
+     * Функция генерации вкладки с командами
+     *
+     */
 
     public void generateTeams(){
         Button add_team=new Button("+");
@@ -344,11 +434,13 @@ public class admin_controller {
             }};
             VBox.setVgrow(lblContainer, Priority.ALWAYS);
 
-            Button editBtn=new Button("E"){{
+            Button editBtn=new Button(){{
                 setPrefSize(50,50);
+                setGraphic(new ImageView(edit_icon));
             }};
-            Button deleteBtn=new Button("D"){{
+            Button deleteBtn=new Button(){{
                 setPrefSize(50,50);
+                setGraphic(new ImageView(delete_icon));
             }};
 
             HBox blockContainer=new HBox(lblContainer, editBtn, deleteBtn);
@@ -357,6 +449,7 @@ public class admin_controller {
 
             String finalI=me.getKey().toString();
 
+            //изменение информации
             editBtn.setOnAction(actionEvent -> {
                 String old_name=nameLbl.getText();
                 String old_state=stateLbl.getText();
@@ -364,16 +457,19 @@ public class admin_controller {
                 ObservableList<String> statesList=FXCollections.observableArrayList("0", "1", "2");
                 lblContainer.getChildren().addAll(new TextField(nameLbl.getText()){{setPromptText("Название");}},new ComboBox<>(statesList){{setValue(stateLbl.getText());}},scoreLbl);
 
-                Button accBtn=new Button("A"){{
+                Button accBtn=new Button(){{
                     setPrefSize(50,50);
+                    setGraphic(new ImageView(accept_icon));
                 }};
-                Button denBtn=new Button("D"){{
+                Button denBtn=new Button(){{
                     setPrefSize(50,50);
+                    setGraphic(new ImageView(cancel_icon));
                 }};
 
                 blockContainer.getChildren().set(1,accBtn);
                 blockContainer.getChildren().set(2,denBtn);
 
+                //подтверждение изменений
                 accBtn.setOnAction(actionEvent1 -> {
                     nameLbl.setText(((TextField) lblContainer.getChildren().get(0)).getText());
                     stateLbl.setText(((ComboBox) lblContainer.getChildren().get(1)).getValue().toString());
@@ -389,18 +485,21 @@ public class admin_controller {
 
                 });
 
+                //отмена изменений
                 denBtn.setOnAction(actionEvent1 -> {
-                    denyBtnFunction(nameLbl, stateLbl, old_name, old_state, lblContainer, blockContainer, editBtn, deleteBtn);
+                    denyBtnFunction(new ArrayList<>(){{add(nameLbl); add(stateLbl);}}, new ArrayList<>(){{add(old_name); add(old_state);}}, lblContainer, blockContainer, editBtn, deleteBtn);
 
                 });
             });
 
+            //удаление поля
             deleteBtn.setOnAction(actionEvent -> {
                 deleteVersion(teams_to_delete, finalI, v3, in3, added_v3, add_team);
 
             });
         }
 
+        //добавление новой команды
         add_team.setOnAction(actionEvent -> {
 
             in3.getChildren().remove(in3.getChildren().size()-1);
@@ -419,12 +518,14 @@ public class admin_controller {
             }};
             VBox.setVgrow(lblContainer, Priority.ALWAYS);
 
-            Button accBtn = new Button("A"){{
+            Button accBtn = new Button(){{
                 setPrefSize(44,50);
+                setGraphic(new ImageView(accept_icon));
             }};
 
-            Button denBtn = new Button("D"){{
+            Button denBtn = new Button(){{
                 setPrefSize(44,50);
+                setGraphic(new ImageView(cancel_icon));
             }};
 
             HBox blockContainer = new HBox(lblContainer, accBtn, denBtn){{
@@ -435,17 +536,15 @@ public class admin_controller {
             in3.getChildren().clear();
             in3.getChildren().add(new VBox(){{getChildren().addAll(v3.values());getChildren().addAll(added_v3.values()); getChildren().add(blockContainer);}});
 
+            //подтверждение изменений
             accBtn.setOnAction(actionEvent1 -> {
-
-//                String key=;
-//
-//                key=org.apache.commons.codec.digest.DigestUtils.sha256Hex(key);
 
                 if(nameTxt.getText().length()>0){
 
                     String simple_key=generateKey();
                     String key=org.apache.commons.codec.digest.DigestUtils.sha256Hex(simple_key);
 
+                    //проверка ключа на уникальность
                     while (teams_list.containsKey(key) || added_teams.containsKey(key)){
                         simple_key=generateKey();
                         key=org.apache.commons.codec.digest.DigestUtils.sha256Hex(simple_key);
@@ -472,10 +571,11 @@ public class admin_controller {
                     accChanges.setDisable(false);
                     disChanges.setDisable(false);
 
+                    //вывод ключа на экран
                     String finalSimple_key = simple_key;
                     new Alert(Alert.AlertType.CONFIRMATION){{
                         setTitle("Team created");
-                        setHeaderText("Code:"+ finalSimple_key);
+                        setHeaderText("Code: "+ finalSimple_key);
                         setContentText("Remember this code, as there is no other way to see it after you close the alert");
                         showAndWait();
                     }};
@@ -491,6 +591,7 @@ public class admin_controller {
                 }
             });
 
+            //отмена изменений
             denBtn.setOnAction(actionEvent1 -> {
                 in3.getChildren().clear();
                 in3.getChildren().add(new VBox(){{getChildren().addAll(v3.values()); getChildren().addAll(added_v3.values()); getChildren().add(add_team);}});
@@ -500,6 +601,12 @@ public class admin_controller {
 
         in3.getChildren().add(new VBox(){{getChildren().addAll(v3.values());getChildren().addAll(added_v3.values());getChildren().add(add_team);}});
     }
+
+    /**
+     * Функция глобального подтверждения изменений спика вопросов
+     *
+     * @throws Exception
+     */
 
     public void acceptQuestions() throws Exception {
         acceptUpdater(question_to_delete, questions_list, 2, changed1);
@@ -554,6 +661,12 @@ public class admin_controller {
 
     }
 
+    /**
+     * Функция глобаольного подтверждения изменения списка аппеляций и счета команд
+     *
+     * @throws Exception
+     */
+
     public void acceptAppeals() throws Exception{
         ArrayList<Integer> toRemove=new ArrayList<>();
         for (int i=0; i<aps.size(); i++){
@@ -595,6 +708,12 @@ public class admin_controller {
 
         for(ArrayList<String> item:aps) Main.aps.add((ArrayList<String>) item.clone());
     }
+
+    /**
+     * Функция глобального подтверждения изменения списка команд
+     *
+     * @throws Exception
+     */
 
     public void acceptTeams() throws Exception {
         acceptUpdater(teams_to_delete, teams_list, 3, changed3);
@@ -671,7 +790,14 @@ public class admin_controller {
 
     }
 
+    /**
+     * Функция генерация динамической части панели администратора
+     *
+     * @throws Exception
+     */
+
     public void generateAdmin() throws Exception {
+        //очистка всех параметров
         try{
             in1.getChildren().clear();
             v1.clear();
@@ -685,7 +811,6 @@ public class admin_controller {
             in2.getChildren().clear();
             aps.clear();
             teams_list.clear();
-//            btnList.clear();
             v2.getChildren().clear();
 
             in3.getChildren().clear();
@@ -699,6 +824,7 @@ public class admin_controller {
             disChanges.setDisable(true);
         }catch (Exception nfe){ System.out.println("All clear"); }
 
+        //получение параметров
         for(int i=0; i<Main.questions_list.size(); i++){
             questions_list.put(String.valueOf(i), (ArrayList<String>) Main.questions_list.get(i).clone());
         }
@@ -717,17 +843,26 @@ public class admin_controller {
             }
         }
 
+        //генерация вкладок
         generateQuestions();
         generateAppeals();
         generateTeams();
     }
 
+    /**
+     * Глобальное подтверждение всех изменений
+     *
+     * @param actionEvent
+     * @throws Exception
+     */
+
     public void onAcceptChanges(ActionEvent actionEvent) throws Exception {
+        //подтверждение изменений каждой из панелей
         acceptQuestions();
         acceptAppeals();
         acceptTeams();
 
-
+        //обновление страницы
         generateAdmin();
 
         new Alert(Alert.AlertType.CONFIRMATION){{
@@ -737,19 +872,37 @@ public class admin_controller {
         }};
     }
 
+    /**
+     * Глобальная отмена всех изменений
+     *
+     * @param actionEvent
+     * @throws Exception
+     */
+
     public void onDiscardChanges(ActionEvent actionEvent) throws Exception {
-//        discardQuestions();
-//        discardAppeals();
-//        discardTeams();
         generateAdmin();
 
         accChanges.setDisable(true);
         disChanges.setDisable(true);
     }
 
+    /**
+     * Переход в главное меню
+     *
+     * @param actionEvent
+     * @throws Exception
+     */
+
     public void onMainMenu(ActionEvent actionEvent) throws Exception {
         StageChanger.simpleChangeStage("Главное меню","main_menu", mainMenu);
     }
+
+    /**
+     * Повторное получение данных от сервера
+     *
+     * @param actionEvent
+     * @throws Exception
+     */
 
     public void onUpdateBtn(ActionEvent actionEvent) throws Exception {
         Main.get_questions();
@@ -757,6 +910,12 @@ public class admin_controller {
         Main.get_appeals();
         generateAdmin();
     }
+
+    /**
+     * Точка входа в класс
+     *
+     * @throws Exception
+     */
 
     public void initialize() throws Exception {
         new Alert(Alert.AlertType.WARNING){{

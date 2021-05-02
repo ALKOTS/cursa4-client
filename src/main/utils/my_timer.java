@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 
 public abstract class my_timer extends AnimationTimer {
 
+    //тикрейт
     long nanosBetweenPulses=1* 1000000000L;
     long lastPulseTimeStamp;
 

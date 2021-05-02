@@ -27,13 +27,18 @@ public class Main extends Application {
 
     public static ArrayList<ArrayList<String>> aps=new ArrayList<>();  //[[question, answer, right answer, team, isApproved(Y, N, null), link], [...], ...]
 
-    public static String dbLink="http://localhost:8080";//"https://cursa4-server.herokuapp.com";
+    public static String dbLink="http://localhost:8080"; //"https://cursa4-server.herokuapp.com";
 
+    /**
+     * Первоначальная подгрузка данных от сервера
+     * Открытие окна главного меню
+     * @param primaryStage main menu stage
+     * @throws Exception
+     */
     @Override
     public void start(Stage primaryStage) throws Exception{
         get_questions();
         get_teams();
-        //generate_questions();
 
         team=null;
 
@@ -42,20 +47,16 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public void generate_questions() throws UnirestException {
-        for(int i=0; i<24; i++){
-            int finalI = i;
-            JSONObject jo=new JSONObject(){{put("question","What is "+ finalI);put("answer",finalI);}};
-
-            Unirests.post(dbLink+"/questions", jo);
-
-        }
-    }
-
+    /**
+     * Метод получения списка вопросов от сервера
+     *
+     * @throws Exception
+     */
     public static void get_questions() throws Exception {
         questions_list.clear();
         AtomicInteger asyncChecker= new AtomicInteger();
 
+        //получение количество страниц данных
         int pages=Integer.parseInt(Unirests.get(dbLink+"/questions").getBody().getObject().getJSONObject("page").get("totalPages").toString());
 
 
@@ -96,15 +97,21 @@ public class Main extends Application {
 
     }
 
+    /**
+     * Метод получения списка команд
+     *
+     * @throws Exception
+     */
     public static void get_teams() throws Exception {
         teams_list.clear();
         AtomicInteger asyncChecker= new AtomicInteger();
+
+        //получение количество страниц данных
         int pages=Integer.parseInt(Unirests.get(dbLink+"/teams").getBody().getObject().getJSONObject("page").get("totalPages").toString());
         new Thread(()->{
             for(int i=0; i<pages; i++) {
                 HttpResponse<JsonNode> get_teams_response = null;
                 try {
-//                    get_teams_response = Unirest.get(dbLink+"/teams/?page="+i).asJson();
                     get_teams_response = Unirests.get(dbLink+"/teams/?page="+i);
                 } catch (Exception e) {
                 }
@@ -155,9 +162,15 @@ public class Main extends Application {
         System.out.println(teams_list);
     }
 
+    /**
+     * Метод получения списка аппеляций
+     *
+     * @throws Exception
+     */
     public static void get_appeals() throws Exception {
         aps.clear();
         AtomicInteger asyncChecker= new AtomicInteger();
+        //получение количество страниц данных
         int pages=Integer.parseInt(Unirests.get(dbLink+"/appeals").getBody().getObject().getJSONObject("page").get("totalPages").toString());
 
         new Thread(()->{
@@ -183,6 +196,7 @@ public class Main extends Application {
                             }});
                         }
                     }catch (NullPointerException npe){
+                        //удаление аппеляций, если команда, подавшая их, не сыграла
                         String toDelete=appeals.getJSONObject(finalI).getJSONObject("_links").getJSONObject("self").getString("href");
                         try {
                             Unirests.delete(toDelete);
@@ -206,6 +220,11 @@ public class Main extends Application {
         }
     }
 
+    /**
+     * Точка входа в программу
+     *
+     * @param args the input arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }

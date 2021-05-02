@@ -12,6 +12,13 @@ public class SceneChanger{
 
     private static Scene current_scene;
 
+    /**
+     * Получение сцены из FXML
+     *
+     * @param newScene name of required scene
+     * @return JavaFX scene
+     * @throws Exception
+     */
 
     public static Scene changeScene(String newScene) throws Exception{
         URL url = new File("src/main/scenes/"+newScene+".fxml").toURI().toURL();

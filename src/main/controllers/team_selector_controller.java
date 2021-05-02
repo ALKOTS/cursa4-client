@@ -30,6 +30,17 @@ public class team_selector_controller {
     public void initialize(){
     }
 
+    /**
+     * Подтверждение выбранной команды
+     *
+     * Обновление списка команд и проверка на доступность
+     *
+     * Выдает ошибку, если команда не доступна
+     *
+     * @param actionEvent
+     * @throws Exception
+     */
+
     public void selectTeam(ActionEvent actionEvent) throws Exception {
         Alert alert = new Alert(Alert.AlertType.ERROR){{
             setTitle("Error Dialog");
@@ -57,6 +68,13 @@ public class team_selector_controller {
             alert.showAndWait();
         }
     }
+
+    /**
+     * Возврат в главное меню
+     *
+     * @param actionEvent
+     * @throws Exception
+     */
 
     public void onReturn(ActionEvent actionEvent) throws Exception {
         StageChanger.simpleChangeStage("Главное меню", "main_menu", returnBtn);

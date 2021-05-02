@@ -30,12 +30,25 @@ public class main_menu_controller {
 
 	public HashMap<String, HashMap<String, String>> teams_list;
 
+	/**
+	 * Точка входа в класс
+	 *
+	 * @throws UnirestException
+	 */
+
 	public void initialize() throws UnirestException {
 		startBtn.setDisable(true);
 		teams_list=Main.teams_list;
 		receiveTeam();
 		drawScoreBoard();
 	}
+
+	/**
+	 * Попытка начать игру. Проверка количества доступных вопросов, обновление статуса команды
+	 *
+	 * @param actionEvent
+	 * @throws Exception
+	 */
 
 	public void onStart(ActionEvent actionEvent) throws Exception {
 		Main.get_questions();
@@ -74,9 +87,22 @@ public class main_menu_controller {
 
 	}
 
+	/**
+	 * Переход к форме выбора команды
+	 *
+	 * @param actionEvent
+	 * @throws Exception
+	 */
+
 	public void onTeamSelect(ActionEvent actionEvent) throws Exception {
 		StageChanger.simpleChangeStage("Выберите команду", "team_selector", teamSelectBtn);
 	}
+
+	/**
+	 * Получение текущей команды
+	 *
+	 * @throws UnirestException
+	 */
 
 	public void receiveTeam() throws UnirestException {
 		if(Main.team!=null){
@@ -84,6 +110,11 @@ public class main_menu_controller {
 			startBtn.setDisable(false);
 		}
 	}
+
+	/**
+	 * Отрисовка таблицы лидеров
+	 *
+	 */
 
 	public void drawScoreBoard(){
 		String teams = "";
@@ -95,9 +126,23 @@ public class main_menu_controller {
 		teamLbl.setText(teams);
 	}
 
+	/**
+	 * Открытие окна с информацией об авторе
+	 *
+	 * @param actionEvent
+	 * @throws Exception
+	 */
+
 	public void onAbout(ActionEvent actionEvent) throws Exception {
 		StageChanger.noCloseChangeStage("Об авторе","about");
 	}
+
+	/**
+	 * Повторное получение данных
+	 *
+	 * @param actionEvent
+	 * @throws Exception
+	 */
 
 	public void onUpdateBtn(ActionEvent actionEvent) throws Exception {
 		Main.get_teams();

@@ -39,8 +39,6 @@ public class game_controller {
     private Random random=new Random();
     public String right_answer;
 
-    //public ArrayList<ArrayList<String>> aps=new ArrayList<>();
-
     public int vScore=0;
     public int pScore=0;
 
@@ -50,11 +48,21 @@ public class game_controller {
 
     public String team;
 
+    /**
+     * Точка входа в класс
+     *
+     * @throws Exception
+     */
+
     public void initialize() throws Exception {
         timeBar.setProgress(1);
         returnBtn.setVisible(false);
         appealBtn.setVisible(false);
         team=Main.team;
+
+        //объявление таймеров
+
+        //таймер раунда
         mt=new my_timer(){
 
             @Override
@@ -67,6 +75,7 @@ public class game_controller {
             }
         };
 
+        //таймер между раундами
         at=new my_timer() {
             @Override
             protected void run() throws Exception {
@@ -81,6 +90,12 @@ public class game_controller {
         startRound();
     }
 
+    /**
+     * Подтверждение введенного пользователем ответа
+     *
+     * @param actionEvent
+     */
+
     public void btnPress(javafx.event.ActionEvent actionEvent) {
         if (vScore<6 && pScore<6){
             mt.stop();
@@ -88,15 +103,32 @@ public class game_controller {
         }
     }
 
+    /**
+     * Функция окончания доступного пользователю времени для ответа
+     *
+     */
+
     public void outOfTime(){
         mt.stop();
         endRound(null);
     }
 
+    /**
+     * Функция продолжения игры, если пользователь не подал аппеляцию
+     *
+     * @throws Exception
+     */
+
     public void appealDeclined() throws Exception {
         at.stop();
         startRound();
     }
+
+    /**
+     * Функция начала нового раунда
+     *
+     * @throws Exception
+     */
 
     public void startRound() throws Exception {
         viewerScore.setText(String.valueOf(vScore));
@@ -122,6 +154,12 @@ public class game_controller {
         }
     }
 
+    /**
+     * Функция окончания раунда и проверки введенного ответа
+     *
+     * @param ans answer given by user
+     */
+
     public void endRound(String ans){
         rAns.setText(right_answer);
         ansTxt.setDisable(true);
@@ -140,6 +178,13 @@ public class game_controller {
         at.start();
     }
 
+    /**
+     * Функция окончания игры, синхронизация счета пользователя и аппеляций с сервером
+     *
+     * @param winner
+     * @throws Exception
+     */
+
     public void endGame(String winner) throws Exception {
         at.stop();
         mt.stop();
@@ -149,7 +194,6 @@ public class game_controller {
             qsLbl.setText("Players won");
         }
 
-        //subBtn.setVisible(false);
         vb.getChildren().remove(1);
         vb.getChildren().remove(1);
         ansTxt.setDisable(true);
@@ -200,9 +244,23 @@ public class game_controller {
 
     }
 
+    /**
+     * Возврат в главное меню
+     *
+     * @param actionEvent
+     * @throws Exception
+     */
+
     public void onReturn(ActionEvent actionEvent) throws Exception {
         StageChanger.simpleChangeStage("Главное меню", "main_menu", returnBtn);
     }
+
+    /**
+     * Подача аппеляции
+     *
+     * @param actionEvent
+     * @throws Exception
+     */
 
     public void onAppeal(ActionEvent actionEvent) throws Exception {
 

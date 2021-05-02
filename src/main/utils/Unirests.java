@@ -12,12 +12,28 @@ import org.json.JSONObject;
 import java.net.ConnectException;
 
 public class Unirests {
+
+    /**
+     * Запрос на удаление информации
+     *
+     * @param toDelete id of the field to be deleted
+     * @throws UnirestException
+     */
+
     public static void delete(String toDelete) throws UnirestException {
 
         Unirest.delete(toDelete)
                 .header("Content-type", "application/hal+json")
                 .asJson();
     }
+
+    /**
+     * Запрос на изменение информации
+     *
+     * @param where field id
+     * @param what new info
+     * @throws UnirestException
+     */
 
     public static void put(String where, JSONObject what) throws UnirestException {
 
@@ -27,12 +43,28 @@ public class Unirests {
                 .asJson();
     }
 
+    /**
+     * Запрос на запись
+     *
+     * @param where table
+     * @param what info
+     * @throws UnirestException
+     */
+
     public static void post(String where, JSONObject what) throws UnirestException {
         Unirest.post(where)
                 .header("Content-type", "application/hal+json")
                 .body(what)
                 .asJson();
     }
+
+    /**
+     * Запрос на получение информации
+     *
+     * @param what table
+     * @return info
+     * @throws Exception
+     */
 
     public static HttpResponse<JsonNode> get(String what) throws Exception {
         HttpResponse<JsonNode> value;
