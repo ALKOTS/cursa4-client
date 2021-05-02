@@ -278,7 +278,8 @@ public class game_controller {
             showAndWait();
         }};
 
-
+        at.stop();
+        mt.stop();
         startRound();
     }
 }

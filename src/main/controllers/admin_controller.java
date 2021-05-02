@@ -284,8 +284,8 @@ public class admin_controller {
         add_question.setOnAction(event -> {
             in1.getChildren().remove(in1.getChildren().size()-1);
 
-            TextField qsTxt=new TextField();
-            TextField ansTxt=new TextField();
+            TextField qsTxt=new TextField(){{setPromptText("Вопрос");}};
+            TextField ansTxt=new TextField(){{setPromptText("Ответ");}};
 
             VBox lblContainer=new VBox(qsTxt,ansTxt){{
                 setMinSize(684,50);
